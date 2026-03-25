@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minhas Finanças — Desktop v2</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bl:#1565c0;--bl2:#1e88e5;--bl3:#e3f2fd;--bl4:#bbdefb;
+  --gn:#1b5e20;--gn2:#2e7d32;--gn3:#e8f5e9;--gn4:#43a047;
+  --rd:#b71c1c;--rd2:#e53935;--rd3:#ffebee;
+  --am:#e65100;--am2:#ef6c00;--am3:#fff3e0;
+  --pu:#4a148c;--pu2:#7b1fa2;--pu3:#f3e5f5;
+  --cy:#006064;--cy2:#00838f;--cy3:#e0f7fa;
+  --bg:#f5f7fa;--bg2:#ffffff;--bg3:#eef1f5;
+  --sd:#1a1a2e;
+  --tx:#1a1a2e;--tx2:#5a6270;--tx3:#9aa3b0;
+  --bd:#e2e8f0;--bd2:#c8d0dc;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,.1),0 1px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.15),0 2px 8px rgba(0,0,0,.08);
+  --R:12px;--r:8px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+.shell{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:56px;background:var(--sd);display:flex;flex-direction:column;align-items:center;padding:0;flex-shrink:0;transition:width .25s;position:relative;z-index:100}
+.sidebar.open{width:220px}
+.sidebar-logo{padding:16px 0;display:flex;align-items:center;justify-content:center;width:100%;height:60px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
+.sidebar-logo .logo-icon{width:32px;height:32px;flex-shrink:0}
+.sidebar-logo .logo-text{font-size:15px;font-weight:600;color:#fff;margin-left:10px;white-space:nowrap;opacity:0;transition:opacity .2s}
+.sidebar.open .logo-text{opacity:1}
+.sidebar-nav{flex:1;width:100%;padding:8px 0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.sidebar-nav::-webkit-scrollbar{display:none}
+.nav-item{display:flex;align-items:center;padding:10px 0;width:100%;cursor:pointer;color:rgba(255,255,255,.55);transition:color .15s,background .15s;position:relative;white-space:nowrap;overflow:hidden}
+.nav-item:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.06)}
+.nav-item.on{color:#fff;background:rgba(255,255,255,.1)}
+.nav-item.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--bl2);border-radius:0 2px 2px 0}
+.nav-icon{width:56px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.nav-label{font-size:13px;font-weight:400;opacity:0;transition:opacity .2s}
+.sidebar.open .nav-label{opacity:1}
+.sidebar-footer{padding:12px 0;border-top:1px solid rgba(255,255,255,.08);width:100%}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{height:60px;background:var(--bg2);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.month-nav{display:flex;align-items:center;gap:8px}
+.mn-btn{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--tx2);transition:background .15s}
+.mn-btn:hover{background:var(--bl3);color:var(--bl)}
+.mn-label{font-size:14px;font-weight:500;min-width:110px;text-align:center}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.tb-btn{height:32px;padding:0 14px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;border:none;transition:all .15s;font-family:'DM Sans',sans-serif}
+.tb-btn-primary{background:var(--bl);color:#fff}
+.tb-btn-primary:hover{background:var(--bl2)}
+.tb-btn-ghost{background:var(--bg3);color:var(--tx2);border:1px solid var(--bd)}
+.tb-btn-ghost:hover{background:var(--bl3);color:var(--bl);border-color:var(--bl4)}
+.sync-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gn2);background:var(--gn3);padding:4px 10px;border-radius:20px;cursor:pointer}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--gn4);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;cursor:pointer}
+
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--bd) transparent}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+.page{display:none}
+.page.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page.on>*{animation:fadeUp .25s ease both}
+.page.on>*:nth-child(2){animation-delay:.04s}
+.page.on>*:nth-child(3){animation-delay:.08s}
+
+/* WIDGETS */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--bg2);border-radius:var(--R);padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:transform .15s,box-shadow .15s,opacity .15s;border:1px solid var(--bd)}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.kpi-card:active{transform:scale(.97)}
+.kpi-card.blue{background:var(--bl);color:#fff;border-color:var(--bl)}
+.kpi-card.green{background:var(--gn2);color:#fff;border-color:var(--gn2)}
+.kpi-card.red{background:var(--rd2);color:#fff;border-color:var(--rd2)}
+.kpi-card.amber{background:var(--am2);color:#fff;border-color:var(--am2)}
+.kpi-card.purple{background:var(--pu2);color:#fff;border-color:var(--pu2)}
+.kpi-icon{font-size:20px;margin-bottom:2px}
+.kpi-label{font-size:11px;opacity:.85;font-weight:400}
+.kpi-val{font-size:20px;font-weight:600;font-family:'DM Mono',monospace;letter-spacing:-.5px}
+.kpi-sub{font-size:11px;opacity:.75}
+.kpi-hint{font-size:10px;opacity:.6;display:flex;align-items:center;gap:3px;margin-top:2px}
+
+.dash-grid{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:16px}
+.dash-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.widget{background:var(--bg2);border-radius:var(--R);box-shadow:var(--shadow);border:1px solid var(--bd);overflow:hidden}
+.widget-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bd)}
+.widget-title{font-size:13px;font-weight:500}
+.widget-sub{font-size:11px;color:var(--tx3);margin-top:1px}
+.widget-acts{display:flex;gap:6px;align-items:center}
+.widget-act{width:26px;height:26px;border-radius:var(--r);background:var(--bg3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--tx2);transition:background .15s}
+.widget-act:hover{background:var(--bl3);color:var(--bl);border-color:var(--bl4)}
+.widget-body{padding:16px}
+.chart-wrap{position:relative;height:180px}
+.chart-wrap-lg{position:relative;height:220px}
+.chart-hint{text-align:center;font-size:11px;color:var(--tx3);margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px}
+.clickable-chart{cursor:pointer}
+.clickable-chart:hover{opacity:.92}
+
+/* DRILL-DOWN MODAL */
+.drill-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.drill-overlay.open{display:flex}
+.drill-modal{background:var(--bg2);border-radius:16px;box-shadow:var(--shadow-lg);width:680px;max-width:95vw;max-height:82vh;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .2s ease}
+.drill-modal-hdr{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--bd)}
+.drill-modal-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.drill-modal-title{font-size:16px;font-weight:600;flex:1}
+.drill-modal-sub{font-size:12px;color:var(--tx2);margin-top:2px}
+.drill-modal-close{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--tx2);flex-shrink:0}
+.drill-modal-close:hover{background:var(--rd3);color:var(--rd2);border-color:var(--rd)}
+.drill-modal-body{overflow-y:auto;padding:16px 20px;flex:1}
+.drill-kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.drill-kpi{background:var(--bg3);border-radius:var(--r);padding:12px;text-align:center}
+.drill-kpi-lbl{font-size:11px;color:var(--tx2);margin-bottom:3px}
+.drill-kpi-val{font-size:18px;font-weight:600;font-family:'DM Mono',monospace}
+.drill-chart-wrap{position:relative;height:160px;margin-bottom:16px}
+.drill-sec{font-size:11px;font-weight:600;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;margin:12px 0 8px}
+.drill-tx-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.drill-tx-row:last-child{border-bottom:none}
+.drill-ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.drill-name{flex:1;font-size:13px;font-weight:500}
+.drill-date{font-size:11px;color:var(--tx3)}
+.drill-amt{font-size:13px;font-weight:600;font-family:'DM Mono',monospace}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{padding:7px 10px;text-align:left;font-weight:500;color:var(--tx2);font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bd);background:var(--bg3)}
+.tbl td{padding:9px 10px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--bg3)}
+.td-name{display:flex;align-items:center;gap:8px}
+.td-logo{width:28px;height:28px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.td-val{font-family:'DM Mono',monospace;font-size:12px}
+.td-val.neg{color:var(--rd2)}
+.td-val.pos{color:var(--gn4)}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500}
+.badge-g{background:var(--gn3);color:var(--gn2)}
+.badge-r{background:var(--rd3);color:var(--rd2)}
+.badge-a{background:var(--am3);color:var(--am2)}
+.badge-b{background:var(--bl3);color:var(--bl2)}
+.badge-p{background:var(--pu3);color:var(--pu2)}
+
+/* CARTÕES */
+.cc-visual{border-radius:var(--R);padding:16px 18px;color:#fff;margin-bottom:0;position:relative;overflow:hidden;cursor:pointer}
+.cc-visual::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.08)}
+.cc-visual::after{content:'';position:absolute;right:30px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.05)}
+.ccv-net{font-size:10px;opacity:.7;letter-spacing:.8px;margin-bottom:8px}
+.ccv-num{font-size:16px;font-weight:500;letter-spacing:3px;margin-bottom:12px;font-family:'DM Mono',monospace}
+.ccv-row{display:flex;justify-content:space-between;font-size:11px;opacity:.85}
+.cc-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:12px 14px;background:var(--bg3);border-top:1px solid var(--bd)}
+.cc-stat{text-align:center}
+.cc-stat-lbl{font-size:10px;color:var(--tx2);margin-bottom:2px}
+.cc-stat-val{font-size:12px;font-weight:600;font-family:'DM Mono',monospace}
+.cc-bar-section{padding:10px 14px;border-top:1px solid var(--bd)}
+.cc-bar-wrap2{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:5px}
+.cc-bar-fill2{height:100%;border-radius:3px;transition:width .6s}
+
+/* RANK */
+.rank-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bd);cursor:pointer;border-radius:var(--r);transition:background .12s;padding-left:6px;padding-right:6px;margin:0 -6px}
+.rank-row:last-child{border-bottom:none}
+.rank-row:hover{background:var(--bg3)}
+.rank-row:hover .rank-label{color:var(--bl)}
+.rank-label{font-size:12px;font-weight:500;width:110px;flex-shrink:0;transition:color .12s}
+.rank-bar-outer{flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.rank-bar-inner{height:100%;border-radius:4px;transition:width .7s}
+.rank-pct{font-size:11px;color:var(--tx2);font-family:'DM Mono',monospace;width:36px;text-align:right;flex-shrink:0}
+.rank-val{font-size:11px;color:var(--tx2);font-family:'DM Mono',monospace;width:70px;text-align:right;flex-shrink:0}
+.rank-arrow{font-size:11px;color:var(--tx3);flex-shrink:0;transition:color .12s}
+.rank-row:hover .rank-arrow{color:var(--bl)}
+
+/* TRANSAÇÕES */
+.tx-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .12s;border-radius:var(--r);padding-left:6px;padding-right:6px;margin:0 -6px}
+.tx-row:last-child{border-bottom:none}
+.tx-row:hover{background:var(--bg3)}
+.tx-ico{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-sub{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:4px}
+.tx-dot{width:5px;height:5px;border-radius:50%;display:inline-block}
+.tx-amt{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+
+/* ORÇAMENTOS */
+.orc-row{padding:9px 0;border-bottom:1px solid var(--bd);cursor:pointer;border-radius:var(--r);padding-left:4px;padding-right:4px;margin:0 -4px;transition:background .12s}
+.orc-row:last-child{border-bottom:none}
+.orc-row:hover{background:var(--bg3)}
+.orc-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.orc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.orc-name{font-size:12px;font-weight:500;flex:1}
+.orc-vals{font-size:11px;color:var(--tx2);font-family:'DM Mono',monospace}
+.orc-bar{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.orc-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* SUBS */
+.sub-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .12s;border-radius:var(--r);padding-left:4px;padding-right:4px;margin:0 -4px}
+.sub-row:last-child{border-bottom:none}
+.sub-row:hover{background:var(--bg3)}
+.sub-logo{width:32px;height:32px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.sub-name{font-size:13px;font-weight:500;flex:1}
+.sub-cycle{font-size:11px;color:var(--tx3)}
+.sub-amt{font-size:13px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)}
+.sub-del{color:var(--tx3);cursor:pointer;font-size:15px;padding:2px 5px}
+.sub-del:hover{color:var(--rd2)}
+
+/* LISTA */
+.si-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.si-row:last-child{border-bottom:none}
+.si-chk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--bd2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;transition:all .15s}
+.si-chk.done{background:var(--gn4);border-color:var(--gn4);color:#fff}
+.si-name{font-size:13px;flex:1}
+.si-name.done{text-decoration:line-through;color:var(--tx3)}
+.si-dept{font-size:10px;padding:1px 6px;border-radius:4px}
+.si-del{color:var(--tx3);cursor:pointer;font-size:15px;padding:2px 6px;line-height:1}
+.si-del:hover{color:var(--rd2)}
+.ac-wrap{position:relative;margin-bottom:10px}
+.ac-wrap input{width:100%;padding:9px 12px;border:1px solid var(--bd);border-radius:var(--r);background:var(--bg);color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border .15s}
+.ac-wrap input:focus{border-color:var(--bl2);box-shadow:0 0 0 3px var(--bl3)}
+.ac-drop{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r);box-shadow:var(--shadow-md);z-index:200;display:none;overflow:hidden}
+.ac-drop.open{display:block}
+.ac-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--bd);transition:background .1s}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:var(--bg3)}
+.ac-ico{font-size:16px;width:24px;text-align:center}
+.ac-name{font-size:13px;font-weight:500;flex:1}
+.ac-cat{font-size:11px;color:var(--tx2)}
+.ac-dept-tag{font-size:10px;padding:2px 7px;border-radius:4px}
+
+/* COMPRAS */
+.mkt-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.mkt-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;border:1px solid var(--bd);color:var(--tx2);cursor:pointer;background:var(--bg2);transition:all .15s}
+.mkt-chip:hover{background:var(--bg3)}
+.mkt-chip.on{color:#fff}
+.mkt-ml{width:14px;height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff}
+.meal-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.meal-row:last-child{border-bottom:none}
+.meal-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--bl3);color:var(--bl);white-space:nowrap;flex-shrink:0}
+
+/* INPUTS */
+.input-row{display:flex;gap:8px;margin-bottom:10px}
+.input-row input,.input-row select{flex:1;padding:8px 11px;border:1px solid var(--bd);border-radius:var(--r);background:var(--bg);color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
+.input-row input:focus,.input-row select:focus{border-color:var(--bl2)}
+.input-row input.sm{max-width:90px;flex:none}
+.btn-primary{padding:8px 16px;background:var(--bl);color:#fff;border:none;border-radius:var(--r);font-size:13px;cursor:pointer;font-weight:500;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.btn-primary:hover{background:var(--bl2)}
+
+.sec-lbl{font-size:11px;font-weight:600;color:var(--tx2);letter-spacing:.6px;text-transform:uppercase;margin:14px 0 8px}
+.alelo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.alelo-item{background:var(--bg3);border-radius:var(--r);padding:10px;text-align:center}
+.alelo-lbl{font-size:10px;color:var(--tx2);margin-bottom:3px}
+.alelo-val{font-size:14px;font-weight:600;font-family:'DM Mono',monospace}
+.sync-banner{background:linear-gradient(135deg,var(--bl),var(--bl2));color:#fff;border-radius:var(--R);padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.sync-banner-icon{font-size:28px}
+.sync-banner-text .t{font-size:14px;font-weight:500}
+.sync-banner-text .s{font-size:12px;opacity:.8;margin-top:2px}
+.sync-banner-btns{margin-left:auto;display:flex;gap:8px}
+
+.footer-bar{height:30px;background:var(--bg2);border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:20px;font-size:11px;color:var(--tx2);flex-shrink:0}
+.fb-item{display:flex;align-items:center;gap:5px}
+.fb-dot{width:6px;height:6px;border-radius:50%}
+</style>
+  <!-- FIREBASE REALTIME DATABASE — SYNC DESKTOP ↔ MOBILE
+       Siga o guia_integracao_sync_v2.md para configurar -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+  // ⚙️ SUBSTITUA pelos seus dados do Firebase Console
+  // Siga o passo a passo no guia_integracao_sync_v2.md
+  const firebaseConfig = {
+    apiKey: "AIzaSyD4Qd8ZPGPWsEEpqX1p4NB1nk6KSOo87Go",
+    authDomain: "minhas-financas-edson.firebaseapp.com",
+    databaseURL: "https://minhas-financas-edson-default-rtdb.firebaseio.com",
+    projectId: "minhas-financas-edson",
+    storageBucket: "minhas-financas-edson.firebasestorage.app",
+    messagingSenderId: "1063178086860",
+    appId: "1:1063178086860:web:cedd32741af0b1a6b9d569"
+  };
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const rtdb = firebase.database();
+    const USER_ID = "edson";
+    const userRef = rtdb.ref("users/" + USER_ID);
+    // Indicador de conexão em tempo real
+    rtdb.ref(".info/connected").on("value", snap => {
+      const ok = snap.val();
+      const dot = document.getElementById("sync-dot");
+      const lbl = document.getElementById("sync-lbl");
+      if (dot) dot.style.background = ok ? "#4caf50" : "#ff9800";
+      if (lbl) lbl.textContent = ok ? "Sincronizado com app" : "Reconectando...";
+    });
+    // Sync lista de compras (desktop ↔ mobile em tempo real)
+    userRef.child("shoppingList").on("value", snap => {
+      const data = snap.val();
+      if (data && data.items) {
+        if (typeof siItems !== "undefined") {
+          siItems = data.items;
+          if (typeof renderSI === "function") renderSI();
+          if (typeof renderDeptChips === "function") renderDeptChips();
+        }
+      }
+    });
+    // Sync assinaturas
+    userRef.child("subscriptions").on("value", snap => {
+      const data = snap.val();
+      if (data && data.items) {
+        if (typeof subsArr !== "undefined") {
+          subsArr = data.items;
+          if (typeof renderSubDesk === "function") renderSubDesk();
+          if (typeof renderSubs === "function") renderSubs();
+        }
+      }
+    });
+    // Funções globais de sync — chamadas automaticamente ao salvar dados
+    window._rtdb = rtdb;
+    window._userRef = userRef;
+    window.syncShoppingList = items => userRef.child("shoppingList").set({ items, updatedAt: Date.now() });
+    window.syncSubscriptions = subs => userRef.child("subscriptions").set({ items: subs, updatedAt: Date.now() });
+    window.saveTransaction = tx => userRef.child("transactions").push({ ...tx, timestamp: Date.now() });
+    console.log("✅ Firebase Realtime Database conectado com sucesso!");
+  } catch(e) {
+    console.warn("⚠️ Firebase não configurado. Siga o guia_integracao_sync_v2.md. Erro:", e.message);
+  }
+  </script>
+
+</head>
+<body>
+
+<!-- ===== DRILL-DOWN MODAL ===== -->
+<div class="drill-overlay" id="drill-overlay" onclick="closeDrill(event)">
+  <div class="drill-modal" id="drill-modal">
+    <div class="drill-modal-hdr">
+      <div class="drill-modal-ico" id="drill-ico"></div>
+      <div style="flex:1">
+        <div class="drill-modal-title" id="drill-title"></div>
+        <div class="drill-modal-sub" id="drill-sub"></div>
+      </div>
+      <div class="drill-modal-close" onclick="closeDrillBtn()">✕</div>
+    </div>
+    <div class="drill-modal-body" id="drill-body"></div>
+  </div>
+</div>
+
+<div class="shell">
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo" onclick="toggleSidebar()">
+    <svg class="logo-icon" viewBox="0 0 32 32"><rect width="8" height="20" x="2" y="12" rx="2" fill="#e74c3c"/><rect width="8" height="26" x="12" y="6" rx="2" fill="#f1c40f"/><rect width="8" height="32" x="22" y="0" rx="2" fill="#2ecc71"/><path d="M6 30 L28 8" stroke="#3498db" stroke-width="2.5" stroke-linecap="round"/><circle cx="28" cy="8" r="3" fill="#3498db"/></svg>
+    <span class="logo-text">minhasfinanças</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item on" onclick="navTo('dashboard',this)"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></div>
+    <div class="nav-item" onclick="navTo('contas',this)"><span class="nav-icon">🏦</span><span class="nav-label">Contas</span></div>
+    <div class="nav-item" onclick="navTo('transacoes',this)"><span class="nav-icon">💸</span><span class="nav-label">Transações</span></div>
+    <div class="nav-item" onclick="navTo('cartoes',this)"><span class="nav-icon">💳</span><span class="nav-label">Cartões</span></div>
+    <div class="nav-item" onclick="navTo('compras',this)"><span class="nav-icon">🛍️</span><span class="nav-label">Compras</span></div>
+    <div class="nav-item" onclick="navTo('lista',this)"><span class="nav-icon">🛒</span><span class="nav-label">Lista de Compras</span></div>
+    <div class="nav-item" onclick="navTo('orcamentos',this)"><span class="nav-icon">🎯</span><span class="nav-label">Orçamentos</span></div>
+    <div class="nav-item" onclick="navTo('servicos',this)"><span class="nav-icon">📺</span><span class="nav-label">Serviços</span></div>
+    <div class="nav-item" onclick="navTo('relatorios',this)"><span class="nav-icon">📈</span><span class="nav-label">Relatórios</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="nav-item" onclick="navTo('config',this)"><span class="nav-icon">⚙️</span><span class="nav-label">Configurações</span></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="month-nav">
+        <div class="mn-btn" onclick="changeMonth(-1)">‹</div>
+        <div class="mn-label" id="mn-lbl">Março 2026</div>
+        <div class="mn-btn" onclick="changeMonth(1)">›</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="sync-badge" onclick="syncNow()">
+        <span class="sync-dot" id="sync-dot"></span>
+        <span id="sync-lbl">Sincronizado com app</span>
+      </div>
+      <button class="tb-btn tb-btn-ghost" onclick="navTo('lista',document.querySelectorAll('.nav-item')[5])">🛒 Lista</button>
+      <button class="tb-btn tb-btn-primary">+ Lançamento</button>
+      <div class="avatar">ED</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ====== DASHBOARD ====== -->
+    <div class="page on" id="pg-dashboard">
+      <div class="sync-banner">
+        <div class="sync-banner-icon">📱</div>
+        <div class="sync-banner-text">
+          <div class="t">App móvel sincronizado em tempo real</div>
+          <div class="s">Última sync: agora mesmo · Nubank ✓ · Santander ✓ · Inter pendente · <strong>Clique nos gráficos e barras para ver detalhes</strong></div>
+        </div>
+      </div>
+
+      <!-- KPI CARDS - clicáveis -->
+      <div class="kpi-row">
+        <div class="kpi-card blue" onclick="openDrill('contas')">
+          <div class="kpi-icon">🏦</div><div class="kpi-label">Saldo total</div>
+          <div class="kpi-val">R$ 8.420</div><div class="kpi-sub">3 contas ativas</div>
+          <div class="kpi-hint">👆 clique para detalhar</div>
+        </div>
+        <div class="kpi-card green" onclick="openDrill('receitas')">
+          <div class="kpi-icon">📥</div><div class="kpi-label">Receitas</div>
+          <div class="kpi-val">R$ 5.200</div><div class="kpi-sub">↑ 5% vs fev</div>
+          <div class="kpi-hint">👆 clique para detalhar</div>
+        </div>
+        <div class="kpi-card red" onclick="openDrill('despesas')">
+          <div class="kpi-icon">📤</div><div class="kpi-label">Despesas</div>
+          <div class="kpi-val">R$ 3.140</div><div class="kpi-sub">↑ 8% vs fev</div>
+          <div class="kpi-hint">👆 clique para detalhar</div>
+        </div>
+        <div class="kpi-card amber" onclick="openDrill('movimentacoes')">
+          <div class="kpi-icon">🔄</div><div class="kpi-label">Movimentações</div>
+          <div class="kpi-val">R$ 0</div><div class="kpi-sub">Transferências</div>
+          <div class="kpi-hint">👆 clique para detalhar</div>
+        </div>
+        <div class="kpi-card purple" onclick="openDrill('cartoes-kpi')">
+          <div class="kpi-icon">💳</div><div class="kpi-label">Cartões (fatura)</div>
+          <div class="kpi-val">R$ 5.340</div><div class="kpi-sub">2 cartões ativos</div>
+          <div class="kpi-hint">👆 clique para detalhar</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="widget">
+          <div class="widget-hdr">
+            <div><div class="widget-title">Evolução das despesas</div><div class="widget-sub">Últimos 30 dias · clique nos pontos para ver detalhes</div></div>
+            <div class="widget-acts"><div class="widget-act">⋯</div></div>
+          </div>
+          <div class="widget-body">
+            <div class="chart-wrap-lg clickable-chart"><canvas id="lineChart"></canvas></div>
+            <div class="chart-hint">👆 Clique em qualquer ponto do gráfico para ver os gastos do dia</div>
+          </div>
+        </div>
+        <div class="widget">
+          <div class="widget-hdr">
+            <div><div class="widget-title">Ranking de categorias</div><div class="widget-sub">Clique para ver detalhes</div></div>
+          </div>
+          <div class="widget-body" id="rank-list"></div>
+        </div>
+      </div>
+
+      <div class="dash-grid-3">
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Despesas por categoria</div><div class="widget-sub">Clique na fatia</div></div>
+          <div class="widget-body">
+            <div class="chart-wrap clickable-chart"><canvas id="donutChart"></canvas></div>
+            <div class="chart-hint">👆 Clique em uma fatia para ver transações da categoria</div>
+          </div>
+        </div>
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Últimas transações</div><div class="widget-acts"><div class="widget-act" onclick="navTo('transacoes',document.querySelectorAll('.nav-item')[2])" title="Ver todas">↗</div></div></div>
+          <div class="widget-body" id="tx-dash"></div>
+        </div>
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Cartões — visão rápida</div></div>
+          <div class="widget-body" id="cc-dash"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== CONTAS ====== -->
+    <div class="page" id="pg-contas">
+      <div class="widget" style="margin-bottom:16px">
+        <div class="widget-hdr"><div class="widget-title">Minhas contas bancárias</div><div class="widget-acts"><button class="btn-primary">+ Adicionar conta</button></div></div>
+        <table class="tbl">
+          <thead><tr><th>Banco</th><th>Tipo</th><th>Saldo atual</th><th>Previsto</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr onclick="openDrill('conta-nubank')" style="cursor:pointer"><td><div class="td-name"><div class="td-logo" style="background:#820ad1">Nu</div>Nubank</div></td><td>Conta corrente</td><td class="td-val pos">R$ 3.210,80</td><td class="td-val" style="color:var(--tx2)">R$ 2.980,00</td><td><span class="badge badge-g">✓ Sincronizado</span></td><td><span class="badge badge-b">Ver detalhes →</span></td></tr>
+            <tr onclick="openDrill('conta-santander')" style="cursor:pointer"><td><div class="td-name"><div class="td-logo" style="background:#ec0000">SAN</div>Santander</div></td><td>Conta corrente</td><td class="td-val pos">R$ 4.120,55</td><td class="td-val" style="color:var(--tx2)">R$ 3.900,00</td><td><span class="badge badge-g">✓ Sincronizado</span></td><td><span class="badge badge-b">Ver detalhes →</span></td></tr>
+            <tr onclick="openDrill('conta-inter')" style="cursor:pointer"><td><div class="td-name"><div class="td-logo" style="background:#ff7a00">IN</div>Banco Inter</div></td><td>Conta digital</td><td class="td-val pos">R$ 1.089,00</td><td class="td-val" style="color:var(--tx2)">R$ 1.060,00</td><td><span class="badge badge-a">⏳ Pendente</span></td><td><span class="badge badge-b">Ver detalhes →</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ====== TRANSAÇÕES ====== -->
+    <div class="page" id="pg-transacoes">
+      <div class="widget">
+        <div class="widget-hdr"><div class="widget-title">Todas as transações — Março 2026</div><div class="widget-acts"><input type="text" placeholder="Buscar..." style="padding:5px 10px;border:1px solid var(--bd);border-radius:var(--r);font-size:12px;outline:none" oninput="filterTx(this.value)"></div></div>
+        <table class="tbl">
+          <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Conta</th><th>Valor</th><th>Tipo</th></tr></thead>
+          <tbody id="tx-full-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ====== CARTÕES ====== -->
+    <div class="page" id="pg-cartoes">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="widget" onclick="openDrill('fatura-nubank')" style="cursor:pointer">
+          <div class="cc-visual" style="background:linear-gradient(135deg,#6a1b9a,#4a148c)">
+            <div class="ccv-net">NUBANK ROXINHO — clique para ver fatura</div>
+            <div class="ccv-num">•••• •••• •••• 4821</div>
+            <div class="ccv-row"><span>Edson S.</span><span>Válido 09/29</span></div>
+          </div>
+          <div class="cc-bar-section">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tx2);margin-bottom:4px"><span>Fatura atual</span><span style="color:var(--am2);font-weight:500">62% do limite</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><span style="font-size:20px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 3.100,00</span><span style="font-size:12px;color:var(--tx2)">Limite R$ 5.000</span></div>
+            <div class="cc-bar-wrap2"><div class="cc-bar-fill2" style="width:62%;background:var(--am2)"></div></div>
+          </div>
+          <div class="cc-stats">
+            <div class="cc-stat"><div class="cc-stat-lbl">Disponível</div><div class="cc-stat-val" style="color:var(--gn4)">R$ 1.900</div></div>
+            <div class="cc-stat"><div class="cc-stat-lbl">Vencimento</div><div class="cc-stat-val">22/04</div></div>
+            <div class="cc-stat"><div class="cc-stat-lbl">Parcelado</div><div class="cc-stat-val" style="color:var(--pu2)">R$ 480</div></div>
+          </div>
+        </div>
+        <div class="widget" onclick="openDrill('fatura-santander')" style="cursor:pointer">
+          <div class="cc-visual" style="background:linear-gradient(135deg,#b71c1c,#880e0e)">
+            <div class="ccv-net">SANTANDER FREE — clique para ver fatura</div>
+            <div class="ccv-num">•••• •••• •••• 7293</div>
+            <div class="ccv-row"><span>Edson S.</span><span>Válido 03/28</span></div>
+          </div>
+          <div class="cc-bar-section">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tx2);margin-bottom:4px"><span>Fatura atual</span><span style="color:var(--gn4);font-weight:500">28% do limite</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><span style="font-size:20px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 2.240,00</span><span style="font-size:12px;color:var(--tx2)">Limite R$ 8.000</span></div>
+            <div class="cc-bar-wrap2"><div class="cc-bar-fill2" style="width:28%;background:var(--gn4)"></div></div>
+          </div>
+          <div class="cc-stats">
+            <div class="cc-stat"><div class="cc-stat-lbl">Disponível</div><div class="cc-stat-val" style="color:var(--gn4)">R$ 5.760</div></div>
+            <div class="cc-stat"><div class="cc-stat-lbl">Vencimento</div><div class="cc-stat-val">17/04</div></div>
+            <div class="cc-stat"><div class="cc-stat-lbl">Parcelado</div><div class="cc-stat-val" style="color:var(--pu2)">R$ 120</div></div>
+          </div>
+        </div>
+        <div class="widget" onclick="openDrill('fatura-mp')" style="cursor:pointer">
+          <div class="cc-visual" style="background:linear-gradient(135deg,#009ee3,#0073bb)">
+            <div class="ccv-net">MERCADO PAGO — clique para ver fatura</div>
+            <div class="ccv-num">•••• •••• •••• 3310</div>
+            <div class="ccv-row"><span>Edson S.</span><span>Válido 11/27</span></div>
+          </div>
+          <div class="cc-bar-section">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--tx2);margin-bottom:4px"><span>Fatura atual</span><span style="color:var(--gn4);font-weight:500">22% do limite</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px"><span style="font-size:20px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 650,00</span><span style="font-size:12px;color:var(--tx2)">Limite R$ 3.000</span></div>
+            <div class="cc-bar-wrap2"><div class="cc-bar-fill2" style="width:22%;background:var(--gn4)"></div></div>
+          </div>
+          <div class="cc-stats">
+            <div class="cc-stat"><div class="cc-stat-lbl">Disponível</div><div class="cc-stat-val" style="color:var(--gn4)">R$ 2.350</div></div>
+            <div class="cc-stat"><div class="cc-stat-lbl">Vencimento</div><div class="cc-stat-val">05/04</div></div>
+            <div class="cc-stat"><div class="cc-stat-lbl">Parcelado</div><div class="cc-stat-val" style="color:var(--pu2)">R$ 0</div></div>
+          </div>
+        </div>
+        <div class="widget">
+          <div class="cc-visual" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">
+            <div class="ccv-net">ALELO MULTIBENEFÍCIOS</div>
+            <div class="ccv-num">•••• •••• •••• 9902</div>
+            <div class="ccv-row"><span>Edson S.</span><span>Benefícios corporativos</span></div>
+          </div>
+          <div style="padding:12px 14px">
+            <div class="alelo-grid">
+              <div class="alelo-item"><div class="alelo-lbl">🍽️ Refeição</div><div class="alelo-val" style="color:var(--gn4)">R$ 420,00</div></div>
+              <div class="alelo-item"><div class="alelo-lbl">🛒 Alimentação</div><div class="alelo-val" style="color:var(--bl2)">R$ 280,00</div></div>
+              <div class="alelo-item"><div class="alelo-lbl">⛽ Combustível</div><div class="alelo-val" style="color:var(--am2)">R$ 180,00</div></div>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:var(--tx2);background:var(--bg3);border-radius:var(--r);padding:7px 10px">🚗 Aceito em postos, restaurantes e supermercados credenciados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== COMPRAS ====== -->
+    <div class="page" id="pg-compras">
+      <div class="dash-grid">
+        <div>
+          <div style="background:var(--bl3);border:1px solid var(--bl4);border-radius:var(--R);padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13px;color:var(--bl)">
+            💡 Detecção automática por horário ativa. Agora: <b id="meal-detect">carregando...</b>
+          </div>
+          <div class="sec-lbl">Filtrar por plataforma</div>
+          <div class="mkt-chips" id="mkt-chips-desk"></div>
+          <div class="widget">
+            <div class="widget-hdr"><div class="widget-title">Transações por plataforma</div><div class="widget-sub">Clique para detalhar</div></div>
+            <div class="widget-body" id="mkt-tx-desk"></div>
+          </div>
+        </div>
+        <div>
+          <div class="widget" style="margin-bottom:14px">
+            <div class="widget-hdr"><div class="widget-title">🍽️ Refeições detectadas hoje</div></div>
+            <div class="widget-body" id="meal-desk"></div>
+          </div>
+          <div class="widget">
+            <div class="widget-hdr"><div class="widget-title">Gastos por plataforma</div><div class="widget-sub">Clique para detalhar</div></div>
+            <div class="widget-body">
+              <div class="chart-wrap clickable-chart"><canvas id="mktChart"></canvas></div>
+              <div class="chart-hint">👆 Clique na barra para ver transações</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== LISTA ====== -->
+    <div class="page" id="pg-lista">
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+        <div>
+          <div class="widget">
+            <div class="widget-hdr">
+              <div><div class="widget-title">Lista de compras</div><div class="widget-sub" id="lista-sub">0 pendentes</div></div>
+            </div>
+            <div style="padding:12px 16px 0">
+              <div class="ac-wrap">
+                <input id="si-inp-desk" placeholder="🔍  Buscar produto... (Enter para adicionar)" oninput="searchProduct(this.value)" onkeydown="if(event.key==='Enter'){addFromSearch();event.preventDefault()}">
+                <div class="ac-drop" id="ac-drop"></div>
+              </div>
+              <div class="mkt-chips" id="dept-chips"></div>
+            </div>
+            <div style="padding:0 16px 12px" id="si-list-desk"></div>
+          </div>
+        </div>
+        <div>
+          <div class="widget">
+            <div class="widget-hdr"><div class="widget-title">Por departamento</div></div>
+            <div class="widget-body">
+              <div class="chart-wrap clickable-chart"><canvas id="deptChart"></canvas></div>
+              <div class="chart-hint">👆 Clique para filtrar por departamento</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== ORÇAMENTOS ====== -->
+    <div class="page" id="pg-orcamentos">
+      <div class="dash-grid">
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Orçamentos mensais</div><div class="widget-sub">Clique em uma categoria para ver gastos detalhados</div></div>
+          <div style="padding:0 16px 12px" id="orc-desk"></div>
+        </div>
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Comparativo gasto vs orçado</div><div class="widget-sub">Clique nas barras</div></div>
+          <div class="widget-body">
+            <div class="chart-wrap-lg clickable-chart"><canvas id="orcChart"></canvas></div>
+            <div class="chart-hint">👆 Clique na barra para ver detalhes da categoria</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== SERVIÇOS ====== -->
+    <div class="page" id="pg-servicos">
+      <div class="dash-grid">
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Assinaturas ativas</div><div class="widget-sub">Clique para ver detalhes e histórico</div></div>
+          <div style="padding:0 16px 12px" id="sub-desk"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--rd3);border-top:1px solid var(--bd)">
+            <span style="font-size:13px;font-weight:500;color:var(--rd2)">Total mensal</span>
+            <span style="font-size:20px;font-weight:700;font-family:'DM Mono',monospace;color:var(--rd2)" id="sub-total-desk">R$ 0</span>
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid var(--bd)">
+            <div class="sec-lbl" style="margin-top:0">Adicionar assinatura</div>
+            <div class="input-row"><input id="sn-name-d" placeholder="Nome do serviço"><input id="sn-price-d" placeholder="R$/mês" class="sm"><button class="btn-primary" onclick="addSubDesk()">+ Adicionar</button></div>
+          </div>
+        </div>
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Custo mensal por serviço</div><div class="widget-sub">Clique para detalhar</div></div>
+          <div class="widget-body">
+            <div class="chart-wrap-lg clickable-chart"><canvas id="subChart"></canvas></div>
+            <div class="chart-hint">👆 Clique na barra para ver histórico do serviço</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== RELATÓRIOS ====== -->
+    <div class="page" id="pg-relatorios">
+      <div class="dash-grid-3">
+        <div class="widget" style="grid-column:span 2">
+          <div class="widget-hdr"><div class="widget-title">Evolução anual — Receitas vs Despesas</div><div class="widget-sub">Clique em uma barra para ver o mês em detalhe</div></div>
+          <div class="widget-body">
+            <div class="chart-wrap-lg clickable-chart"><canvas id="barChart"></canvas></div>
+            <div class="chart-hint">👆 Clique em qualquer barra para ver o resumo do mês</div>
+          </div>
+        </div>
+        <div class="widget">
+          <div class="widget-hdr"><div class="widget-title">Economia mensal %</div></div>
+          <div class="widget-body"><div class="chart-wrap-lg clickable-chart"><canvas id="savingsChart"></canvas></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== CONFIG ====== -->
+    <div class="page" id="pg-config">
+      <div class="widget">
+        <div class="widget-hdr"><div class="widget-title">⚙️ Configurações e sincronização</div></div>
+        <div class="widget-body">
+          <div class="sec-lbl">Sincronização com app móvel (cloud)</div>
+          <div style="background:var(--gn3);border-radius:var(--r);padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:14px">
+            <div style="font-size:32px">📱</div>
+            <div><div style="font-size:13px;font-weight:500;margin-bottom:3px">Sincronização em tempo real ativa</div><div style="font-size:12px;color:var(--tx2)">Desktop e mobile compartilham os mesmos dados via Firebase. Qualquer lançamento feito no app aparece aqui instantaneamente.</div></div>
+            <div style="margin-left:auto"><span class="badge badge-g">✓ Ativo</span></div>
+          </div>
+          <div class="sec-lbl">Contas conectadas via Open Finance</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg3);border-radius:var(--r)"><div class="td-logo" style="background:#820ad1;width:28px;height:28px">Nu</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Nubank</div><div style="font-size:11px;color:var(--tx2)">Conta corrente · cartão · saldo em tempo real</div></div><span class="badge badge-g">✓ Conectado</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg3);border-radius:var(--r)"><div class="td-logo" style="background:#ec0000;width:28px;height:28px">SAN</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Santander</div><div style="font-size:11px;color:var(--tx2)">Conta corrente · cartão · saldo em tempo real</div></div><span class="badge badge-g">✓ Conectado</span></div>
+            <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg3);border-radius:var(--r)"><div class="td-logo" style="background:#ff7a00;width:28px;height:28px">IN</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Banco Inter</div><div style="font-size:11px;color:var(--tx2)">Aguardando autorização no app do banco</div></div><button class="btn-primary" style="font-size:11px;padding:5px 10px">Conectar</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <div class="footer-bar">
+    <div class="fb-item"><span class="fb-dot" style="background:var(--gn4)"></span>Limite disp: R$ 14.604,25</div>
+    <div style="color:var(--tx3)">·</div>
+    <div class="fb-item"><span class="fb-dot" style="background:var(--rd2)"></span>Despesas mês: R$ 3.140,22</div>
+    <div style="color:var(--tx3)">·</div>
+    <div class="fb-item"><span class="fb-dot" style="background:var(--pu2)"></span>Total faturas: R$ 5.990,00</div>
+    <div style="margin-left:auto;font-size:11px;color:var(--tx3)">Minhas Finanças Desktop · <span id="clock">--:--</span></div>
+  </div>
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+/* ===== DADOS ===== */
+const CATS=[
+  {n:'Alimentação',spend:920,budget:800,color:'#e53935',ico:'🍽️',txs:[
+    {d:'24/03',n:'St. Marche',v:-187.40,ico:'🛒',bg:'#e8f5e9'},
+    {d:'23/03',n:'iFood',v:-68.90,ico:'🛵',bg:'#fff3e0'},
+    {d:'16/03',n:'Keeta',v:-38.50,ico:'🟢',bg:'#e8f5e9'},
+    {d:'15/03',n:'Rappi',v:-28.90,ico:'🟠',bg:'#ffebee'},
+    {d:'14/03',n:'99Food',v:-55.00,ico:'🟡',bg:'#fffde7'},
+    {d:'10/03',n:'Hortifruti',v:-89.20,ico:'🥦',bg:'#e8f5e9'},
+    {d:'05/03',n:'Padaria Italiana',v:-45.80,ico:'🍞',bg:'#fffde7'},
+    {d:'02/03',n:'Restaurante Central',v:-112.00,ico:'🍽️',bg:'#fff3e0'},
+  ]},
+  {n:'Crédito',spend:600,budget:700,color:'#8e24aa',ico:'💳',txs:[
+    {d:'15/03',n:'Fatura Nubank — parcelamento TV',v:-240,ico:'📺',bg:'#f3e5f5'},
+    {d:'10/03',n:'Fatura Nubank — roupas',v:-180,ico:'👕',bg:'#f3e5f5'},
+    {d:'05/03',n:'Fatura Santander — eletrônico',v:-180,ico:'📱',bg:'#f3e5f5'},
+  ]},
+  {n:'Transporte',spend:340,budget:500,color:'#ef6c00',ico:'🚗',txs:[
+    {d:'22/03',n:'Uber',v:-38.90,ico:'🚗',bg:'#fff3e0'},
+    {d:'20/03',n:'Gasolina Shell',v:-180.00,ico:'⛽',bg:'#fff3e0'},
+    {d:'18/03',n:'99 Taxi',v:-32.00,ico:'🚕',bg:'#fff3e0'},
+    {d:'15/03',n:'Metrô (recarga)',v:-50.00,ico:'🚇',bg:'#e3f2fd'},
+    {d:'10/03',n:'Uber',v:-39.10,ico:'🚗',bg:'#fff3e0'},
+  ]},
+  {n:'Streaming',spend:205,budget:250,color:'#1e88e5',ico:'📺',txs:[
+    {d:'22/03',n:'Netflix',v:-55.90,ico:'📺',bg:'#ffebee'},
+    {d:'15/03',n:'Disney+',v:-43.90,ico:'🎬',bg:'#e3f2fd'},
+    {d:'10/03',n:'Spotify',v:-26.90,ico:'🎵',bg:'#e8f5e9'},
+    {d:'08/03',n:'YouTube Premium',v:-27.90,ico:'▶️',bg:'#ffebee'},
+    {d:'03/03',n:'Globoplay',v:-24.90,ico:'🎞️',bg:'#ffebee'},
+  ]},
+  {n:'Contas fixas',spend:620,budget:700,color:'#0097a7',ico:'⚡',txs:[
+    {d:'20/03',n:'Conta de Luz',v:-212.00,ico:'⚡',bg:'#fff3e0'},
+    {d:'15/03',n:'Internet Vivo',v:-99.90,ico:'📡',bg:'#e3f2fd'},
+    {d:'10/03',n:'Condomínio',v:-280.00,ico:'🏢',bg:'#e8f5e9'},
+    {d:'05/03',n:'Água',v:-28.10,ico:'💧',bg:'#e3f2fd'},
+  ]},
+  {n:'Saúde',spend:180,budget:400,color:'#43a047',ico:'💊',txs:[
+    {d:'18/03',n:'Drogasil',v:-42.80,ico:'💊',bg:'#e8f5e9'},
+    {d:'12/03',n:'Consulta médica',v:-90.00,ico:'🏥',bg:'#e8f5e9'},
+    {d:'05/03',n:'Academia',v:-47.20,ico:'🏋️',bg:'#e8f5e9'},
+  ]},
+  {n:'Lazer',spend:280,budget:300,color:'#f9a825',ico:'🎭',txs:[
+    {d:'22/03',n:'Cinema Kinoplex',v:-54.00,ico:'🎬',bg:'#fffde7'},
+    {d:'18/03',n:'Bar Brahma',v:-89.50,ico:'🍺',bg:'#fffde7'},
+    {d:'10/03',n:'Show — Allianz',v:-136.50,ico:'🎵',bg:'#fffde7'},
+  ]},
+];
+
+const TXS=[
+  {date:'24/03',n:'St. Marche',cat:'Alimentação',conta:'Nubank',amt:-187.40,ico:'🛒',bg:'#e8f5e9',app:'mercado'},
+  {date:'01/03',n:'Salário',cat:'Receita',conta:'Santander',amt:5200,ico:'💼',bg:'#e3f2fd',app:''},
+  {date:'23/03',n:'iFood',cat:'Alimentação',conta:'Nubank',amt:-68.90,ico:'🛵',bg:'#fff3e0',app:'ifood'},
+  {date:'22/03',n:'Netflix',cat:'Streaming',conta:'Nubank',amt:-55.90,ico:'📺',bg:'#ffebee',app:'streaming'},
+  {date:'20/03',n:'Conta de Luz',cat:'Contas fixas',conta:'Inter',amt:-212,ico:'⚡',bg:'#fff3e0',app:''},
+  {date:'18/03',n:'Amazon',cat:'Compras online',conta:'Nubank',amt:-189.90,ico:'📦',bg:'#fffde7',app:'amazon'},
+  {date:'17/03',n:'Mercado Livre',cat:'Compras online',conta:'Santander',amt:-320,ico:'🛍️',bg:'#fff3e0',app:'mercadolivre'},
+  {date:'16/03',n:'Keeta',cat:'Alimentação',conta:'Nubank',amt:-38.50,ico:'🟢',bg:'#e8f5e9',app:'keeta'},
+  {date:'15/03',n:'Rappi',cat:'Alimentação',conta:'Nubank',amt:-28.90,ico:'🟠',bg:'#ffebee',app:'rappi'},
+  {date:'14/03',n:'99Food',cat:'Alimentação',conta:'Nubank',amt:-55,ico:'🟡',bg:'#fffde7',app:'99food'},
+  {date:'13/03',n:'Shopee',cat:'Compras online',conta:'Nubank',amt:-98.50,ico:'🟠',bg:'#fff3e0',app:'shopee'},
+  {date:'12/03',n:'Drogasil',cat:'Saúde',conta:'Nubank',amt:-42.80,ico:'💊',bg:'#e8f5e9',app:''},
+];
+
+const MKT=[
+  {id:'todos',label:'Todos',color:'#1565c0'},
+  {id:'ifood',label:'iFood',color:'#ea1d2c'},
+  {id:'keeta',label:'Keeta',color:'#00a650'},
+  {id:'rappi',label:'Rappi',color:'#ff441f'},
+  {id:'99food',label:'99Food',color:'#f5c518',tc:'#333'},
+  {id:'mercadolivre',label:'Mercado Livre',color:'#ffe600',tc:'#333'},
+  {id:'amazon',label:'Amazon',color:'#ff9900'},
+  {id:'shopee',label:'Shopee',color:'#ee4d2d'},
+  {id:'mercado',label:'Supermercado',color:'#2ea85b'},
+];
+let mktF='todos';
+
+const MEALS=[
+  {h:8,min:15,name:"Bob's Natural",app:'iFood',amt:28.90,ico:'☕'},
+  {h:12,min:30,name:'Madero Burger',app:'iFood',amt:42.50,ico:'🍔'},
+  {h:16,min:0,name:'Padaria Central',app:'Keeta',amt:18.90,ico:'🥐'},
+  {h:20,min:10,name:'Sushi Leblon',app:'Rappi',amt:89.00,ico:'🍣'},
+];
+const MEAL_TYPES=[
+  {r:[5,9],label:'Café da manhã',icon:'☕'},
+  {r:[9,11],label:'Lanche manhã',icon:'🥐'},
+  {r:[11,14],label:'Almoço',icon:'🍽️'},
+  {r:[14,17],label:'Lanche tarde',icon:'🍵'},
+  {r:[17,20],label:'Café da tarde',icon:'🌅'},
+  {r:[20,24],label:'Jantar',icon:'🌙'},
+];
+function getMealType(h){return MEAL_TYPES.find(m=>h>=m.r[0]&&h<m.r[1])||{label:'Refeição',icon:'🍴'};}
+
+/* ===== NAVEGAÇÃO ===== */
+const PAGES=['dashboard','contas','transacoes','cartoes','compras','lista','orcamentos','servicos','relatorios','config'];
+function navTo(key,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('on'));
+  document.getElementById('pg-'+key).classList.add('on');
+  if(navEl) navEl.classList.add('on');
+  const idx=PAGES.indexOf(key);
+  if(idx>=0) document.querySelectorAll('.nav-item')[idx].classList.add('on');
+  if(key==='dashboard') setTimeout(renderDashCharts,100);
+  if(key==='lista'){renderSI();renderDeptChips();setTimeout(renderDeptChart,100);}
+  if(key==='servicos'){renderSubDesk();setTimeout(renderSubChart,100);}
+  if(key==='orcamentos'){renderOrcDesk();setTimeout(renderOrcChart,100);}
+  if(key==='compras'){renderComprasDesk();setTimeout(renderMktChart,100);}
+  if(key==='relatorios') setTimeout(renderReportCharts,100);
+  if(key==='transacoes') renderTxFull();
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+
+/* ===== CLOCK / MESES ===== */
+setInterval(()=>{const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');},1000);
+const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let curM=2,curY=2026;
+function changeMonth(d){curM+=d;if(curM<0){curM=11;curY--;}else if(curM>11){curM=0;curY++;}document.getElementById('mn-lbl').textContent=MONTHS[curM]+' '+curY;}
+
+function syncNow(){const d=document.getElementById('sync-dot'),l=document.getElementById('sync-lbl');d.style.background='#ef6c00';l.textContent='Sincronizando...';setTimeout(()=>{d.style.background='#43a047';l.textContent='Sincronizado com app';},1800);}
+
+/* ===== DRILL-DOWN ===== */
+let drillChartInst=null;
+function openDrill(key){
+  const overlay=document.getElementById('drill-overlay');
+  const body=document.getElementById('drill-body');
+  const ico=document.getElementById('drill-ico');
+  const title=document.getElementById('drill-title');
+  const sub=document.getElementById('drill-sub');
+
+  const configs={
+    'despesas':{ico:'📤',color:'#e53935',t:'Despesas — Março 2026',s:'Total: R$ 3.140,22 · 7 categorias'},
+    'receitas':{ico:'📥',color:'#43a047',t:'Receitas — Março 2026',s:'Total: R$ 5.200,00'},
+    'contas':{ico:'🏦',color:'#1565c0',t:'Saldo consolidado — Março 2026',s:'3 contas · Atualizado agora'},
+    'movimentacoes':{ico:'🔄',color:'#ef6c00',t:'Movimentações — Março 2026',s:'Transferências entre contas'},
+    'cartoes-kpi':{ico:'💳',color:'#7b1fa2',t:'Cartões de crédito — Março 2026',s:'Total em faturas: R$ 5.990,00'},
+    'conta-nubank':{ico:'💜',color:'#820ad1',t:'Nubank — Extrato',s:'Saldo atual: R$ 3.210,80'},
+    'conta-santander':{ico:'❤️',color:'#ec0000',t:'Santander — Extrato',s:'Saldo atual: R$ 4.120,55'},
+    'conta-inter':{ico:'🧡',color:'#ff7a00',t:'Banco Inter — Extrato',s:'Saldo atual: R$ 1.089,00'},
+    'fatura-nubank':{ico:'💳',color:'#6a1b9a',t:'Nubank — Fatura Março 2026',s:'Total: R$ 3.100,00 · Vence 22/04'},
+    'fatura-santander':{ico:'💳',color:'#b71c1c',t:'Santander — Fatura Março 2026',s:'Total: R$ 2.240,00 · Vence 17/04'},
+    'fatura-mp':{ico:'💳',color:'#009ee3',t:'Mercado Pago — Fatura Março 2026',s:'Total: R$ 650,00 · Vence 05/04'},
+  };
+
+  // Categoria direto pelo nome
+  const catConfig=CATS.find(c=>c.n===key);
+  if(catConfig){
+    openCatDrill(catConfig);return;
+  }
+  // Sub direto
+  const subSvc=subsArr.find((s,i)=>s.n===key||i===parseInt(key));
+  if(subSvc){openSubDrill(subSvc);return;}
+
+  const cfg=configs[key]||{ico:'📊',color:'var(--bl)',t:key,s:'Detalhes'};
+  ico.style.background=cfg.color+'22';
+  ico.style.color=cfg.color;
+  ico.textContent=cfg.ico;
+  title.textContent=cfg.t;
+  sub.textContent=cfg.s;
+  body.innerHTML=buildDrillBody(key,cfg.color);
+  overlay.classList.add('open');
+  setTimeout(()=>buildDrillChart(key,cfg.color),100);
+}
+
+function openCatDrill(cat){
+  const overlay=document.getElementById('drill-overlay');
+  const body=document.getElementById('drill-body');
+  const ico=document.getElementById('drill-ico');
+  const title=document.getElementById('drill-title');
+  const sub=document.getElementById('drill-sub');
+  ico.style.background=cat.color+'22';ico.style.color=cat.color;ico.textContent=cat.ico||'📊';
+  title.textContent=cat.n+' — Março 2026';
+  sub.textContent='Total gasto: R$ '+cat.spend.toFixed(2).replace('.',',')+' · Orçamento: R$ '+cat.budget;
+  const pct=Math.round(cat.spend/cat.budget*100);
+  const ov=cat.spend>cat.budget;
+  body.innerHTML=`
+    <div class="drill-kpi-row">
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Gasto</div><div class="drill-kpi-val" style="color:${ov?'var(--rd2)':'var(--tx)'}">R$ ${cat.spend.toFixed(2).replace('.',',')}</div></div>
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Orçamento</div><div class="drill-kpi-val">R$ ${cat.budget.toFixed(2).replace('.',',')}</div></div>
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Utilizado</div><div class="drill-kpi-val" style="color:${ov?'var(--rd2)':'var(--gn4)'}">${pct}% ${ov?'⚠️':''}</div></div>
+    </div>
+    <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:16px"><div style="width:${Math.min(pct,100)}%;height:100%;background:${ov?'var(--rd2)':cat.color};border-radius:3px"></div></div>
+    <div class="drill-chart-wrap"><canvas id="drill-chart"></canvas></div>
+    <div class="drill-sec">Transações desta categoria</div>
+    ${cat.txs.map(t=>`<div class="drill-tx-row"><div class="drill-ico" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.d}</div></div><div class="drill-amt" style="color:var(--rd2)">- R$ ${Math.abs(t.v).toFixed(2).replace('.',',')}</div></div>`).join('')}`;
+  overlay.classList.add('open');
+  setTimeout(()=>{
+    if(drillChartInst){drillChartInst.destroy();drillChartInst=null;}
+    const ctx=document.getElementById('drill-chart');if(!ctx)return;
+    drillChartInst=new Chart(ctx,{type:'bar',data:{labels:cat.txs.map(t=>t.n),datasets:[{data:cat.txs.map(t=>Math.abs(t.v)),backgroundColor:cat.color+'cc',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>'R$'+v,font:{size:10}}}}}});
+  },100);
+}
+
+function openSubDrill(sub){
+  const overlay=document.getElementById('drill-overlay');
+  const body=document.getElementById('drill-body');
+  document.getElementById('drill-ico').style.background=sub.color+'22';
+  document.getElementById('drill-ico').style.color=sub.color;
+  document.getElementById('drill-ico').textContent=sub.logo;
+  document.getElementById('drill-title').textContent=sub.n+' — Histórico';
+  document.getElementById('drill-sub').textContent='Mensalidade: R$ '+sub.price.toFixed(2).replace('.',',')+' · '+sub.cycle;
+  body.innerHTML=`
+    <div class="drill-kpi-row">
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Mensal</div><div class="drill-kpi-val" style="color:var(--rd2)">R$ ${sub.price.toFixed(2).replace('.',',')}</div></div>
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Anual estimado</div><div class="drill-kpi-val" style="color:var(--rd2)">R$ ${(sub.price*12).toFixed(2).replace('.',',')}</div></div>
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Últimos 3 meses</div><div class="drill-kpi-val">R$ ${(sub.price*3).toFixed(2).replace('.',',')}</div></div>
+    </div>
+    <div class="drill-chart-wrap"><canvas id="drill-chart"></canvas></div>
+    <div class="drill-sec">Histórico de cobranças</div>
+    ${['Jan/26','Fev/26','Mar/26'].map(m=>`<div class="drill-tx-row"><div class="drill-ico" style="background:${sub.color}22;color:${sub.color}">${sub.logo}</div><div style="flex:1"><div class="drill-name">${sub.n}</div><div class="drill-date">${m}</div></div><div class="drill-amt" style="color:var(--rd2)">- R$ ${sub.price.toFixed(2).replace('.',',')}</div></div>`).join('')}`;
+  overlay.classList.add('open');
+  setTimeout(()=>{
+    if(drillChartInst){drillChartInst.destroy();drillChartInst=null;}
+    const ctx=document.getElementById('drill-chart');if(!ctx)return;
+    drillChartInst=new Chart(ctx,{type:'line',data:{labels:['Jan','Fev','Mar'],datasets:[{data:[sub.price,sub.price,sub.price],borderColor:sub.color,backgroundColor:sub.color+'22',fill:true,tension:.3,borderWidth:2,pointRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,ticks:{callback:v=>'R$'+v,font:{size:10}}},x:{ticks:{font:{size:10}}}}}});
+  },100);
+}
+
+function buildDrillBody(key,color){
+  const kpiCards=(lbl1,v1,lbl2,v2,lbl3,v3)=>`<div class="drill-kpi-row"><div class="drill-kpi"><div class="drill-kpi-lbl">${lbl1}</div><div class="drill-kpi-val">${v1}</div></div><div class="drill-kpi"><div class="drill-kpi-lbl">${lbl2}</div><div class="drill-kpi-val">${v2}</div></div><div class="drill-kpi"><div class="drill-kpi-lbl">${lbl3}</div><div class="drill-kpi-val">${v3}</div></div></div>`;
+  const txList=(txs)=>txs.map(t=>`<div class="drill-tx-row"><div class="drill-ico" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.date||t.d} · ${t.conta||''}</div></div><div class="drill-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'- R$ '+Math.abs(t.amt).toFixed(2):'+R$ '+t.amt.toFixed(2)}</div></div>`).join('');
+  const barChart=`<div class="drill-chart-wrap"><canvas id="drill-chart"></canvas></div>`;
+  if(key==='despesas') return kpiCards('Total gasto','R$ 3.140,22','Maior categoria','Alimentação','vs Fevereiro','↑ 8%')+barChart+'<div class="drill-sec">Todas as despesas</div>'+txList(TXS.filter(t=>t.amt<0));
+  if(key==='receitas') return kpiCards('Total','R$ 5.200,00','Fontes','1','vs Fevereiro','↑ 5%')+txList(TXS.filter(t=>t.amt>0));
+  if(key==='contas') return kpiCards('Nubank','R$ 3.210,80','Santander','R$ 4.120,55','Inter','R$ 1.089,00')+'<div class="drill-sec">Extrato consolidado</div>'+txList(TXS.slice(0,8));
+  if(key==='cartoes-kpi') return kpiCards('Nubank','R$ 3.100,00','Santander','R$ 2.240,00','Mercado Pago','R$ 650,00')+'<div class="drill-sec">Transações no crédito</div>'+txList(TXS.filter(t=>t.amt<0).slice(0,6));
+  if(key.startsWith('fatura-')) return kpiCards('Fatura',key==='fatura-nubank'?'R$ 3.100,00':key==='fatura-santander'?'R$ 2.240,00':'R$ 650,00','Vencimento',key==='fatura-nubank'?'22/04':key==='fatura-santander'?'17/04':'05/04','Parcelado',key==='fatura-nubank'?'R$ 480':'R$ 0')+barChart+'<div class="drill-sec">Lançamentos na fatura</div>'+txList(TXS.filter(t=>t.amt<0).slice(0,5));
+  if(key.startsWith('conta-')) return kpiCards('Saldo atual',key==='conta-nubank'?'R$ 3.210,80':key==='conta-santander'?'R$ 4.120,55':'R$ 1.089,00','Entradas','R$ 5.200,00','Saídas','R$ 1.989,20')+barChart+'<div class="drill-sec">Extrato</div>'+txList(TXS.filter(t=>t.conta===(key==='conta-nubank'?'Nubank':key==='conta-santander'?'Santander':'Inter')));
+  return kpiCards('Total','R$ 0','Itens','0','Período','Mar/26')+'<div class="drill-sec">Sem dados disponíveis</div>';
+}
+
+function buildDrillChart(key,color){
+  if(drillChartInst){drillChartInst.destroy();drillChartInst=null;}
+  const ctx=document.getElementById('drill-chart');if(!ctx)return;
+  if(key==='despesas'||key==='cartoes-kpi'){
+    drillChartInst=new Chart(ctx,{type:'bar',data:{labels:CATS.map(c=>c.n),datasets:[{data:CATS.map(c=>c.spend),backgroundColor:CATS.map(c=>c.color+'cc'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>'R$'+v,font:{size:10}}}}}});
+  }else if(key.startsWith('fatura-')||key.startsWith('conta-')){
+    const lbls=['01/03','05/03','10/03','15/03','20/03','24/03'];
+    const data=[120,280,450,780,920,1100].map(v=>v*(Math.random()*.4+.8));
+    drillChartInst=new Chart(ctx,{type:'line',data:{labels:lbls,datasets:[{data:data.map(v=>Math.round(v)),borderColor:color,backgroundColor:color+'22',fill:true,tension:.4,borderWidth:2,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}}},y:{ticks:{callback:v=>'R$'+v,font:{size:10}}}}}});
+  }
+}
+
+function closeDrill(e){if(e.target===document.getElementById('drill-overlay')) closeDrillBtn();}
+function closeDrillBtn(){document.getElementById('drill-overlay').classList.remove('open');if(drillChartInst){drillChartInst.destroy();drillChartInst=null;}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeDrillBtn();});
+
+/* ===== CHARTS ===== */
+let charts={};
+function destroyChart(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
+
+function renderDashCharts(){
+  renderTxDash();renderCCDash();renderRankList();
+  destroyChart('lineChart');
+  const lc=document.getElementById('lineChart');
+  if(lc){
+    charts.lineChart=new Chart(lc,{
+      type:'line',
+      data:{labels:['01','03','05','07','09','11','13','15','17','19','21','23','25'],
+      datasets:[
+        {label:'Despesas',data:[180,220,150,300,420,280,190,350,420,280,310,250,380],borderColor:'#e53935',backgroundColor:'rgba(229,57,53,.1)',fill:true,tension:.4,borderWidth:2,pointRadius:4,pointHoverRadius:7,pointBackgroundColor:'#e53935'},
+        {label:'Receitas',data:[0,0,0,0,0,5200,5200,5200,5200,5200,5200,5200,5200],borderColor:'#43a047',backgroundColor:'rgba(67,160,71,.06)',fill:true,tension:.4,borderWidth:2,pointRadius:3,pointHoverRadius:6,pointBackgroundColor:'#43a047'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        onClick:(e,els)=>{if(els.length){const day=els[0].index+1;const dateStr=String(day).padStart(2,'0')+'/03';const txsDay=TXS.filter(t=>t.date===dateStr);const d=document.getElementById('drill-overlay');document.getElementById('drill-ico').textContent='📅';document.getElementById('drill-ico').style.background='#e3f2fd';document.getElementById('drill-ico').style.color='#1565c0';document.getElementById('drill-title').textContent='Transações — '+dateStr+'/2026';document.getElementById('drill-sub').textContent=(txsDay.length||'Nenhuma')+' transação(ões) neste dia';document.getElementById('drill-body').innerHTML=txsDay.length?txsDay.map(t=>`<div class="drill-tx-row"><div class="drill-ico" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.conta} · ${t.cat}</div></div><div class="drill-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'- R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--tx3)">Nenhuma transação registrada neste dia</div>';d.classList.add('open');}},
+        plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:11}}}},
+        scales:{x:{ticks:{font:{size:10}}},y:{ticks:{font:{size:10},callback:v=>'R$'+v}}}}
+    });
+  }
+  destroyChart('donutChart');
+  const dc=document.getElementById('donutChart');
+  if(dc){
+    charts.donutChart=new Chart(dc,{
+      type:'doughnut',
+      data:{labels:CATS.map(c=>c.n),datasets:[{data:CATS.map(c=>c.spend),backgroundColor:CATS.map(c=>c.color),borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'63%',
+        onClick:(e,els)=>{if(els.length){const cat=CATS[els[0].index];openCatDrill(cat);}},
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:d=>' R$'+d.raw+' ('+Math.round(d.raw/CATS.reduce((a,c)=>a+c.spend,0)*100)+'%)'}}}}
+    });
+  }
+}
+
+function renderTxDash(){
+  const el=document.getElementById('tx-dash');if(!el)return;
+  el.innerHTML=TXS.slice(0,6).map(t=>`<div class="tx-row" onclick="openDrill('${t.cat}')"><div class="tx-ico" style="background:${t.bg}">${t.ico}</div><div class="tx-info"><div class="tx-name">${t.n}</div><div class="tx-sub"><span class="tx-dot" style="background:${t.amt<0?'#e53935':'#43a047'}"></span>${t.date} · ${t.cat}</div></div><div class="tx-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'- R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div>`).join('');
+}
+
+function renderCCDash(){
+  const el=document.getElementById('cc-dash');if(!el)return;
+  el.innerHTML=`
+    <div class="tx-row" onclick="openDrill('fatura-nubank')" style="padding-top:4px">
+      <div style="width:28px;height:28px;border-radius:6px;background:#820ad1;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0">Nu</div>
+      <div style="flex:1;margin-left:8px"><div style="font-size:12px;font-weight:500">Nubank · <span style="color:var(--am2)">62%</span></div><div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:4px;overflow:hidden"><div style="width:62%;height:100%;background:var(--am2)"></div></div></div>
+      <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 3.100</div>
+    </div>
+    <div class="tx-row" onclick="openDrill('fatura-santander')">
+      <div style="width:28px;height:28px;border-radius:6px;background:#ec0000;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0">SAN</div>
+      <div style="flex:1;margin-left:8px"><div style="font-size:12px;font-weight:500">Santander · <span style="color:var(--gn4)">28%</span></div><div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:4px;overflow:hidden"><div style="width:28%;height:100%;background:var(--gn4)"></div></div></div>
+      <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 2.240</div>
+    </div>
+    <div class="tx-row" onclick="openDrill('fatura-mp')">
+      <div style="width:28px;height:28px;border-radius:6px;background:#009ee3;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0">MP</div>
+      <div style="flex:1;margin-left:8px"><div style="font-size:12px;font-weight:500">Mercado Pago · <span style="color:var(--gn4)">22%</span></div><div style="height:4px;background:var(--bg3);border-radius:2px;margin-top:4px;overflow:hidden"><div style="width:22%;height:100%;background:var(--gn4)"></div></div></div>
+      <div style="font-size:12px;font-weight:600;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 650</div>
+    </div>
+    <div style="background:var(--rd3);border-radius:var(--r);padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;cursor:pointer" onclick="openDrill('cartoes-kpi')">
+      <span style="font-size:12px;color:var(--rd2);font-weight:500">Total em faturas →</span>
+      <span style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--rd2)">R$ 5.990</span>
+    </div>`;
+}
+
+function renderRankList(){
+  const el=document.getElementById('rank-list');if(!el)return;
+  const tot=CATS.reduce((a,c)=>a+c.spend,0);
+  el.innerHTML='<div style="padding:4px 6px">'+CATS.map(c=>`<div class="rank-row" onclick="openCatDrill(${JSON.stringify(c).replace(/"/g,'&quot;')})" title="Clique para ver detalhes de ${c.n}">
+    <div class="rank-label">${c.ico||'•'} ${c.n}</div>
+    <div class="rank-bar-outer"><div class="rank-bar-inner" style="width:${Math.round(c.spend/tot*100)}%;background:${c.color}"></div></div>
+    <div class="rank-pct">${Math.round(c.spend/tot*100)}%</div>
+    <div class="rank-val">R$ ${c.spend}</div>
+    <div class="rank-arrow">›</div>
+  </div>`).join('')+'</div>';
+}
+
+/* ===== TRANSAÇÕES ===== */
+let txFilter='';
+function renderTxFull(){
+  const body=document.getElementById('tx-full-body');if(!body)return;
+  const filtered=txFilter?TXS.filter(t=>t.n.toLowerCase().includes(txFilter)||t.cat.toLowerCase().includes(txFilter)):TXS;
+  body.innerHTML=filtered.map(t=>`<tr onclick="openDrill('${t.cat}')" style="cursor:pointer"><td>${t.date}</td><td><div class="td-name"><div style="width:26px;height:26px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:12px">${t.ico}</div>${t.n}</div></td><td><span class="badge ${t.cat==='Receita'?'badge-g':t.amt<0?'badge-r':'badge-b'}" style="cursor:pointer">${t.cat}</span></td><td>${t.conta}</td><td class="td-val ${t.amt<0?'neg':'pos'}">${t.amt<0?'- R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</td><td><span class="badge ${t.amt<0?'badge-r':'badge-g'}">${t.amt<0?'Despesa':'Receita'}</span></td></tr>`).join('');
+}
+function filterTx(v){txFilter=v.toLowerCase();renderTxFull();}
+
+/* ===== COMPRAS ===== */
+function renderComprasDesk(){
+  const h=new Date().getHours();const mt=getMealType(h);
+  document.getElementById('meal-detect').textContent=mt.icon+' '+mt.label;
+  const chips=document.getElementById('mkt-chips-desk');
+  chips.innerHTML=MKT.map(m=>`<div class="mkt-chip${m.id===mktF?' on':''}" style="${m.id===mktF?'background:'+m.color+';border-color:'+m.color+(m.tc?';color:'+m.tc:''):''}" onclick="setMkt('${m.id}')"><div class="mkt-ml" style="background:${m.color};color:${m.tc||'#fff'}">${m.label[0]}</div>${m.label}</div>`).join('');
+  const txEl=document.getElementById('mkt-tx-desk');
+  let filtered=mktF==='todos'?TXS.filter(t=>t.app&&t.app!=='streaming'):TXS.filter(t=>t.app===mktF);
+  txEl.innerHTML=filtered.length?filtered.map(t=>`<div class="tx-row" onclick="openDrill('${t.cat}')"><div class="tx-ico" style="background:${t.bg};font-size:14px">${t.ico}</div><div class="tx-info"><div class="tx-name">${t.n}</div><div class="tx-sub">${t.date} · ${t.cat} · ${t.conta}</div></div><div class="tx-amt" style="color:var(--rd2)">- R$${Math.abs(t.amt).toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nenhuma transação</div>';
+  const meal=document.getElementById('meal-desk');
+  meal.innerHTML=MEALS.map(m=>{const mt2=getMealType(m.h);return`<div class="meal-row"><span class="meal-badge">${mt2.icon} ${mt2.label}</span><span style="font-size:16px;margin:0 4px">${m.ico}</span><div class="tx-info" style="margin-left:4px"><div class="tx-name">${m.name}</div><div class="tx-sub">${String(m.h).padStart(2,'0')}:${String(m.min).padStart(2,'0')} · ${m.app}</div></div><div class="tx-amt" style="color:var(--rd2)">- R$${m.amt.toFixed(2)}</div></div>`}).join('');
+}
+function setMkt(id){mktF=id;renderComprasDesk();setTimeout(renderMktChart,100);}
+function renderMktChart(){
+  destroyChart('mktChart');
+  const ctx=document.getElementById('mktChart');if(!ctx)return;
+  const mktData=[{l:'iFood',v:110.3,c:'#ea1d2c'},{l:'Keeta',v:38.5,c:'#00a650'},{l:'Rappi',v:28.9,c:'#ff441f'},{l:'99Food',v:55,c:'#f5c518'},{l:'Amazon',v:189.9,c:'#ff9900'},{l:'M.Livre',v:320,c:'#ffd700'},{l:'Shopee',v:98.5,c:'#ee4d2d'},{l:'Mercado',v:187.4,c:'#2ea85b'}];
+  charts.mktChart=new Chart(ctx,{type:'bar',data:{labels:mktData.map(d=>d.l),datasets:[{data:mktData.map(d=>d.v),backgroundColor:mktData.map(d=>d.c),borderRadius:4,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:(e,els)=>{if(els.length){const item=mktData[els[0].index];const t=TXS.filter(tx=>tx.app&&tx.app.toLowerCase().includes(item.l.toLowerCase().split('.')[0]));const d=document.getElementById('drill-overlay');document.getElementById('drill-ico').textContent='🛍️';document.getElementById('drill-ico').style.background=item.c+'22';document.getElementById('drill-ico').style.color=item.c;document.getElementById('drill-title').textContent=item.l+' — Transações';document.getElementById('drill-sub').textContent='Total: R$ '+item.v.toFixed(2);document.getElementById('drill-body').innerHTML=(t.length?t:TXS.filter(tx=>tx.amt<0).slice(0,3)).map(tx=>`<div class="drill-tx-row"><div class="drill-ico" style="background:${tx.bg}">${tx.ico}</div><div style="flex:1"><div class="drill-name">${tx.n}</div><div class="drill-date">${tx.date} · ${tx.conta}</div></div><div class="drill-amt" style="color:var(--rd2)">- R$${Math.abs(tx.amt).toFixed(2)}</div></div>`).join('');d.classList.add('open');}},
+      plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:10}}},x:{ticks:{font:{size:10}}}}}
+  });
+}
+
+/* ===== LISTA ===== */
+const PRODUCTS=[
+  {n:'Leite Integral',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🥛',un:'cx'},
+  {n:'Iogurte Natural',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🍶',un:'un'},
+  {n:'Queijo Mussarela',cat:'Frios',dept:'Frios e Laticínios',ico:'🧀',un:'kg'},
+  {n:'Arroz Branco',cat:'Grãos',dept:'Mercearia',ico:'🍚',un:'kg'},
+  {n:'Feijão Carioca',cat:'Grãos',dept:'Mercearia',ico:'🫘',un:'kg'},
+  {n:'Macarrão Espaguete',cat:'Massas',dept:'Mercearia',ico:'🍝',un:'pc'},
+  {n:'Café em Pó',cat:'Bebidas',dept:'Mercearia',ico:'☕',un:'pc'},
+  {n:'Óleo de Soja',cat:'Óleos',dept:'Mercearia',ico:'🫙',un:'un'},
+  {n:'Azeite de Oliva',cat:'Óleos',dept:'Mercearia',ico:'🫒',un:'un'},
+  {n:'Refrigerante Cola',cat:'Bebidas',dept:'Bebidas',ico:'🥤',un:'un'},
+  {n:'Água Mineral',cat:'Bebidas',dept:'Bebidas',ico:'💧',un:'un'},
+  {n:'Vinho Tinto',cat:'Bebidas Alcoólicas',dept:'Bebidas',ico:'🍷',un:'gf'},
+  {n:'Frango Filé',cat:'Aves',dept:'Açougue',ico:'🍗',un:'kg'},
+  {n:'Carne Bovina',cat:'Carnes',dept:'Açougue',ico:'🥩',un:'kg'},
+  {n:'Picanha',cat:'Carnes',dept:'Açougue',ico:'🥩',un:'kg'},
+  {n:'Alface',cat:'Folhosas',dept:'Hortifruti',ico:'🥬',un:'pé'},
+  {n:'Tomate',cat:'Legumes',dept:'Hortifruti',ico:'🍅',un:'kg'},
+  {n:'Cebola',cat:'Legumes',dept:'Hortifruti',ico:'🧅',un:'kg'},
+  {n:'Banana Prata',cat:'Frutas',dept:'Hortifruti',ico:'🍌',un:'kg'},
+  {n:'Maçã Fuji',cat:'Frutas',dept:'Hortifruti',ico:'🍎',un:'kg'},
+  {n:'Pão de Forma',cat:'Pães',dept:'Padaria',ico:'🍞',un:'pc'},
+  {n:'Detergente',cat:'Limpeza',dept:'Limpeza',ico:'🧴',un:'un'},
+  {n:'Sabão em Pó',cat:'Limpeza',dept:'Limpeza',ico:'🧺',un:'kg'},
+  {n:'Papel Higiênico',cat:'Higiene',dept:'Higiene',ico:'🧻',un:'pc'},
+  {n:'Shampoo',cat:'Higiene',dept:'Higiene',ico:'🧴',un:'un'},
+  {n:'Ovo',cat:'Ovos',dept:'Frios e Laticínios',ico:'🥚',un:'dz'},
+];
+const DEPT_COLORS={'Frios e Laticínios':'#1e88e5','Mercearia':'#ef6c00','Açougue':'#e53935','Hortifruti':'#43a047','Padaria':'#f9a825','Bebidas':'#8e24aa','Limpeza':'#00838f','Higiene':'#1e88e5','Outros':'#9e9e9e'};
+let siItems=[
+  {id:1,n:'Arroz Branco',cat:'Grãos',dept:'Mercearia',ico:'🍚',qty:'5 kg',done:false},
+  {id:2,n:'Feijão Carioca',cat:'Grãos',dept:'Mercearia',ico:'🫘',qty:'1 kg',done:false},
+  {id:3,n:'Frango Filé',cat:'Aves',dept:'Açougue',ico:'🍗',qty:'1 kg',done:false},
+  {id:4,n:'Alface',cat:'Folhosas',dept:'Hortifruti',ico:'🥬',qty:'1 pé',done:true},
+  {id:5,n:'Tomate',cat:'Legumes',dept:'Hortifruti',ico:'🍅',qty:'500g',done:false},
+  {id:6,n:'Detergente',cat:'Limpeza',dept:'Limpeza',ico:'🧴',qty:'2 un',done:false},
+  {id:7,n:'Leite Integral',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🥛',qty:'2 cx',done:false},
+];
+let siNext=8,siDeptF='Todos';
+function searchProduct(q){
+  const drop=document.getElementById('ac-drop');
+  if(!q||q.length<2){drop.classList.remove('open');return;}
+  const res=PRODUCTS.filter(p=>p.n.toLowerCase().includes(q.toLowerCase())).slice(0,7);
+  if(!res.length){drop.classList.remove('open');return;}
+  drop.innerHTML=res.map(p=>`<div class="ac-item" onclick='addProduct(${JSON.stringify(p)})'><div class="ac-ico">${p.ico}</div><div class="ac-name">${p.n}</div><div class="ac-cat">${p.cat}</div><span class="ac-dept-tag" style="background:${DEPT_COLORS[p.dept]||'#ccc'}22;color:${DEPT_COLORS[p.dept]||'#888'}">${p.dept}</span></div>`).join('');
+  drop.classList.add('open');
+}
+function addProduct(p){if(typeof p==='string')p=JSON.parse(p);siItems.unshift({id:siNext++,n:p.n,cat:p.cat,dept:p.dept,ico:p.ico,qty:'1 '+p.un,done:false});document.getElementById('si-inp-desk').value='';document.getElementById('ac-drop').classList.remove('open');renderSI();renderDeptChips();setTimeout(renderDeptChart,100);}
+function addFromSearch(){const v=document.getElementById('si-inp-desk').value.trim();if(!v)return;const p=PRODUCTS.find(x=>x.n.toLowerCase()===v.toLowerCase());if(p)addProduct(p);else{siItems.unshift({id:siNext++,n:v,cat:'Outros',dept:'Outros',ico:'🛒',qty:'1 un',done:false});document.getElementById('si-inp-desk').value='';document.getElementById('ac-drop').classList.remove('open');renderSI();renderDeptChips();}}
+document.addEventListener('click',e=>{if(!e.target.closest('.ac-wrap'))document.getElementById('ac-drop')&&document.getElementById('ac-drop').classList.remove('open');});
+function renderDeptChips(){
+  const depts=['Todos',...new Set(siItems.map(i=>i.dept))];
+  document.getElementById('dept-chips').innerHTML=depts.map(d=>`<div class="mkt-chip${d===siDeptF?' on':''}" style="${d===siDeptF?'background:'+(DEPT_COLORS[d]||'var(--bl)')+';border-color:'+(DEPT_COLORS[d]||'var(--bl)'):''};font-size:11px;padding:4px 10px" onclick="setSIDept('${d}')">${d}</div>`).join('');
+}
+function setSIDept(d){siDeptF=d;renderDeptChips();renderSI();}
+function renderSI(){
+  let items=siDeptF==='Todos'?siItems:siItems.filter(i=>i.dept===siDeptF);
+  const el=document.getElementById('si-list-desk');if(!el)return;
+  const p=siItems.filter(i=>!i.done).length,dn=siItems.filter(i=>i.done).length;
+  document.getElementById('lista-sub').textContent=p+' pendentes · '+dn+' concluídos';
+  if(!items.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nenhum item</div>';return;}
+  el.innerHTML=items.map(i=>`<div class="si-row"><div class="si-chk${i.done?' done':''}" onclick="toggleSI(${i.id})">${i.done?'✓':''}</div><div style="font-size:16px;margin:0 4px">${i.ico}</div><div class="si-name${i.done?' done':''}" style="flex:1">${i.n}</div><span style="font-size:11px;color:var(--tx2);margin-right:8px">${i.qty}</span><span class="si-dept" style="background:${DEPT_COLORS[i.dept]||'#ccc'}22;color:${DEPT_COLORS[i.dept]||'#888'}">${i.dept}</span><span class="si-del" onclick="delSI(${i.id})">×</span></div>`).join('');
+}
+function toggleSI(id){const i=siItems.find(x=>x.id===id);if(i)i.done=!i.done;renderSI();setTimeout(renderDeptChart,100);}
+function delSI(id){siItems=siItems.filter(x=>x.id!==id);renderSI();renderDeptChips();}
+function renderDeptChart(){
+  destroyChart('deptChart');
+  const ctx=document.getElementById('deptChart');if(!ctx)return;
+  const depts=[...new Set(siItems.map(i=>i.dept))];
+  const counts=depts.map(d=>siItems.filter(i=>i.dept===d).length);
+  const colors=depts.map(d=>DEPT_COLORS[d]||'#9e9e9e');
+  charts.deptChart=new Chart(ctx,{type:'doughnut',data:{labels:depts,datasets:[{data:counts,backgroundColor:colors,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',
+      onClick:(e,els)=>{if(els.length){setSIDept(depts[els[0].index]);}},
+      plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:10,font:{size:10}}}}}
+  });
+}
+
+/* ===== ORÇAMENTOS ===== */
+function renderOrcDesk(){
+  const el=document.getElementById('orc-desk');if(!el)return;
+  el.innerHTML=CATS.map(c=>{const p=Math.min(Math.round(c.spend/c.budget*100),100);const ov=c.spend>c.budget;return`<div class="orc-row" onclick="openCatDrill(${JSON.stringify(c).replace(/"/g,'&quot;')})"><div class="orc-hdr"><div class="orc-dot" style="background:${c.color}"></div><div class="orc-name">${c.ico||''} ${c.n}</div><div class="orc-vals">${ov?'<span style="color:var(--rd2)">⚠ </span>':''}R$ ${c.spend} / R$ ${c.budget} <span style="color:${ov?'var(--rd2)':c.color}">(${p}%)</span></div><div style="font-size:11px;color:var(--bl);margin-left:4px">›</div></div><div class="orc-bar"><div class="orc-fill" style="width:${p}%;background:${ov?'var(--rd2)':c.color}"></div></div></div>`}).join('');
+}
+function renderOrcChart(){
+  destroyChart('orcChart');
+  const ctx=document.getElementById('orcChart');if(!ctx)return;
+  charts.orcChart=new Chart(ctx,{type:'bar',data:{labels:CATS.map(c=>c.n),datasets:[{label:'Gasto',data:CATS.map(c=>c.spend),backgroundColor:CATS.map(c=>c.color+'cc'),borderRadius:4},{label:'Orçamento',data:CATS.map(c=>c.budget),backgroundColor:'rgba(0,0,0,.07)',borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:(e,els)=>{if(els.length){const cat=CATS[els[0].index];openCatDrill(cat);}},
+      plugins:{legend:{labels:{boxWidth:10,font:{size:11}}}},
+      scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:10}}},x:{ticks:{font:{size:10}}}}}
+  });
+}
+
+/* ===== SERVIÇOS ===== */
+let subsArr=[
+  {n:'Netflix',logo:'N',color:'#e50914',price:55.90,cycle:'Mensal · dia 5'},
+  {n:'Spotify',logo:'S',color:'#1db954',price:26.90,cycle:'Mensal · dia 10'},
+  {n:'Disney+',logo:'D+',color:'#00a8e0',price:43.90,cycle:'Mensal · dia 15'},
+  {n:'Amazon Prime',logo:'A',color:'#ff9900',price:19.90,cycle:'Mensal · dia 22'},
+  {n:'YouTube Premium',logo:'YT',color:'#ff0000',price:27.90,cycle:'Mensal · dia 8'},
+  {n:'Globoplay',logo:'G',color:'#e6002e',price:24.90,cycle:'Mensal · dia 3'},
+  {n:'Internet Vivo',logo:'V',color:'#9b2eff',price:99.90,cycle:'Mensal · dia 20'},
+];
+function renderSubDesk(){
+  const el=document.getElementById('sub-desk');if(!el)return;
+  el.innerHTML=subsArr.map((s,i)=>`<div class="sub-row" onclick="openSubDrill(${JSON.stringify(s).replace(/"/g,'&quot;')})"><div class="sub-logo" style="background:${s.color}">${s.logo}</div><div style="flex:1"><div class="sub-name">${s.n}</div><div class="sub-cycle">${s.cycle}</div></div><div class="sub-amt">R$ ${s.price.toFixed(2).replace('.',',')}</div><span class="sub-del" onclick="event.stopPropagation();delSub(${i})">×</span></div>`).join('');
+  const m=subsArr.reduce((a,s)=>a+s.price,0);
+  document.getElementById('sub-total-desk').textContent='R$ '+m.toFixed(2).replace('.',',');
+}
+function delSub(i){subsArr.splice(i,1);renderSubDesk();setTimeout(renderSubChart,100);}
+function addSubDesk(){const n=document.getElementById('sn-name-d').value.trim();const p=parseFloat(document.getElementById('sn-price-d').value);if(!n||isNaN(p))return;subsArr.push({n,logo:n[0].toUpperCase(),color:'#555',price:p,cycle:'Mensal'});document.getElementById('sn-name-d').value='';document.getElementById('sn-price-d').value='';renderSubDesk();setTimeout(renderSubChart,100);}
+function renderSubChart(){
+  destroyChart('subChart');
+  const ctx=document.getElementById('subChart');if(!ctx)return;
+  charts.subChart=new Chart(ctx,{type:'bar',data:{labels:subsArr.map(s=>s.n),datasets:[{data:subsArr.map(s=>s.price),backgroundColor:subsArr.map(s=>s.color+'cc'),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      onClick:(e,els)=>{if(els.length){openSubDrill(subsArr[els[0].index]);}},
+      plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>'R$'+v,font:{size:10}}},y:{ticks:{font:{size:10}}}}}
+  });
+}
+
+/* ===== RELATÓRIOS ===== */
+const MONTH_NAMES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function renderReportCharts(){
+  destroyChart('barChart');
+  const ctx1=document.getElementById('barChart');
+  const receitas=[5200,5200,5200,5400,5400,5400,5600,5600,5600,5800,5800,6000];
+  const despesas=[2900,2910,3140,3000,2800,3200,3100,2950,3300,3000,2800,3200];
+  if(ctx1) charts.barChart=new Chart(ctx1,{type:'bar',
+    data:{labels:MONTH_NAMES,datasets:[{label:'Receitas',data:receitas,backgroundColor:'rgba(67,160,71,.75)',borderRadius:4},{label:'Despesas',data:despesas,backgroundColor:'rgba(229,57,53,.75)',borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      onClick:(e,els)=>{if(els.length){const idx=els[0].index;const mName=MONTH_NAMES[idx];const d=document.getElementById('drill-overlay');document.getElementById('drill-ico').textContent='📅';document.getElementById('drill-ico').style.background='#e3f2fd';document.getElementById('drill-ico').style.color='#1565c0';document.getElementById('drill-title').textContent='Resumo — '+mName+'/2026';document.getElementById('drill-sub').textContent='Receitas: R$ '+receitas[idx].toLocaleString('pt-BR')+' · Despesas: R$ '+despesas[idx].toLocaleString('pt-BR');document.getElementById('drill-body').innerHTML=`<div class="drill-kpi-row"><div class="drill-kpi"><div class="drill-kpi-lbl">Receitas</div><div class="drill-kpi-val" style="color:var(--gn4)">R$ ${receitas[idx].toLocaleString('pt-BR')}</div></div><div class="drill-kpi"><div class="drill-kpi-lbl">Despesas</div><div class="drill-kpi-val" style="color:var(--rd2)">R$ ${despesas[idx].toLocaleString('pt-BR')}</div></div><div class="drill-kpi"><div class="drill-kpi-lbl">Economia</div><div class="drill-kpi-val" style="color:var(--bl)">${Math.round((receitas[idx]-despesas[idx])/receitas[idx]*100)}%</div></div></div><div class="drill-sec">Categorias do mês</div>`+CATS.map(c=>`<div class="drill-tx-row"><div class="drill-ico" style="background:${c.color}22;color:${c.color}">${c.ico||'●'}</div><div style="flex:1"><div class="drill-name">${c.n}</div></div><div class="drill-amt" style="color:var(--rd2)">R$ ${c.spend}</div></div>`).join('');d.classList.add('open');}},
+      plugins:{legend:{labels:{boxWidth:10,font:{size:11}}}},
+      scales:{y:{ticks:{callback:v=>'R$'+v/1000+'k',font:{size:10}}},x:{ticks:{font:{size:10}}}}}
+  });
+  destroyChart('savingsChart');
+  const ctx2=document.getElementById('savingsChart');
+  if(ctx2) charts.savingsChart=new Chart(ctx2,{type:'line',data:{labels:MONTH_NAMES,datasets:[{label:'Economia %',data:[44,44,40,44,48,41,45,47,41,48,52,47],borderColor:'#1e88e5',backgroundColor:'rgba(30,136,229,.1)',fill:true,tension:.4,borderWidth:2,pointRadius:4,pointHoverRadius:7}]},options:{responsive:true,maintainAspectRatio:false,onClick:(e,els)=>{if(els.length){const idx=els[0].index;alert('Economia em '+MONTH_NAMES[idx]+': '+ [44,44,40,44,48,41,45,47,41,48,52,47][idx]+'%');}},plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'%',font:{size:10}},min:30,max:60},x:{ticks:{font:{size:10}}}}}});
+}
+
+/* ===== INIT ===== */
+setTimeout(()=>{renderDashCharts();renderSI();renderDeptChips();renderSubDesk();renderOrcDesk();renderComprasDesk();},200);
+</script>
+</body>
+</html>
