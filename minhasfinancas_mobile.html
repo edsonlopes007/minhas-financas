@@ -317,6 +317,211 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   }
   </script>
 
+
+<style id="form-redesign-styles">
+/* ── FAB menu redesenhado ── */
+#fab-main {
+  bottom: calc(72px + env(safe-area-inset-bottom,0px) + 12px)!important;
+  right: 16px !important;
+  width: 52px !important;
+  height: 52px !important;
+  background: #1e88e5 !important;
+  box-shadow: 0 4px 20px rgba(30,136,229,.45) !important;
+  border-radius: 50% !important;
+  font-size: 24px !important;
+  font-weight: 300 !important;
+}
+
+/* ── Overlay escuro mais suave ── */
+#fab-overlay { background: rgba(0,0,0,.45) !important; backdrop-filter: blur(4px) !important; }
+
+/* ── Opções FAB ── */
+.fab-opt-lbl {
+  background: #2a2a2a !important;
+  color: rgba(255,255,255,.92) !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.35) !important;
+}
+.fab-opt-ico {
+  width: 46px !important; height: 46px !important;
+  border-radius: 50% !important;
+  font-size: 19px !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3) !important;
+}
+
+/* ── Modal do formulário ── */
+#form-modal {
+  background: #141414 !important;
+  border-radius: 24px 24px 0 0 !important;
+  max-height: 94vh !important;
+}
+
+/* ── Header do form ── */
+#form-modal > div:first-child {
+  background: #141414 !important;
+  border-bottom: 1px solid rgba(255,255,255,.07) !important;
+  border-radius: 24px 24px 0 0 !important;
+  padding: 18px 20px 14px !important;
+}
+
+/* ── Linha puxador ── */
+#form-modal::before {
+  content: '';
+  display: block;
+  width: 40px; height: 4px;
+  background: rgba(255,255,255,.2);
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+
+/* ── Título do form ── */
+#form-title {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+}
+
+/* ── Botão Salvar ── */
+#form-save-btn {
+  border-radius: 22px !important;
+  padding: 8px 20px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: .2px !important;
+}
+
+/* ── Linhas do form ── */
+.form-row {
+  padding: 14px 20px !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  gap: 14px !important;
+}
+
+/* ── Ícones form ── */
+.form-ico {
+  font-size: 16px !important;
+  opacity: .5 !important;
+  width: 22px !important;
+}
+
+/* ── Textos rows ── */
+.form-row > span:not(.form-ico) {
+  color: rgba(255,255,255,.85) !important;
+  font-size: 14px !important;
+}
+
+/* ── Valor ── */
+#f-valor {
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,.9) !important;
+  letter-spacing: -.5px !important;
+}
+
+/* ── Descrição ── */
+#f-desc {
+  font-size: 15px !important;
+  color: rgba(255,255,255,.9) !important;
+}
+#f-desc::placeholder { color: rgba(255,255,255,.3) !important; }
+
+/* ── Selects ── */
+.form-sel {
+  color: rgba(255,255,255,.85) !important;
+  font-size: 14px !important;
+}
+
+/* ── Toggle mais suave ── */
+.toggle-sl { background: rgba(255,255,255,.15) !important; }
+.toggle-sw input:checked + .toggle-sl { background: #43a047 !important; }
+
+/* ── Mais informações ── */
+#form-modal [onclick="toggleMaisInfo()"] {
+  color: rgba(255,255,255,.4) !important;
+  font-size: 13px !important;
+  padding: 12px 20px !important;
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+}
+
+/* ── Seletor de categoria com ícone redondo ── */
+#cat-ico, #subcat-ico {
+  border-radius: 50% !important;
+  width: 34px !important;
+  height: 34px !important;
+  font-size: 14px !important;
+  opacity: .9 !important;
+}
+
+/* ── Data input dark ── */
+#f-data {
+  color-scheme: dark !important;
+  color: rgba(255,255,255,.75) !important;
+  font-size: 13px !important;
+}
+
+/* ── Grupos de seção ── */
+#row-cartao > div:first-child,
+#row-cat-section > div:first-child,
+#row-conta > div:first-child,
+div[style*="padding:6px 18px 2px"],
+div[style*="padding:2px 18px 2px"] {
+  padding: 10px 20px 4px !important;
+  font-size: 11px !important;
+  color: rgba(255,255,255,.35) !important;
+  letter-spacing: .5px !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+}
+</style>
+
+
+<style id="drawer-styles">
+/* ===== DRAWER LATERAL ===== */
+#drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;display:none;backdrop-filter:blur(2px)}
+#drawer{position:fixed;top:0;left:0;bottom:0;width:290px;background:#141414;z-index:700;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}
+#drawer.open{transform:translateX(0)}
+#drawer-overlay.open{display:block}
+
+/* Perfil */
+.drawer-profile{padding:20px 18px 16px;background:#1a1a1a;border-bottom:1px solid rgba(255,255,255,.07)}
+.drawer-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#1e88e5,#0d47a1);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0}
+.drawer-name{font-size:15px;font-weight:600;color:#fff}
+.drawer-email{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+.drawer-arrow{color:rgba(255,255,255,.3);font-size:16px;margin-left:auto}
+
+/* Nav */
+.drawer-nav{flex:1;overflow-y:auto;padding:8px 0;scrollbar-width:none}
+.drawer-nav::-webkit-scrollbar{display:none}
+.drawer-section{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:1px;padding:14px 20px 6px;text-transform:uppercase}
+.drawer-item{display:flex;align-items:center;gap:14px;padding:12px 20px;cursor:pointer;color:rgba(255,255,255,.75);font-size:14px;font-weight:500;position:relative;transition:background .15s,color .15s;border-radius:0}
+.drawer-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.drawer-item.active{background:rgba(30,136,229,.18);color:#1e88e5}
+.drawer-item.active .drawer-item-ico{color:#1e88e5}
+.drawer-item-ico{font-size:18px;width:22px;text-align:center;flex-shrink:0;opacity:.8}
+.drawer-item.active .drawer-item-ico{opacity:1}
+.drawer-lock{font-size:13px;margin-left:auto;opacity:.35}
+.drawer-divider{height:1px;background:rgba(255,255,255,.07);margin:8px 0}
+
+/* Footer */
+.drawer-footer{padding:12px 0;border-top:1px solid rgba(255,255,255,.07)}
+.drawer-theme-row{display:flex;align-items:center;gap:14px;padding:11px 20px;cursor:pointer;color:rgba(255,255,255,.6);font-size:14px;font-weight:500}
+.theme-toggle{width:40px;height:22px;background:rgba(255,255,255,.15);border-radius:11px;position:relative;margin-left:auto;transition:background .25s}
+.theme-toggle.on{background:#1e88e5}
+.theme-toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s}
+.theme-toggle.on::after{transform:translateX(18px)}
+
+/* Topbar hamburguer */
+#hamburger-btn{width:36px;height:36px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:4px;border-radius:8px;transition:background .15s;flex-shrink:0}
+#hamburger-btn:hover{background:rgba(255,255,255,.1)}
+#hamburger-btn span{display:block;width:20px;height:2px;background:rgba(255,255,255,.85);border-radius:1px;transition:all .25s}
+#hamburger-btn.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+#hamburger-btn.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+#hamburger-btn.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+</style>
+
 </head>
 <body>
 
@@ -336,18 +541,349 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   </div>
 </div>
 
+
+<!-- ===== TELA DE LOGIN ===== -->
+<div id="login-screen" style="position:fixed;inset:0;background:#121212;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px">
+  
+  <!-- LOGO -->
+  <div style="margin-bottom:32px;text-align:center">
+    <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#1e88e5,#0d47a1);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 24px rgba(30,136,229,.35)">
+      <svg width="38" height="38" viewBox="0 0 32 32"><rect width="8" height="18" x="2" y="14" rx="2" fill="#ef5350"/><rect width="8" height="24" x="12" y="8" rx="2" fill="#f9a825"/><rect width="8" height="30" x="22" y="2" rx="2" fill="#66bb6a"/><path d="M6 28 L28 6" stroke="#90caf9" stroke-width="2.5" stroke-linecap="round"/><circle cx="28" cy="6" r="3" fill="#90caf9"/></svg>
+    </div>
+    <div style="font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px">Minhas Finanças</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.45);margin-top:4px">Controle financeiro inteligente</div>
+  </div>
+
+  <!-- CARD LOGIN -->
+  <div style="width:100%;max-width:360px;background:#1e1e1e;border-radius:20px;padding:28px 24px;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+    
+    <!-- ABAS usuário/admin -->
+    <div style="display:flex;background:#2a2a2a;border-radius:12px;padding:3px;margin-bottom:24px">
+      <div id="tab-user" onclick="setLoginTab('user')" style="flex:1;text-align:center;padding:8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;background:#1e88e5;color:#fff;transition:all .2s">📱 Usuário</div>
+      <div id="tab-admin" onclick="setLoginTab('admin')" style="flex:1;text-align:center;padding:8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.5);transition:all .2s">🖥️ Admin</div>
+    </div>
+
+    <div id="login-subtitle" style="font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:20px">Acesso mobile — app pessoal</div>
+
+    <!-- EMAIL -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:6px;font-weight:500">E-MAIL</div>
+      <div style="background:#2a2a2a;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.08)">
+        <span style="color:rgba(255,255,255,.4);font-size:16px">✉</span>
+        <input id="login-email" type="email" placeholder="seu@email.com" value="edson@financas.com"
+          style="background:none;border:none;color:#fff;font-size:14px;outline:none;flex:1;font-family:inherit">
+      </div>
+    </div>
+
+    <!-- SENHA -->
+    <div style="margin-bottom:22px">
+      <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:6px;font-weight:500">SENHA</div>
+      <div style="background:#2a2a2a;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.08)">
+        <span style="color:rgba(255,255,255,.4);font-size:16px">🔒</span>
+        <input id="login-senha" type="password" placeholder="••••••••" value="123456"
+          style="background:none;border:none;color:#fff;font-size:14px;outline:none;flex:1;font-family:inherit">
+        <span onclick="toggleSenha()" style="color:rgba(255,255,255,.35);cursor:pointer;font-size:14px" id="eye-ico">👁</span>
+      </div>
+    </div>
+
+    <!-- BOTÃO ENTRAR -->
+    <button id="btn-login" onclick="doLogin()" 
+      style="width:100%;padding:14px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(30,136,229,.35);letter-spacing:.3px;transition:opacity .15s">
+      Entrar
+    </button>
+
+    <!-- ESQUECI -->
+    <div style="text-align:center;margin-top:16px">
+      <span style="font-size:13px;color:#1e88e5;cursor:pointer">Esqueci minha senha</span>
+    </div>
+  </div>
+
+  <!-- RODAPÉ -->
+  <div style="margin-top:28px;text-align:center;font-size:11px;color:rgba(255,255,255,.25)">
+    Versão 2.0 · Firebase Sync ativo
+  </div>
+
+  <!-- ERRO -->
+  <div id="login-erro" style="display:none;position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#c62828;color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3)">
+    ❌ E-mail ou senha incorretos
+  </div>
+</div>
+
+<style>
+#login-screen input::placeholder{color:rgba(255,255,255,.25)}
+</style>
+
+<script>
+// Credenciais demo
+const USERS = {
+  'edson@financas.com':  { senha: '123456', role: 'user',  nome: 'Edson' },
+  'admin@financas.com':  { senha: 'admin123', role: 'admin', nome: 'Admin' },
+  'deby@financas.com':   { senha: '123456', role: 'user',  nome: 'Deby' },
+};
+let loginTab = 'user';
+
+function setLoginTab(tab) {
+  loginTab = tab;
+  const isAdmin = tab === 'admin';
+  document.getElementById('tab-user').style.background  = isAdmin ? 'transparent' : '#1e88e5';
+  document.getElementById('tab-user').style.color       = isAdmin ? 'rgba(255,255,255,.5)' : '#fff';
+  document.getElementById('tab-admin').style.background = isAdmin ? '#1e88e5' : 'transparent';
+  document.getElementById('tab-admin').style.color      = isAdmin ? '#fff' : 'rgba(255,255,255,.5)';
+  document.getElementById('login-subtitle').textContent = isAdmin
+    ? 'Acesso desktop — painel administrativo'
+    : 'Acesso mobile — app pessoal';
+  document.getElementById('login-email').value = isAdmin ? 'admin@financas.com' : 'edson@financas.com';
+  document.getElementById('login-senha').value = isAdmin ? 'admin123' : '123456';
+}
+
+function toggleSenha() {
+  const inp = document.getElementById('login-senha');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const senha = document.getElementById('login-senha').value;
+  const user  = USERS[email];
+  const btn   = document.getElementById('btn-login');
+
+  btn.style.opacity = '.7';
+  btn.textContent = 'Entrando...';
+
+  setTimeout(() => {
+    btn.style.opacity = '1';
+    btn.textContent = 'Entrar';
+
+    if (user && user.senha === senha) {
+      // Login OK — anima saída
+      const scr = document.getElementById('login-screen');
+      scr.style.transition = 'opacity .4s';
+      scr.style.opacity = '0';
+      setTimeout(() => {
+        scr.style.display = 'none';
+        // Mostra nome no avatar
+        const av = document.getElementById('topbar-avatar-lbl');
+        if (av) av.textContent = user.nome.substring(0,2).toUpperCase();
+        // Atualiza drawer
+        const dn = document.getElementById('drawer-name');
+        const de = document.getElementById('drawer-email');
+        const da = document.getElementById('drawer-avatar-lbl');
+        if (dn) dn.textContent = user.nome + ' Lopes';
+        if (de) de.textContent = email;
+        if (da) da.textContent = user.nome.substring(0,2).toUpperCase();
+        const greet = document.getElementById('greeting-lbl');
+        if (greet) greet.textContent = (new Date().getHours() < 12 ? 'Bom dia,' : new Date().getHours() < 18 ? 'Boa tarde,' : 'Boa noite,');
+        const nm = document.getElementById('topbar-name');
+        if (nm) nm.textContent = user.nome;
+      }, 400);
+    } else {
+      const erro = document.getElementById('login-erro');
+      erro.style.display = 'block';
+      setTimeout(() => erro.style.display = 'none', 3000);
+    }
+  }, 800);
+}
+
+// Enter para logar
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
+});
+</script>
+
+
+<!-- ===== DRAWER LATERAL ===== -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer">
+
+  <!-- PERFIL -->
+  <div class="drawer-profile">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="drawer-avatar" id="drawer-avatar-lbl">ED</div>
+      <div style="flex:1;min-width:0">
+        <div class="drawer-name" id="drawer-name">Edson Lopes</div>
+        <div class="drawer-email" id="drawer-email">edson@financas.com</div>
+      </div>
+      <span class="drawer-arrow">›</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="drawer-nav">
+
+    <!-- PRINCIPAL -->
+    <div class="drawer-item active" onclick="drawerNav('inicio')">
+      <span class="drawer-item-ico">⊞</span>Resumo
+    </div>
+    <div class="drawer-item" onclick="drawerNav('contas')">
+      <span class="drawer-item-ico">🏦</span>Contas
+    </div>
+    <div class="drawer-item" onclick="drawerNav('transacoes')">
+      <span class="drawer-item-ico">💸</span>Transações
+    </div>
+    <div class="drawer-item" onclick="drawerNav('cartoes')">
+      <span class="drawer-item-ico">💳</span>Cartões de crédito
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <!-- PLANEJAR -->
+    <div class="drawer-section">Planejar</div>
+    <div class="drawer-item" onclick="drawerNav('orcamentos')">
+      <span class="drawer-item-ico">%</span>Orçamentos
+      <span class="drawer-lock">🔒</span>
+    </div>
+    <div class="drawer-item" onclick="showPremium()">
+      <span class="drawer-item-ico">🎯</span>Objetivos
+      <span class="drawer-lock">🔒</span>
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <!-- ANALISAR -->
+    <div class="drawer-section">Analisar</div>
+    <div class="drawer-item" onclick="drawerNav('relatorios')">
+      <span class="drawer-item-ico">📈</span>Relatórios
+      <span class="drawer-lock">🔒</span>
+    </div>
+    <div class="drawer-item" onclick="drawerNav('gastos')">
+      <span class="drawer-item-ico">📊</span>Gráficos
+    </div>
+    <div class="drawer-item" onclick="drawerNav('orcamentos')">
+      <span class="drawer-item-ico">⊛</span>Categorias
+    </div>
+    <div class="drawer-item" onclick="showPremium()">
+      <span class="drawer-item-ico">🏷️</span>Tags
+      <span class="drawer-lock">🔒</span>
+    </div>
+    <div class="drawer-item" onclick="showPremium()">
+      <span class="drawer-item-ico">📅</span>Calendário
+    </div>
+
+    <div class="drawer-divider"></div>
+
+    <!-- OUTROS -->
+    <div class="drawer-item" onclick="showPremium()">
+      <span class="drawer-item-ico">🔧</span>Ferramentas
+      <span class="drawer-lock">🔒</span>
+    </div>
+    <div class="drawer-item" onclick="drawerNav('config')">
+      <span class="drawer-item-ico">⚙️</span>Configurações
+    </div>
+    <div class="drawer-item" onclick="showPremium()">
+      <span class="drawer-item-ico">💎</span>Planos e Preços
+    </div>
+    <div class="drawer-item" onclick="showAjuda()">
+      <span class="drawer-item-ico">❓</span>Ajuda
+    </div>
+    <div class="drawer-item" onclick="showSobre()">
+      <span class="drawer-item-ico">ℹ️</span>Sobre
+    </div>
+
+    <!-- SAIR -->
+    <div class="drawer-divider"></div>
+    <div class="drawer-item" onclick="doLogout()" style="color:rgba(229,57,53,.8)">
+      <span class="drawer-item-ico" style="color:rgba(229,57,53,.7)">🚪</span>Sair
+    </div>
+
+  </nav>
+
+  <!-- FOOTER — MODO CLARO/ESCURO -->
+  <div class="drawer-footer">
+    <div class="drawer-theme-row" onclick="toggleTheme()">
+      <span style="font-size:18px" id="theme-ico">☀️</span>
+      <span id="theme-lbl">Modo claro</span>
+      <div class="theme-toggle" id="theme-toggle"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL PREMIUM -->
+<div id="premium-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;align-items:center;justify-content:center;padding:24px">
+  <div style="background:#1e1e1e;border-radius:20px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.5)">
+    <div style="font-size:40px;margin-bottom:12px">💎</div>
+    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:8px">Recurso Premium</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.6">Este recurso está disponível no plano Premium. Desbloqueie todos os recursos por apenas R$ 9,90/mês.</div>
+    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:13px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px">Ver Planos</button>
+    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:11px;background:none;color:rgba(255,255,255,.45);border:none;font-size:14px;cursor:pointer;font-family:inherit">Agora não</button>
+  </div>
+</div>
+
+<script>
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('hamburger-btn').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+}
+function drawerNav(page) {
+  closeDrawer();
+  document.querySelectorAll('.drawer-item').forEach(el => el.classList.remove('active'));
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+  const tabs = document.querySelectorAll('.tab');
+  const pageMap = ['inicio','gastos','cartoes','compras','lista','servicos'];
+  const tabEl = tabs[pageMap.indexOf(page)] || null;
+  if (typeof navTo === 'function') navTo(page, tabEl, null);
+}
+function showPremium() {
+  closeDrawer();
+  document.getElementById('premium-modal').style.display = 'flex';
+}
+function showAjuda() {
+  closeDrawer();
+  showToastDrawer('❓ Ajuda: acesse minhasfinancas.app.br');
+}
+function showSobre() {
+  closeDrawer();
+  showToastDrawer('ℹ️ Minhas Finanças v2.0 · Firebase Sync');
+}
+function doLogout() {
+  closeDrawer();
+  const scr = document.getElementById('login-screen');
+  if (scr) {
+    scr.style.opacity = '0';
+    scr.style.display = 'flex';
+    setTimeout(() => { scr.style.transition = 'opacity .3s'; scr.style.opacity = '1'; }, 10);
+  }
+}
+let darkMode = true;
+function toggleTheme() {
+  darkMode = !darkMode;
+  document.getElementById('theme-toggle').classList.toggle('on', !darkMode);
+  document.getElementById('theme-ico').textContent = darkMode ? '☀️' : '🌙';
+  document.getElementById('theme-lbl').textContent = darkMode ? 'Modo claro' : 'Modo escuro';
+  // Aplica tema claro/escuro básico
+  document.body.style.filter = darkMode ? 'none' : 'invert(1) hue-rotate(180deg)';
+}
+function showToastDrawer(msg) {
+  if (typeof showToast === 'function') { showToast(msg, '#333'); return; }
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+</script>
+
 <div class="app">
   <div class="status-area"></div>
 
   <!-- TOPBAR -->
-  <div class="topbar">
-    <div>
+  <div class="topbar" style="gap:10px">
+    <button id="hamburger-btn" onclick="openDrawer()">
+      <span></span><span></span><span></span>
+    </button>
+    <div style="flex:1">
       <div class="topbar-greeting" id="greeting-lbl">Boa tarde,</div>
-      <div class="topbar-name">Edson</div>
+      <div class="topbar-name" id="topbar-name">Edson</div>
     </div>
     <div class="topbar-right">
-      <button class="tb-icon" onclick="syncNow()">🔔</button>
-      <div class="avatar">ED</div>
+      <button class="tb-icon" onclick="syncNow()" style="background:none;border:none;font-size:18px;cursor:pointer">🔔</button>
+      <div class="avatar" id="topbar-avatar-lbl" onclick="openDrawer()" style="cursor:pointer">ED</div>
     </div>
   </div>
 
@@ -584,8 +1120,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 
   </div><!-- /scroll-content -->
 
-  <!-- FAB -->
-  <button class="fab" onclick="alert('Novo lançamento em breve!')">+</button>
+  
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
@@ -700,10 +1235,10 @@ function navTo(key,tabEl,bnEl){
   document.getElementById('pg-'+key).classList.add('on');
   const idx=PAGES.indexOf(key);
   if(idx>=0) document.querySelectorAll('.tab')[idx].classList.add('on');
-  const bnMap={inicio:0,gastos:1,cartoes:2,compras:3,lista:4};
+  const bnMap={inicio:0,gastos:1,cartoes:2,compras:3,lista:4,servicos:4};
   if(bnMap[key]!==undefined) document.querySelectorAll('.bn')[bnMap[key]].classList.add('on');
   if(key==='gastos') setTimeout(renderGastos,100);
-  if(key==='lista'){renderSI();renderCatChips();}
+  if(key==='lista'){renderSI();renderCatChips();if(typeof syncShoppingList==="function")syncShoppingList(siItems);}
   if(key==='servicos') renderSubs();
   if(key==='compras') renderCompras();
   if(key==='inicio') renderTxHome();
@@ -987,5 +1522,539 @@ function closeDrillBtn(){document.getElementById('drill-overlay').classList.remo
 /* ===== INIT ===== */
 setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatChips();renderCompras();},180);
 </script>
+
+<!-- ============================================================
+     MODAL DE LANÇAMENTO — FAB + 4 TIPOS + FORMULÁRIOS COMPLETOS
+     ============================================================ -->
+
+<!-- OVERLAY ESCURO -->
+<div id="fab-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;backdrop-filter:blur(2px)" onclick="closeFabMenu()"></div>
+
+<!-- FAB MENU (igual ao app original) -->
+<div id="fab-menu" style="display:none;position:fixed;bottom:80px;right:18px;z-index:400;display:none;flex-direction:column;gap:10px;align-items:flex-end">
+  <div class="fab-opt" onclick="openForm('transferencia')" style="background:#b8860b">
+    <span class="fab-opt-lbl">Transferência</span>
+    <div class="fab-opt-ico" style="background:#b8860b">⇅</div>
+  </div>
+  <div class="fab-opt" onclick="openForm('receita')" style="background:#2e7d32">
+    <span class="fab-opt-lbl">Receita</span>
+    <div class="fab-opt-ico" style="background:#2e7d32">+</div>
+  </div>
+  <div class="fab-opt" onclick="openForm('despesa')" style="background:#c62828">
+    <span class="fab-opt-lbl">Despesa</span>
+    <div class="fab-opt-ico" style="background:#c62828">−</div>
+  </div>
+  <div class="fab-opt" onclick="openForm('cartao')" style="background:#1565c0">
+    <span class="fab-opt-lbl">Despesa cartão</span>
+    <div class="fab-opt-ico" style="background:#1565c0">▬</div>
+  </div>
+</div>
+
+<!-- FAB PRINCIPAL -->
+<button id="fab-main" onclick="toggleFabMenu()" style="position:fixed;bottom:80px;right:18px;width:54px;height:54px;border-radius:50%;background:#1565c0;color:#fff;border:none;font-size:26px;cursor:pointer;z-index:401;box-shadow:0 4px 16px rgba(21,101,192,.5);transition:transform .2s,background .2s;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
+
+<!-- MODAL FORMULÁRIO -->
+<div id="form-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:flex-end;justify-content:center;padding-bottom:0" onclick="closeFormOutside(event)">
+  <div id="form-modal" style="background:#1a1a2e;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;padding-bottom:24px;animation:slideUp .25s ease">
+
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;position:sticky;top:0;background:#1a1a2e;z-index:10;border-bottom:1px solid rgba(255,255,255,.1)">
+      <button onclick="closeForm()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center">✕</button>
+      <div>
+        <div id="form-title" style="font-size:17px;font-weight:600;color:#fff;text-align:center">Nova Despesa</div>
+        <div id="form-subtitle" style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;margin-top:1px"></div>
+      </div>
+      <button id="form-save-btn" onclick="saveForm()" style="background:#e53935;color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Salvar</button>
+    </div>
+
+    <!-- BODY FORMULÁRIO -->
+    <div style="padding:0">
+
+      <!-- DESCRIÇÃO -->
+      <div class="form-row">
+        <span class="form-ico">☰</span>
+        <input id="f-desc" type="text" placeholder="Descrição" style="flex:1;background:none;border:none;color:#fff;font-size:16px;outline:none;font-family:inherit" autocomplete="off">
+      </div>
+
+      <!-- VALOR -->
+      <div class="form-row">
+        <span class="form-ico">💲</span>
+        <input id="f-valor" type="number" placeholder="R$ 0,00" step="0.01" min="0" style="flex:1;background:none;border:none;color:#fff;font-size:22px;font-weight:600;outline:none;font-family:inherit" oninput="updateValorColor()">
+      </div>
+
+      <!-- RECORRÊNCIA -->
+      <div class="form-row form-row-sel">
+        <span class="form-ico">🔄</span>
+        <select id="f-recorrencia" class="form-sel">
+          <option>Não recorrente</option>
+          <option>Diária</option>
+          <option>Semanal</option>
+          <option>Mensal</option>
+          <option>Bimestral</option>
+          <option>Trimestral</option>
+          <option>Semestral</option>
+          <option>Anual</option>
+        </select>
+        <span style="color:rgba(255,255,255,.4);font-size:14px">›</span>
+      </div>
+
+      <!-- MULTICATEGORIAS (só despesa) -->
+      <div class="form-row" id="row-multi" style="display:none">
+        <span class="form-ico">⊞</span>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Multicategorias</span>
+        <label class="toggle-sw"><input type="checkbox" id="f-multi"><span class="toggle-sl"></span></label>
+      </div>
+
+      <!-- DATA VENCIMENTO -->
+      <div class="form-row">
+        <span class="form-ico">📅</span>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data vencimento</span>
+        <input id="f-data" type="date" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:14px;outline:none;font-family:inherit;cursor:pointer">
+      </div>
+
+      <!-- EFETIVADA -->
+      <div class="form-row">
+        <span class="form-ico">✔</span>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Efetivada</span>
+        <label class="toggle-sw"><input type="checkbox" id="f-efetivada" checked><span class="toggle-sl" id="sl-efetivada"></span></label>
+      </div>
+
+      <!-- CARTÃO (só despesa cartão) -->
+      <div id="row-cartao" style="display:none">
+        <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Cartão de crédito</div>
+        <div class="form-row form-row-sel">
+          <div style="width:32px;height:32px;border-radius:50%;background:#009ee3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">MP</div>
+          <select id="f-cartao" class="form-sel" style="margin-left:10px">
+            <option>Nubank</option>
+            <option>Santander</option>
+            <option selected>Mercado Pago</option>
+            <option>Alelo</option>
+          </select>
+          <span style="background:var(--bl,#1565c0);color:#fff;font-size:10px;padding:2px 6px;border-radius:3px;margin-left:8px">VISA</span>
+        </div>
+        <div class="form-row form-row-sel">
+          <span class="form-ico">📋</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Fatura</span>
+          <select id="f-fatura" class="form-sel">
+            <option>Abril, 2026</option>
+            <option>Maio, 2026</option>
+            <option>Junho, 2026</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- CATEGORIA -->
+      <div id="row-cat-section">
+        <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)" id="cat-label">Categoria</div>
+        <div class="form-row form-row-sel">
+          <div id="cat-ico" style="width:32px;height:32px;border-radius:50%;background:#e53935;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🍽️</div>
+          <select id="f-cat" class="form-sel" style="margin-left:10px" onchange="updateCatIco()">
+            <optgroup label="— Despesas —">
+              <option value="ali" data-ico="🍽️" data-color="#e53935">Alimentação</option>
+              <option value="tra" data-ico="🚗" data-color="#ef6c00">Transporte</option>
+              <option value="sau" data-ico="💊" data-color="#43a047">Saúde</option>
+              <option value="laz" data-ico="🎭" data-color="#f9a825">Lazer</option>
+              <option value="edu" data-ico="📚" data-color="#1e88e5">Educação</option>
+              <option value="mor" data-ico="🏠" data-color="#8e24aa">Moradia</option>
+              <option value="rou" data-ico="👕" data-color="#e91e63">Vestuário</option>
+              <option value="str" data-ico="📺" data-color="#1e88e5">Streaming</option>
+              <option value="fix" data-ico="⚡" data-color="#0097a7">Contas fixas</option>
+              <option value="out" data-ico="📦" data-color="#9e9e9e">Outros</option>
+            </optgroup>
+            <optgroup label="— Receitas —">
+              <option value="sal" data-ico="💼" data-color="#43a047">Salário</option>
+              <option value="fre" data-ico="💰" data-color="#2e7d32">Freelance</option>
+              <option value="inv" data-ico="📈" data-color="#1565c0">Investimentos</option>
+              <option value="alu" data-ico="🏘️" data-color="#6a1b9a">Aluguel recebido</option>
+              <option value="pre" data-ico="🎁" data-color="#c62828">Presente</option>
+              <option value="out2" data-ico="💡" data-color="#9e9e9e">Outros</option>
+            </optgroup>
+          </select>
+          <span onclick="openSubCat()" style="color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;margin-left:8px">+</span>
+        </div>
+      </div>
+
+      <!-- SUBCATEGORIA -->
+      <div>
+        <div style="padding:2px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Subcategoria</div>
+        <div class="form-row form-row-sel">
+          <div id="subcat-ico" style="width:32px;height:32px;border-radius:50%;background:#f9a825;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🍔</div>
+          <select id="f-subcat" class="form-sel" style="margin-left:10px">
+            <option>Almoço</option>
+            <option>Café da manhã</option>
+            <option>Jantar</option>
+            <option>Lanche</option>
+            <option>Mercado</option>
+            <option>Restaurante</option>
+            <option>Delivery</option>
+            <option>Outros</option>
+          </select>
+          <span style="color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;margin-left:8px">+</span>
+        </div>
+      </div>
+
+      <!-- CONTA (não aparece no cartão) -->
+      <div id="row-conta">
+        <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Conta</div>
+        <div class="form-row form-row-sel">
+          <div style="width:32px;height:32px;border-radius:50%;background:#820ad1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">Nu</div>
+          <select id="f-conta" class="form-sel" style="margin-left:10px">
+            <option>Nubank</option>
+            <option>Santander</option>
+            <option>Banco Inter</option>
+          </select>
+          <span style="color:rgba(255,255,255,.4);font-size:18px;margin-left:8px">≡</span>
+        </div>
+      </div>
+
+      <!-- CONTA DESTINO (só transferência) -->
+      <div id="row-conta-destino" style="display:none">
+        <div style="padding:4px 18px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;color:rgba(255,255,255,.3)">≡≡</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+          <div style="width:28px;height:28px;border-radius:50%;background:#b8860b;display:flex;align-items:center;justify-content:center;font-size:13px">⇅</div>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+        </div>
+        <div style="padding:2px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Conta destino</div>
+        <div class="form-row form-row-sel">
+          <div style="width:32px;height:32px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">👛</div>
+          <select id="f-conta-dest" class="form-sel" style="margin-left:10px">
+            <option>Nubank</option>
+            <option>Santander</option>
+            <option>Banco Inter</option>
+            <option>Carteira</option>
+          </select>
+          <span style="color:rgba(255,255,255,.4);font-size:18px;margin-left:8px">≡</span>
+        </div>
+      </div>
+
+      <!-- TAGS -->
+      <div class="form-row">
+        <span class="form-ico">🏷️</span>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Tags</span>
+        <span style="color:rgba(255,255,255,.4);font-size:14px">›</span>
+      </div>
+
+      <!-- MAIS INFORMAÇÕES (expansível) -->
+      <div onclick="toggleMaisInfo()" style="padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:#f9a825;font-size:14px;font-weight:500">
+        <span id="mais-info-lbl">Mais informações</span>
+        <span id="mais-info-ico">▾</span>
+      </div>
+
+      <div id="mais-info-body" style="display:none">
+        <!-- DATA LANÇAMENTO -->
+        <div class="form-row">
+          <span class="form-ico">🕐</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data lançamento</span>
+          <span id="f-data-lanc-lbl" style="color:rgba(255,255,255,.6);font-size:13px">Hoje</span>
+        </div>
+        <!-- DATA EFETIVAÇÃO -->
+        <div class="form-row">
+          <span class="form-ico">📆</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data efetivação</span>
+          <span style="color:rgba(255,255,255,.6);font-size:13px">Hoje</span>
+        </div>
+        <!-- ENCARGOS -->
+        <div class="form-row">
+          <span class="form-ico">💵</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Encargos</span>
+          <input type="number" placeholder="R$ 0,00" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:13px;width:80px;text-align:right;outline:none;font-family:inherit">
+        </div>
+        <!-- OBSERVAÇÕES -->
+        <div class="form-row">
+          <span class="form-ico">📝</span>
+          <input id="f-obs" type="text" placeholder="Observações e hashtags" style="flex:1;background:none;border:none;color:rgba(255,255,255,.7);font-size:14px;outline:none;font-family:inherit">
+        </div>
+        <!-- ANEXO -->
+        <div class="form-row">
+          <span class="form-ico">📎</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Adicionar anexo</span>
+          <div style="display:flex;gap:10px">
+            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">🖼️</span>
+            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">📷</span>
+            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">📄</span>
+          </div>
+        </div>
+        <!-- TOGGLES -->
+        <div class="form-row">
+          <span class="form-ico">📊</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar em Estatísticas</span>
+          <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
+        </div>
+        <div class="form-row">
+          <span class="form-ico">🎯</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar em Orçamentos</span>
+          <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
+        </div>
+        <div class="form-row">
+          <span class="form-ico">💰</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar na Economia mensal</span>
+          <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
+        </div>
+        <div class="form-row">
+          <span class="form-ico">∑</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar nos totais</span>
+          <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
+        </div>
+      </div>
+
+      <!-- SALVAR E CONTINUAR -->
+      <div class="form-row" style="margin-top:4px">
+        <span class="form-ico">🔁</span>
+        <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Salvar e continuar</span>
+        <label class="toggle-sw"><input type="checkbox" id="f-continuar"><span class="toggle-sl"></span></label>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.fab-opt{display:flex;align-items:center;gap:10px;cursor:pointer;animation:fadeUp .15s ease both}
+.fab-opt-lbl{background:rgba(30,30,30,.92);color:#fff;padding:7px 14px;border-radius:20px;font-size:14px;font-weight:500;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.fab-opt-ico{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:600;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.form-row{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.form-row-sel select{cursor:pointer}
+.form-ico{font-size:18px;width:24px;text-align:center;flex-shrink:0;opacity:.7}
+.form-sel{flex:1;background:none;border:none;color:rgba(255,255,255,.9);font-size:14px;outline:none;cursor:pointer;font-family:inherit;-webkit-appearance:none}
+.form-sel option,.form-sel optgroup{background:#1a1a2e;color:#fff}
+.toggle-sw{position:relative;display:inline-block;width:46px;height:26px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.2);border-radius:26px;transition:.3s}
+.toggle-sl::before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle-sw input:checked+.toggle-sl{background:#43a047}
+.toggle-sw input:checked+#sl-efetivada{background:#e53935}
+.toggle-sw input:checked+.toggle-sl::before{transform:translateX(20px)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+</style>
+
+<script>
+let fabOpen = false;
+let currentFormType = 'despesa';
+
+function toggleFabMenu() {
+  fabOpen = !fabOpen;
+  const menu = document.getElementById('fab-menu');
+  const overlay = document.getElementById('fab-overlay');
+  const btn = document.getElementById('fab-main');
+  if (fabOpen) {
+    menu.style.display = 'flex';
+    overlay.style.display = 'block';
+    btn.style.transform = 'rotate(45deg)';
+    btn.style.background = '#555';
+    // Anima cada opção
+    menu.querySelectorAll('.fab-opt').forEach((el,i) => {
+      el.style.animationDelay = i*0.05+'s';
+    });
+  } else {
+    closeFabMenu();
+  }
+}
+
+function closeFabMenu() {
+  fabOpen = false;
+  document.getElementById('fab-menu').style.display = 'none';
+  document.getElementById('fab-overlay').style.display = 'none';
+  const btn = document.getElementById('fab-main');
+  btn.style.transform = 'rotate(0)';
+  btn.style.background = '#1565c0';
+}
+
+function openForm(tipo) {
+  closeFabMenu();
+  currentFormType = tipo;
+  const overlay = document.getElementById('form-overlay');
+  const title = document.getElementById('form-title');
+  const subtitle = document.getElementById('form-subtitle');
+  const saveBtn = document.getElementById('form-save-btn');
+  const rowMulti = document.getElementById('row-multi');
+  const rowCartao = document.getElementById('row-cartao');
+  const rowConta = document.getElementById('row-conta');
+  const rowContaDest = document.getElementById('row-conta-destino');
+  const slEfetivada = document.getElementById('sl-efetivada');
+
+  // Reset campos
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-valor').value = '';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-data').value = today;
+  document.getElementById('mais-info-body').style.display = 'none';
+  document.getElementById('mais-info-lbl').textContent = 'Mais informações';
+  document.getElementById('mais-info-ico').textContent = '▾';
+
+  // Configura por tipo
+  rowMulti.style.display = 'none';
+  rowCartao.style.display = 'none';
+  rowConta.style.display = '';
+  rowContaDest.style.display = 'none';
+
+  if (tipo === 'receita') {
+    title.textContent = 'Nova Receita';
+    subtitle.textContent = '';
+    saveBtn.style.background = '#2e7d32';
+    if (slEfetivada) slEfetivada.style.background = '';
+    document.getElementById('f-efetivada').checked = true;
+    // Seleciona categoria Salário por padrão
+    const sel = document.getElementById('f-cat');
+    for (let opt of sel.options) if (opt.value === 'sal') { opt.selected = true; break; }
+    updateCatIco();
+  } else if (tipo === 'despesa') {
+    title.textContent = 'Nova Despesa';
+    subtitle.textContent = '';
+    saveBtn.style.background = '#e53935';
+    rowMulti.style.display = '';
+    document.getElementById('f-efetivada').checked = true;
+    const sel = document.getElementById('f-cat');
+    for (let opt of sel.options) if (opt.value === 'ali') { opt.selected = true; break; }
+    updateCatIco();
+  } else if (tipo === 'cartao') {
+    title.textContent = 'Nova Despesa';
+    subtitle.textContent = 'Cartão de crédito';
+    saveBtn.style.background = '#1565c0';
+    rowCartao.style.display = '';
+    rowConta.style.display = 'none';
+    rowMulti.style.display = '';
+    const sel = document.getElementById('f-cat');
+    for (let opt of sel.options) if (opt.value === 'ali') { opt.selected = true; break; }
+    updateCatIco();
+  } else if (tipo === 'transferencia') {
+    title.textContent = 'Nova Transferência';
+    subtitle.textContent = '';
+    saveBtn.style.background = '#b8860b';
+    document.getElementById('row-cat-section').style.display = 'none';
+    rowContaDest.style.display = '';
+    setTimeout(()=>document.getElementById('row-cat-section').style.display='', 100);
+    rowContaDest.style.display = '';
+  }
+
+  overlay.style.display = 'flex';
+  setTimeout(()=>document.getElementById('f-desc').focus(), 300);
+}
+
+function closeForm() {
+  document.getElementById('form-overlay').style.display = 'none';
+  // Reexibe seção categoria caso tenha sido escondida
+  document.getElementById('row-cat-section').style.display = '';
+  document.getElementById('row-conta-destino').style.display = 'none';
+}
+
+function closeFormOutside(e) {
+  if (e.target === document.getElementById('form-overlay')) closeForm();
+}
+
+function toggleMaisInfo() {
+  const body = document.getElementById('mais-info-body');
+  const lbl = document.getElementById('mais-info-lbl');
+  const ico = document.getElementById('mais-info-ico');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  lbl.textContent = open ? 'Menos informações' : 'Mais informações';
+  ico.textContent = open ? '▴' : '▾';
+}
+
+function updateValorColor() {
+  const inp = document.getElementById('f-valor');
+  const colors = {receita:'#4caf50', despesa:'#ef5350', cartao:'#ef5350', transferencia:'#f9a825'};
+  inp.style.color = colors[currentFormType] || '#fff';
+}
+
+function updateCatIco() {
+  const sel = document.getElementById('f-cat');
+  const opt = sel.options[sel.selectedIndex];
+  const ico = opt.getAttribute('data-ico') || '📦';
+  const color = opt.getAttribute('data-color') || '#9e9e9e';
+  const div = document.getElementById('cat-ico');
+  div.textContent = ico;
+  div.style.background = color;
+}
+
+function openSubCat() {
+  // Placeholder para expansão futura
+  const sub = document.getElementById('f-subcat');
+  sub.focus();
+}
+
+function saveForm() {
+  const desc = document.getElementById('f-desc').value.trim();
+  const valor = parseFloat(document.getElementById('f-valor').value);
+  const data = document.getElementById('f-data').value;
+  const cat = document.getElementById('f-cat');
+  const catOpt = cat.options[cat.selectedIndex];
+  const conta = document.getElementById('f-conta').value;
+  const efetivada = document.getElementById('f-efetivada').checked;
+
+  if (!desc) { document.getElementById('f-desc').focus(); document.getElementById('f-desc').style.borderBottom='1px solid #e53935'; return; }
+  if (!valor || valor <= 0) { document.getElementById('f-valor').focus(); return; }
+
+  // Monta objeto da transação
+  const isReceita = currentFormType === 'receita';
+  const tx = {
+    id: Date.now(),
+    name: desc,
+    amount: isReceita ? valor : -valor,
+    cat: catOpt.text,
+    catIco: catOpt.getAttribute('data-ico') || '📦',
+    catColor: catOpt.getAttribute('data-color') || '#9e9e9e',
+    catBg: (catOpt.getAttribute('data-color') || '#9e9e9e') + '22',
+    conta: conta,
+    date: data ? data.split('-').reverse().join('/') : new Date().toLocaleDateString('pt-BR'),
+    efetivada: efetivada,
+    tipo: currentFormType,
+    obs: document.getElementById('f-obs')?.value || ''
+  };
+
+  // Adiciona à lista global de transações
+  TXS.unshift({
+    date: tx.date,
+    n: tx.name,
+    cat: tx.cat,
+    conta: tx.conta,
+    amt: tx.amount,
+    ico: tx.catIco,
+    bg: tx.catBg,
+    app: ''
+  });
+
+  // Atualiza renders
+  if (typeof renderTxHome === 'function') renderTxHome();
+  if (typeof renderGastos === 'function' && document.getElementById('pg-gastos')?.classList.contains('on')) renderGastos();
+  // Sync Firebase
+  if (typeof window.saveTransaction === 'function') window.saveTransaction(tx);
+  if (typeof renderTxFull === 'function') renderTxFull();
+  if (typeof renderTxDash === 'function') renderTxDash();
+
+  // Sync Firebase
+  if (typeof saveTransaction === 'function') {
+    saveTransaction(tx);
+  }
+
+  // Toast de confirmação
+  showToast(isReceita ? '✅ Receita salva!' : currentFormType === 'transferencia' ? '✅ Transferência salva!' : '✅ Despesa salva!', isReceita ? '#2e7d32' : currentFormType === 'transferencia' ? '#b8860b' : '#c62828');
+
+  // Fecha ou continua
+  const continuar = document.getElementById('f-continuar').checked;
+  if (!continuar) {
+    closeForm();
+  } else {
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-valor').value = '';
+    document.getElementById('f-desc').focus();
+  }
+}
+
+function showToast(msg, color) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);animation:fadeUp .2s ease;pointer-events:none;white-space:nowrap`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// Atalho teclado ESC
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeForm(); closeFabMenu(); }
+});
+</script>
+
 </body>
 </html>
