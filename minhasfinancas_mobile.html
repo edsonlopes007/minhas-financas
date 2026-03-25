@@ -701,7 +701,7 @@ document.addEventListener('keydown', e => {
       <div class="drawer-avatar" id="drawer-avatar-lbl">ED</div>
       <div style="flex:1;min-width:0">
         <div class="drawer-name" id="drawer-name">Edson Lopes</div>
-        <div class="drawer-email" id="drawer-email">edson@financas.com</div>
+        <div class="drawer-email" id="drawer-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="badfdec9d5d4fadcd3d4dbd4d9dbc994d9d5d7">[email&#160;protected]</a></div>
       </div>
       <span class="drawer-arrow">›</span>
     </div>
@@ -809,7 +809,7 @@ document.addEventListener('keydown', e => {
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function openDrawer() {
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
@@ -2046,15 +2046,3 @@ function showToast(msg, color) {
   const t = document.createElement('div');
   t.textContent = msg;
   t.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);animation:fadeUp .2s ease;pointer-events:none;white-space:nowrap`;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
-
-// Atalho teclado ESC
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeForm(); closeFabMenu(); }
-});
-</script>
-
-</body>
-</html>
