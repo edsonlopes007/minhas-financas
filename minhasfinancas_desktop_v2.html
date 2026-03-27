@@ -1957,5 +1957,216 @@ function setGreeting(){
 }
 setGreeting();
 </script>
+
+<script>
+// FIX: Garante que funções do FAB estão no escopo global
+// (necessário quando scripts são carregados em ordem diferente)
+document.addEventListener('DOMContentLoaded', function() {
+  // Se toggleFabMenu não está no window, redefine aqui
+  if (typeof toggleFabMenu === 'undefined') {
+    console.warn('Redefinindo funções FAB no escopo global...');
+    
+    let _fabOpen = false;
+    let _currentFormType = 'despesa';
+
+    window.toggleFabMenu = function() {
+      _fabOpen = !_fabOpen;
+      const menu = document.getElementById('fab-menu');
+      const overlay = document.getElementById('fab-overlay');
+      const btn = document.getElementById('fab-main');
+      if (!menu) return;
+      if (_fabOpen) {
+        menu.style.display = 'flex';
+        overlay.style.display = 'block';
+        btn.style.transform = 'rotate(45deg)';
+        btn.style.background = '#555';
+        menu.querySelectorAll('.fab-opt').forEach((el, i) => {
+          el.style.animationDelay = i * 0.05 + 's';
+        });
+      } else {
+        window.closeFabMenu();
+      }
+    };
+
+    window.closeFabMenu = function() {
+      _fabOpen = false;
+      const menu = document.getElementById('fab-menu');
+      const overlay = document.getElementById('fab-overlay');
+      const btn = document.getElementById('fab-main');
+      if (menu) menu.style.display = 'none';
+      if (overlay) overlay.style.display = 'none';
+      if (btn) { btn.style.transform = 'rotate(0)'; btn.style.background = '#1565c0'; }
+    };
+
+    window.openForm = function(tipo) {
+      window.closeFabMenu();
+      _currentFormType = tipo;
+      const overlay = document.getElementById('form-overlay');
+      const title = document.getElementById('form-title');
+      const subtitle = document.getElementById('form-subtitle');
+      const saveBtn = document.getElementById('form-save-btn');
+      const rowMulti = document.getElementById('row-multi');
+      const rowCartao = document.getElementById('row-cartao');
+      const rowConta = document.getElementById('row-conta');
+      const rowContaDest = document.getElementById('row-conta-destino');
+
+      if (!overlay) { alert('Formulário não encontrado'); return; }
+
+      // Reset
+      const fDesc = document.getElementById('f-desc');
+      const fValor = document.getElementById('f-valor');
+      const fData = document.getElementById('f-data');
+      if (fDesc) fDesc.value = '';
+      if (fValor) fValor.value = '';
+      if (fData) fData.value = new Date().toISOString().split('T')[0];
+      document.getElementById('mais-info-body').style.display = 'none';
+
+      // Configuração por tipo
+      rowMulti.style.display = 'none';
+      rowCartao.style.display = 'none';
+      rowConta.style.display = '';
+      rowContaDest.style.display = 'none';
+
+      const configs = {
+        receita: { title: 'Nova Receita', color: '#2e7d32', btnColor: '#2e7d32', catVal: 'sal' },
+        despesa: { title: 'Nova Despesa', color: '#e53935', btnColor: '#e53935', catVal: 'ali' },
+        cartao: { title: 'Nova Despesa', subtitle: 'Cartão de crédito', color: '#1565c0', btnColor: '#1565c0', catVal: 'ali' },
+        transferencia: { title: 'Nova Transferência', color: '#b8860b', btnColor: '#b8860b', catVal: '' }
+      };
+      const cfg = configs[tipo] || configs.despesa;
+
+      if (title) title.textContent = cfg.title;
+      if (subtitle) subtitle.textContent = cfg.subtitle || '';
+      if (saveBtn) saveBtn.style.background = cfg.btnColor;
+
+      if (tipo === 'despesa' || tipo === 'cartao') rowMulti.style.display = '';
+      if (tipo === 'cartao') { rowCartao.style.display = ''; rowConta.style.display = 'none'; }
+      if (tipo === 'transferencia') rowContaDest.style.display = '';
+
+      if (cfg.catVal) {
+        const sel = document.getElementById('f-cat');
+        if (sel) for (let opt of sel.options) if (opt.value === cfg.catVal) { opt.selected = true; break; }
+        if (typeof updateCatIco === 'function') updateCatIco();
+      }
+
+      overlay.style.display = 'flex';
+      setTimeout(() => { if (fDesc) fDesc.focus(); }, 300);
+    };
+
+    window.closeForm = function() {
+      const overlay = document.getElementById('form-overlay');
+      if (overlay) overlay.style.display = 'none';
+      const rowContaDest = document.getElementById('row-conta-destino');
+      const rowCatSection = document.getElementById('row-cat-section');
+      if (rowContaDest) rowContaDest.style.display = 'none';
+      if (rowCatSection) rowCatSection.style.display = '';
+    };
+
+    window.closeFormOutside = function(e) {
+      if (e.target === document.getElementById('form-overlay')) window.closeForm();
+    };
+
+    window.toggleMaisInfo = function() {
+      const body = document.getElementById('mais-info-body');
+      const lbl = document.getElementById('mais-info-lbl');
+      const ico = document.getElementById('mais-info-ico');
+      if (!body) return;
+      const open = body.style.display === 'none' || body.style.display === '';
+      body.style.display = open ? 'block' : 'none';
+      if (lbl) lbl.textContent = open ? 'Menos informações' : 'Mais informações';
+      if (ico) ico.textContent = open ? '▴' : '▾';
+    };
+
+    window.updateCatIco = function() {
+      const sel = document.getElementById('f-cat');
+      if (!sel) return;
+      const opt = sel.options[sel.selectedIndex];
+      const ico = opt.getAttribute('data-ico') || '📦';
+      const color = opt.getAttribute('data-color') || '#9e9e9e';
+      const div = document.getElementById('cat-ico');
+      if (div) { div.textContent = ico; div.style.background = color; }
+    };
+
+    window.saveForm = function() {
+      const desc = (document.getElementById('f-desc') || {}).value?.trim();
+      const valor = parseFloat((document.getElementById('f-valor') || {}).value);
+      const fData = document.getElementById('f-data');
+      const fCat = document.getElementById('f-cat');
+      const fConta = document.getElementById('f-conta');
+      const fEfetivada = document.getElementById('f-efetivada');
+      const fContinuar = document.getElementById('f-continuar');
+
+      if (!desc) { const el = document.getElementById('f-desc'); if(el){el.focus();el.style.borderBottom='1px solid #e53935';} return; }
+      if (!valor || valor <= 0) { const el = document.getElementById('f-valor'); if(el) el.focus(); return; }
+
+      const isReceita = _currentFormType === 'receita';
+      const catOpt = fCat ? fCat.options[fCat.selectedIndex] : null;
+      const tx = {
+        id: Date.now(),
+        name: desc,
+        amount: isReceita ? valor : -valor,
+        cat: catOpt ? catOpt.text : 'Outros',
+        catIco: catOpt ? (catOpt.getAttribute('data-ico') || '📦') : '📦',
+        catColor: catOpt ? (catOpt.getAttribute('data-color') || '#9e9e9e') : '#9e9e9e',
+        conta: fConta ? fConta.value : 'Nubank',
+        date: fData ? fData.value.split('-').reverse().join('/') : new Date().toLocaleDateString('pt-BR'),
+        efetivada: fEfetivada ? fEfetivada.checked : true,
+        tipo: _currentFormType
+      };
+
+      // Adiciona à lista de transações
+      if (typeof TXS !== 'undefined') {
+        TXS.unshift({ date: tx.date, n: tx.name, cat: tx.cat, conta: tx.conta, amt: tx.amount, ico: tx.catIco, bg: tx.catColor + '22', app: '' });
+        if (typeof renderTxHome === 'function') renderTxHome();
+      }
+
+      // Sync Firebase
+      if (typeof window.saveTransaction === 'function') window.saveTransaction(tx);
+
+      // Toast
+      const msgs = { receita: '✅ Receita salva!', transferencia: '✅ Transferência salva!', cartao: '✅ Despesa no cartão salva!' };
+      const colors = { receita: '#2e7d32', transferencia: '#b8860b', cartao: '#1565c0' };
+      window.showToast(msgs[_currentFormType] || '✅ Despesa salva!', colors[_currentFormType] || '#c62828');
+
+      if (fContinuar && fContinuar.checked) {
+        const fDesc = document.getElementById('f-desc');
+        const fValor = document.getElementById('f-valor');
+        if (fDesc) fDesc.value = '';
+        if (fValor) fValor.value = '';
+        if (fDesc) fDesc.focus();
+      } else {
+        window.closeForm();
+      }
+    };
+
+    window.showToast = function(msg, color) {
+      color = color || '#333';
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = `position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:${color};color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap`;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2500);
+    };
+
+    window.updateValorColor = function() {
+      const inp = document.getElementById('f-valor');
+      const colors = { receita: '#4caf50', despesa: '#ef5350', cartao: '#ef5350', transferencia: '#f9a825' };
+      if (inp) inp.style.color = colors[_currentFormType] || '#fff';
+    };
+
+    console.log('✅ Funções FAB redefinidas no escopo global!');
+  } else {
+    console.log('✅ Funções FAB já disponíveis no escopo global!');
+  }
+
+  // Garante que ESC fecha o form e o FAB
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (typeof closeForm === 'function') closeForm();
+      if (typeof closeFabMenu === 'function') closeFabMenu();
+    }
+  });
+});
+</script>
 </body>
 </html>
