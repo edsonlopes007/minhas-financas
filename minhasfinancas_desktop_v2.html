@@ -538,7 +538,7 @@ document.addEventListener('keydown', e => {
         <span id="sync-lbl">Sincronizado com app</span>
       </div>
       <button class="tb-btn tb-btn-ghost" onclick="navTo('lista',document.querySelectorAll('.nav-item')[5])">🛒 Lista</button>
-      <button class="tb-btn tb-btn-primary">+ Lançamento</button>
+      <button class="tb-btn tb-btn-primary" onclick="toggleFabMenu()">+ Lançamento</button>
       <div class="avatar">ED</div>
     </div>
   </div>
@@ -625,7 +625,7 @@ document.addEventListener('keydown', e => {
     <!-- ====== CONTAS ====== -->
     <div class="page" id="pg-contas">
       <div class="widget" style="margin-bottom:16px">
-        <div class="widget-hdr"><div class="widget-title">Minhas contas bancárias</div><div class="widget-acts"><button class="btn-primary">+ Adicionar conta</button></div></div>
+        <div class="widget-hdr"><div class="widget-title">Minhas contas bancárias</div><div class="widget-acts"><button class="btn-primary" onclick="openAddConta()">+ Adicionar conta</button></div></div>
         <table class="tbl">
           <thead><tr><th>Banco</th><th>Tipo</th><th>Saldo atual</th><th>Previsto</th><th>Status</th><th>Ações</th></tr></thead>
           <tbody>
