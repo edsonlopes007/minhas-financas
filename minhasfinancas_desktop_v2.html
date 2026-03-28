@@ -2168,5 +2168,484 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+<!-- MODAL CADASTRO CONTA/CARTÃO -->
+<div id="cadastro-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeCadastro()">
+  <div style="background:#141414;border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding-bottom:24px;animation:slideUp .25s ease">
+    <div style="width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:12px auto 0"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div id="cadastro-title" style="font-size:17px;font-weight:600;color:#fff">Nova Conta</div>
+      <button onclick="closeCadastro()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div id="cadastro-body" style="padding:0"></div>
+    <div style="padding:16px 20px 0;display:flex;gap:10px">
+      <button onclick="closeCadastro()" style="flex:1;padding:12px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:none;border-radius:12px;font-size:14px;cursor:pointer;font-family:inherit">Cancelar</button>
+      <button onclick="salvarCadastro()" style="flex:2;padding:12px;background:#1e88e5;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Salvar</button>
+    </div>
+  </div>
+</div>
+
+
+<script id="dados-sistema">
+// ============================================================
+// SISTEMA DE DADOS — Contas, Cartões, Transações (editáveis)
+// Tudo sincronizado com Firebase Realtime Database
+// ============================================================
+
+// ── BANCOS DISPONÍVEIS (para adicionar novas contas)
+const BANCOS_DISPONIVEIS = [
+  { id: 'nubank',       nome: 'Nubank',          cor: '#820ad1', icone: 'Nu',  tipo: 'digital' },
+  { id: 'santander',    nome: 'Santander',        cor: '#ec0000', icone: 'SAN', tipo: 'tradicional' },
+  { id: 'inter',        nome: 'Banco Inter',      cor: '#ff7a00', icone: 'IN',  tipo: 'digital' },
+  { id: 'caixa',        nome: 'Caixa Econômica',  cor: '#005ca9', icone: 'CEF', tipo: 'tradicional' },
+  { id: 'bradesco',     nome: 'Bradesco',         cor: '#cc092f', icone: 'BRD', tipo: 'tradicional' },
+  { id: 'itau',         nome: 'Itaú',             cor: '#003d7b', icone: 'ITÁ', tipo: 'tradicional' },
+  { id: 'bb',           nome: 'Banco do Brasil',  cor: '#f5d200', icone: 'BB',  tipo: 'tradicional', tcor: '#333' },
+  { id: 'c6',           nome: 'C6 Bank',          cor: '#222222', icone: 'C6',  tipo: 'digital' },
+  { id: 'original',     nome: 'Banco Original',   cor: '#00a859', icone: 'ORI', tipo: 'digital' },
+  { id: 'picpay',       nome: 'PicPay',           cor: '#11c76f', icone: 'PIC', tipo: 'digital' },
+  { id: 'mercadopago',  nome: 'Mercado Pago',     cor: '#009ee3', icone: 'MP',  tipo: 'digital' },
+  { id: 'pagseguro',    nome: 'PagSeguro',        cor: '#f6a623', icone: 'PAG', tipo: 'digital' },
+  { id: 'sicredi',      nome: 'Sicredi',          cor: '#00853f', icone: 'SIC', tipo: 'cooperativa' },
+  { id: 'sicoob',       nome: 'Sicoob',           cor: '#006c3e', icone: 'SCB', tipo: 'cooperativa' },
+  { id: 'carteira',     nome: 'Carteira',         cor: '#555555', icone: '👛', tipo: 'carteira' },
+  { id: 'outro',        nome: 'Outro banco',      cor: '#9e9e9e', icone: '🏦',  tipo: 'outro' },
+];
+
+// ── CARTÕES DISPONÍVEIS
+const CARTOES_DISPONIVEIS = [
+  { id: 'nubank_cc',    nome: 'Nubank',        cor: '#820ad1', icone: 'Nu',  bandeira: 'VISA' },
+  { id: 'santander_cc', nome: 'Santander',     cor: '#ec0000', icone: 'SAN', bandeira: 'VISA' },
+  { id: 'itau_cc',      nome: 'Itaú',          cor: '#003d7b', icone: 'ITÁ', bandeira: 'VISA' },
+  { id: 'bradesco_cc',  nome: 'Bradesco',      cor: '#cc092f', icone: 'BRD', bandeira: 'VISA' },
+  { id: 'bb_cc',        nome: 'BB',            cor: '#f5d200', icone: 'BB',  bandeira: 'VISA', tcor: '#333' },
+  { id: 'caixa_cc',     nome: 'Caixa',         cor: '#005ca9', icone: 'CEF', bandeira: 'ELO' },
+  { id: 'c6_cc',        nome: 'C6 Bank',       cor: '#222222', icone: 'C6',  bandeira: 'VISA' },
+  { id: 'inter_cc',     nome: 'Inter',         cor: '#ff7a00', icone: 'IN',  bandeira: 'VISA' },
+  { id: 'mp_cc',        nome: 'Mercado Pago',  cor: '#009ee3', icone: 'MP',  bandeira: 'VISA' },
+  { id: 'alelo',        nome: 'Alelo',         cor: '#1565c0', icone: 'AL',  bandeira: 'BENE' },
+  { id: 'vr',           nome: 'VR',            cor: '#e53935', icone: 'VR',  bandeira: 'BENE' },
+  { id: 'sodexo',       nome: 'Sodexo/Pluxee', cor: '#0069aa', icone: 'SOD', bandeira: 'BENE' },
+  { id: 'ticket',       nome: 'Ticket',        cor: '#ff6900', icone: 'TKT', bandeira: 'BENE' },
+  { id: 'outro_cc',     nome: 'Outro cartão',  cor: '#9e9e9e', icone: '💳', bandeira: 'VISA' },
+];
+
+// ── DADOS DINÂMICOS (carregados do Firebase ou localStorage)
+let appData = {
+  contas: [],
+  cartoes: [],
+  transacoes: [],
+  orcamentos: [],
+  assinaturas: [],
+  listaCompras: [],
+  ultimaAtualizacao: null
+};
+
+// ── DEFAULTS ao criar conta/cartão novo
+const CONTA_DEFAULT = {
+  id: null, banco: 'outro', nome: 'Minha Conta', saldo: 0, 
+  tipo: 'corrente', cor: '#9e9e9e', icone: '🏦', ativa: true
+};
+const CARTAO_DEFAULT = {
+  id: null, banco: 'outro_cc', nome: 'Meu Cartão', limite: 0, usado: 0,
+  cor: '#9e9e9e', icone: '💳', bandeira: 'VISA', fechamento: 1, vencimento: 10, ativo: true
+};
+
+// ── INICIALIZAÇÃO — carrega dados do Firebase ou localStorage
+function initAppData() {
+  // Tenta carregar do localStorage primeiro (offline)
+  const saved = localStorage.getItem('mf_appdata');
+  if (saved) {
+    try {
+      appData = JSON.parse(saved);
+      console.log('Dados carregados do localStorage');
+    } catch(e) {}
+  }
+  
+  // Se vazio, carrega dados padrão (primeira vez)
+  if (!appData.contas.length) {
+    appData.contas = [
+      { id: 'c1', banco: 'nubank', nome: 'Nubank', saldo: 0, tipo: 'corrente', cor: '#820ad1', icone: 'Nu', ativa: true },
+    ];
+    appData.assinaturas = [
+      { id: 's1', nome: 'Netflix', icone: 'N', cor: '#e50914', valor: 0, ciclo: 'Mensal', diaCobranca: 5 },
+    ];
+    saveLocalData();
+  }
+  
+  // Sincroniza com Firebase se disponível
+  syncFromFirebase();
+  renderAllData();
+}
+
+// ── SALVA no localStorage
+function saveLocalData() {
+  appData.ultimaAtualizacao = Date.now();
+  localStorage.setItem('mf_appdata', JSON.stringify(appData));
+}
+
+// ── SALVA + SYNC Firebase
+function saveAndSync() {
+  saveLocalData();
+  if (typeof window._userRef !== 'undefined' && window._userRef) {
+    window._userRef.child('appData').set(appData)
+      .then(() => { updateSyncIndicator(true); })
+      .catch(e => console.warn('Sync erro:', e));
+  }
+}
+
+// ── CARREGA do Firebase
+function syncFromFirebase() {
+  if (typeof window._userRef !== 'undefined' && window._userRef) {
+    window._userRef.child('appData').on('value', snap => {
+      const data = snap.val();
+      if (data && data.ultimaAtualizacao > (appData.ultimaAtualizacao || 0)) {
+        appData = data;
+        saveLocalData();
+        renderAllData();
+        updateSyncIndicator(true);
+        console.log('Dados sincronizados do Firebase');
+      }
+    });
+  }
+}
+
+function updateSyncIndicator(ok) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-lbl');
+  if (dot) dot.style.background = ok ? '#4caf50' : '#ff9800';
+  if (lbl) lbl.textContent = ok ? 'Sync' : 'Reconectando...';
+}
+
+// ── RENDERIZA TODOS OS DADOS
+function renderAllData() {
+  renderContasList();
+  renderCartoesList();
+  renderTxHome();
+  renderSubs();
+  renderSI();
+}
+
+// ── CONTAS: renderiza na tela início
+function renderContasList() {
+  const el = document.getElementById('contas-list');
+  if (!el) return;
+  
+  if (!appData.contas.length) {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhuma conta cadastrada.<br><span onclick="openAddConta()" style="color:#1e88e5;cursor:pointer">+ Adicionar conta</span></div>';
+    return;
+  }
+  
+  const total = appData.contas.reduce((s, c) => s + (parseFloat(c.saldo) || 0), 0);
+  
+  el.innerHTML = appData.contas.filter(c => c.ativa).map(conta => {
+    const banco = BANCOS_DISPONIVEIS.find(b => b.id === conta.banco) || {};
+    const saldo = parseFloat(conta.saldo) || 0;
+    return `
+      <div class="row" onclick="openEditConta('${conta.id}')">
+        <div class="logo" style="background:${conta.cor}">${conta.icone}</div>
+        <div class="rinfo">
+          <div class="rname">${conta.nome}</div>
+          <div class="rsub">${conta.tipo === 'corrente' ? 'Conta corrente' : conta.tipo === 'poupanca' ? 'Poupança' : conta.tipo === 'digital' ? 'Conta digital' : 'Conta'}</div>
+        </div>
+        <div class="ramt">
+          <div class="rval ${saldo >= 0 ? 'pos' : 'neg'}">${formatMoney(saldo)}</div>
+          <span class="pill pill-g" style="font-size:9px">✎ editar</span>
+        </div>
+      </div>`;
+  }).join('') + `
+    <div class="row" onclick="openAddConta()" style="border-top:1px dashed rgba(255,255,255,.1)">
+      <div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:20px">+</div>
+      <div class="rinfo"><div class="rname" style="color:rgba(255,255,255,.5)">Adicionar conta</div></div>
+    </div>`;
+}
+
+// ── CARTÕES: renderiza na tela início  
+function renderCartoesList() {
+  const el = document.getElementById('cartoes-resumo');
+  if (!el) return;
+  
+  if (!appData.cartoes.length) {
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhum cartão cadastrado.<br><span onclick="openAddCartao()" style="color:#1e88e5;cursor:pointer">+ Adicionar cartão</span></div>';
+    return;
+  }
+  
+  el.innerHTML = appData.cartoes.filter(c => c.ativo).map(cartao => {
+    const pct = cartao.limite > 0 ? Math.min(Math.round((cartao.usado / cartao.limite) * 100), 100) : 0;
+    const cor = pct > 70 ? 'var(--am2)' : pct > 90 ? 'var(--rd2)' : 'var(--gn4)';
+    return `
+      <div class="row" onclick="openEditCartao('${cartao.id}')">
+        <div class="logo" style="background:${cartao.cor}">${cartao.icone}</div>
+        <div class="rinfo">
+          <div class="rname">${cartao.nome} · <span style="color:${cor}">${pct}%</span></div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${cor}"></div></div>
+        </div>
+        <div class="ramt">
+          <div class="rval neg">${formatMoney(cartao.usado)}</div>
+          <div class="rprev">de ${formatMoney(cartao.limite)}</div>
+        </div>
+      </div>`;
+  }).join('') + `
+    <div class="row" onclick="openAddCartao()" style="border-top:1px dashed rgba(255,255,255,.1)">
+      <div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:20px">+</div>
+      <div class="rinfo"><div class="rname" style="color:rgba(255,255,255,.5)">Adicionar cartão</div></div>
+    </div>`;
+}
+
+// ── HELPER: formata moeda
+function formatMoney(v) {
+  const n = parseFloat(v) || 0;
+  return 'R$ ' + Math.abs(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ── ABRIR MODAL ADICIONAR CONTA
+function openAddConta() {
+  openCadastroModal('conta', null);
+}
+function openEditConta(id) {
+  const conta = appData.contas.find(c => c.id === id);
+  openCadastroModal('conta', conta);
+}
+function openAddCartao() {
+  openCadastroModal('cartao', null);
+}
+function openEditCartao(id) {
+  const cartao = appData.cartoes.find(c => c.id === id);
+  openCadastroModal('cartao', cartao);
+}
+
+// ── MODAL DE CADASTRO (conta ou cartão)
+function openCadastroModal(tipo, dados) {
+  const overlay = document.getElementById('cadastro-overlay');
+  const title = document.getElementById('cadastro-title');
+  const body = document.getElementById('cadastro-body');
+  if (!overlay) return;
+  
+  const isEdit = !!dados;
+  
+  if (tipo === 'conta') {
+    title.textContent = isEdit ? '✎ Editar Conta' : '+ Nova Conta';
+    const d = dados || CONTA_DEFAULT;
+    body.innerHTML = `
+      <div class="form-row">
+        <span class="form-ico">🏦</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Banco</div>
+          <select id="cad-banco" class="form-sel" style="width:100%;padding:8px 0" onchange="updateContaCor()">
+            ${BANCOS_DISPONIVEIS.map(b => `<option value="${b.id}" ${d.banco === b.id ? 'selected' : ''}>${b.nome}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <span class="form-ico">✏️</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Nome da conta</div>
+          <input id="cad-nome" type="text" value="${d.nome || ''}" placeholder="Ex: Nubank Pessoal" class="form-sel" style="width:100%;padding:4px 0;font-size:15px">
+        </div>
+      </div>
+      <div class="form-row">
+        <span class="form-ico">💰</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Saldo atual (R$)</div>
+          <input id="cad-saldo" type="number" step="0.01" value="${d.saldo || 0}" placeholder="0,00" class="form-sel" style="width:100%;padding:4px 0;font-size:22px;font-weight:600;color:#4caf50">
+        </div>
+      </div>
+      <div class="form-row">
+        <span class="form-ico">📋</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Tipo</div>
+          <select id="cad-tipo" class="form-sel" style="width:100%;padding:8px 0">
+            <option value="corrente" ${d.tipo==='corrente'?'selected':''}>Conta Corrente</option>
+            <option value="poupanca" ${d.tipo==='poupanca'?'selected':''}>Poupança</option>
+            <option value="digital" ${d.tipo==='digital'?'selected':''}>Conta Digital</option>
+            <option value="investimento" ${d.tipo==='investimento'?'selected':''}>Investimento</option>
+            <option value="carteira" ${d.tipo==='carteira'?'selected':''}>Carteira</option>
+          </select>
+        </div>
+      </div>
+      ${isEdit ? `<div class="form-row" style="cursor:pointer" onclick="excluirConta('${d.id}')">
+        <span class="form-ico">🗑️</span>
+        <span style="color:#ef5350;font-size:14px">Excluir esta conta</span>
+      </div>` : ''}
+      <input type="hidden" id="cad-id" value="${d.id || ''}">
+      <input type="hidden" id="cad-tipo-modal" value="conta">`;
+  } else {
+    // Cartão
+    title.textContent = isEdit ? '✎ Editar Cartão' : '+ Novo Cartão';
+    const d = dados || CARTAO_DEFAULT;
+    body.innerHTML = `
+      <div class="form-row">
+        <span class="form-ico">💳</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Cartão</div>
+          <select id="cad-banco" class="form-sel" style="width:100%;padding:8px 0">
+            ${CARTOES_DISPONIVEIS.map(b => `<option value="${b.id}" ${d.banco === b.id ? 'selected' : ''}>${b.nome} (${b.bandeira})</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <span class="form-ico">✏️</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Nome do cartão</div>
+          <input id="cad-nome" type="text" value="${d.nome || ''}" placeholder="Ex: Nubank Roxinho" class="form-sel" style="width:100%;padding:4px 0;font-size:15px">
+        </div>
+      </div>
+      <div class="form-row">
+        <span class="form-ico">🏦</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Limite total (R$)</div>
+          <input id="cad-limite" type="number" step="0.01" value="${d.limite || 0}" placeholder="0,00" class="form-sel" style="width:100%;padding:4px 0;font-size:22px;font-weight:600;color:#1e88e5">
+        </div>
+      </div>
+      <div class="form-row">
+        <span class="form-ico">📊</span>
+        <div style="flex:1">
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Fatura atual (R$)</div>
+          <input id="cad-usado" type="number" step="0.01" value="${d.usado || 0}" placeholder="0,00" class="form-sel" style="width:100%;padding:4px 0;font-size:22px;font-weight:600;color:#ef5350">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:13px 20px;border-bottom:1px solid rgba(255,255,255,.06)">
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Fechamento</div>
+          <select id="cad-fechamento" class="form-sel">
+            ${Array.from({length:28},(_,i)=>`<option value="${i+1}" ${d.fechamento==i+1?'selected':''}>Dia ${i+1}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Vencimento</div>
+          <select id="cad-vencimento" class="form-sel">
+            ${Array.from({length:28},(_,i)=>`<option value="${i+1}" ${d.vencimento==i+1?'selected':''}>Dia ${i+1}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      ${isEdit ? `<div class="form-row" style="cursor:pointer" onclick="excluirCartao('${d.id}')">
+        <span class="form-ico">🗑️</span>
+        <span style="color:#ef5350;font-size:14px">Excluir este cartão</span>
+      </div>` : ''}
+      <input type="hidden" id="cad-id" value="${d.id || ''}">
+      <input type="hidden" id="cad-tipo-modal" value="cartao">`;
+  }
+  
+  overlay.style.display = 'flex';
+}
+
+function updateContaCor() {
+  const sel = document.getElementById('cad-banco');
+  const banco = BANCOS_DISPONIVEIS.find(b => b.id === sel.value);
+  if (banco) {
+    const nomeEl = document.getElementById('cad-nome');
+    if (nomeEl && !nomeEl.dataset.edited) nomeEl.value = banco.nome;
+  }
+}
+
+function salvarCadastro() {
+  const tipo = document.getElementById('cad-tipo-modal')?.value;
+  const id = document.getElementById('cad-id')?.value;
+  const banco = document.getElementById('cad-banco')?.value;
+  const nome = document.getElementById('cad-nome')?.value?.trim();
+  
+  if (!nome) { showToast('Nome obrigatório', '#c62828'); return; }
+  
+  if (tipo === 'conta') {
+    const saldo = parseFloat(document.getElementById('cad-saldo')?.value) || 0;
+    const tipoC = document.getElementById('cad-tipo')?.value || 'corrente';
+    const bancoObj = BANCOS_DISPONIVEIS.find(b => b.id === banco) || {};
+    
+    const conta = {
+      id: id || 'c_' + Date.now(),
+      banco, nome, saldo, tipo: tipoC,
+      cor: bancoObj.cor || '#9e9e9e',
+      icone: bancoObj.icone || '🏦',
+      ativa: true
+    };
+    
+    const idx = appData.contas.findIndex(c => c.id === conta.id);
+    if (idx >= 0) appData.contas[idx] = conta;
+    else appData.contas.push(conta);
+    
+    showToast(id ? '✅ Conta atualizada!' : '✅ Conta adicionada!', '#2e7d32');
+    
+  } else {
+    const limite = parseFloat(document.getElementById('cad-limite')?.value) || 0;
+    const usado = parseFloat(document.getElementById('cad-usado')?.value) || 0;
+    const fechamento = parseInt(document.getElementById('cad-fechamento')?.value) || 1;
+    const vencimento = parseInt(document.getElementById('cad-vencimento')?.value) || 10;
+    const bancoObj = CARTOES_DISPONIVEIS.find(b => b.id === banco) || {};
+    
+    const cartao = {
+      id: id || 'cc_' + Date.now(),
+      banco, nome, limite, usado, fechamento, vencimento,
+      cor: bancoObj.cor || '#9e9e9e',
+      icone: bancoObj.icone || '💳',
+      bandeira: bancoObj.bandeira || 'VISA',
+      ativo: true
+    };
+    
+    const idx = appData.cartoes.findIndex(c => c.id === cartao.id);
+    if (idx >= 0) appData.cartoes[idx] = cartao;
+    else appData.cartoes.push(cartao);
+    
+    showToast(id ? '✅ Cartão atualizado!' : '✅ Cartão adicionado!', '#1565c0');
+  }
+  
+  saveAndSync();
+  closeCadastro();
+  renderAllData();
+  
+  // Atualiza o seletor de contas nos formulários de lançamento
+  atualizarSelectContas();
+}
+
+function excluirConta(id) {
+  if (!confirm('Excluir esta conta?')) return;
+  appData.contas = appData.contas.filter(c => c.id !== id);
+  saveAndSync();
+  closeCadastro();
+  renderContasList();
+  showToast('🗑️ Conta removida', '#555');
+}
+
+function excluirCartao(id) {
+  if (!confirm('Excluir este cartão?')) return;
+  appData.cartoes = appData.cartoes.filter(c => c.id !== id);
+  saveAndSync();
+  closeCadastro();
+  renderCartoesList();
+  showToast('🗑️ Cartão removido', '#555');
+}
+
+function closeCadastro() {
+  const overlay = document.getElementById('cadastro-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+// ── Atualiza selects de conta nos formulários
+function atualizarSelectContas() {
+  const sel = document.getElementById('f-conta');
+  if (!sel || !appData.contas.length) return;
+  sel.innerHTML = appData.contas.filter(c => c.ativa).map(c =>
+    `<option value="${c.id}">${c.nome}</option>`
+  ).join('');
+  
+  const selDest = document.getElementById('f-conta-dest');
+  if (selDest) {
+    selDest.innerHTML = appData.contas.filter(c => c.ativa).map(c =>
+      `<option value="${c.id}">${c.nome}</option>`
+    ).join('') + '<option value="carteira">Carteira</option>';
+  }
+  
+  const selCartao = document.getElementById('f-cartao');
+  if (selCartao) {
+    selCartao.innerHTML = appData.cartoes.filter(c => c.ativo).map(c =>
+      `<option value="${c.id}">${c.nome}</option>`
+    ).join('');
+  }
+}
+
+// Inicia quando DOM carrega
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(initAppData, 500);
+});
+</script>
 </body>
 </html>
