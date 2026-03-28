@@ -6,9 +6,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Minhas Finanças">
+<meta name="apple-mobile-web-app-title" content="Minhas FinanÃ§as">
 <meta name="theme-color" content="#1a1a2e">
-<title>Minhas Finanças</title>
+<title>Minhas FinanÃ§as</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -120,7 +120,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .bar-wrap{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:5px}
 .bar-fill{height:100%;border-radius:3px;transition:width .4s}
 
-/* CARTÃO VISUAL */
+/* CARTÃO VISUAL */
 .cc-visual{border-radius:var(--R);padding:16px;color:#fff;margin-bottom:0;position:relative;overflow:hidden}
 .cc-visual::before{content:'';position:absolute;right:-15px;top:-15px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.08)}
 .ccv-net{font-size:10px;opacity:.65;letter-spacing:.6px;margin-bottom:6px}
@@ -254,12 +254,12 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
 .info-box{background:var(--bl3);border:1px solid #bbdefb;border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--bl);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .alert-box{background:var(--rd3);border:1px solid #ffcdd2;border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--rd2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 </style>
-  <!-- FIREBASE REALTIME DATABASE — SYNC DESKTOP ↔ MOBILE
+  <!-- FIREBASE REALTIME DATABASE â SYNC DESKTOP â MOBILE
        Siga o guia_integracao_sync_v2.md para configurar -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
-  // ⚙️ SUBSTITUA pelos seus dados do Firebase Console
+  // âï¸ SUBSTITUA pelos seus dados do Firebase Console
   // Siga o passo a passo no guia_integracao_sync_v2.md
   const firebaseConfig = {
     apiKey: "AIzaSyD4Qd8ZPGPWsEEpqX1p4NB1nk6KSOo87Go",
@@ -275,7 +275,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
     const rtdb = firebase.database();
     const USER_ID = "edson";
     const userRef = rtdb.ref("users/" + USER_ID);
-    // Indicador de conexão em tempo real
+    // Indicador de conexÃ£o em tempo real
     rtdb.ref(".info/connected").on("value", snap => {
       const ok = snap.val();
       const dot = document.getElementById("sync-dot");
@@ -283,7 +283,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
       if (dot) dot.style.background = ok ? "#4caf50" : "#ff9800";
       if (lbl) lbl.textContent = ok ? "Sincronizado com app" : "Reconectando...";
     });
-    // Sync lista de compras (desktop ↔ mobile em tempo real)
+    // Sync lista de compras (desktop â mobile em tempo real)
     userRef.child("shoppingList").on("value", snap => {
       const data = snap.val();
       if (data && data.items) {
@@ -305,21 +305,21 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
         }
       }
     });
-    // Funções globais de sync — chamadas automaticamente ao salvar dados
+    // FunÃ§Ãµes globais de sync â chamadas automaticamente ao salvar dados
     window._rtdb = rtdb;
     window._userRef = userRef;
     window.syncShoppingList = items => userRef.child("shoppingList").set({ items, updatedAt: Date.now() });
     window.syncSubscriptions = subs => userRef.child("subscriptions").set({ items: subs, updatedAt: Date.now() });
     window.saveTransaction = tx => userRef.child("transactions").push({ ...tx, timestamp: Date.now() });
-    console.log("✅ Firebase Realtime Database conectado com sucesso!");
+    console.log("â Firebase Realtime Database conectado com sucesso!");
   } catch(e) {
-    console.warn("⚠️ Firebase não configurado. Siga o guia_integracao_sync_v2.md. Erro:", e.message);
+    console.warn("â ï¸ Firebase nÃ£o configurado. Siga o guia_integracao_sync_v2.md. Erro:", e.message);
   }
   </script>
 
 
 <style id="form-redesign-styles">
-/* ── FAB menu redesenhado ── */
+/* ââ FAB menu redesenhado ââ */
 #fab-main {
   bottom: calc(72px + env(safe-area-inset-bottom,0px) + 12px)!important;
   right: 16px !important;
@@ -332,10 +332,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   font-weight: 300 !important;
 }
 
-/* ── Overlay escuro mais suave ── */
+/* ââ Overlay escuro mais suave ââ */
 #fab-overlay { background: rgba(0,0,0,.45) !important; backdrop-filter: blur(4px) !important; }
 
-/* ── Opções FAB ── */
+/* ââ OpÃ§Ãµes FAB ââ */
 .fab-opt-lbl {
   background: #2a2a2a !important;
   color: rgba(255,255,255,.92) !important;
@@ -352,14 +352,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   box-shadow: 0 2px 12px rgba(0,0,0,.3) !important;
 }
 
-/* ── Modal do formulário ── */
+/* ââ Modal do formulÃ¡rio ââ */
 #form-modal {
   background: #141414 !important;
   border-radius: 24px 24px 0 0 !important;
   max-height: 94vh !important;
 }
 
-/* ── Header do form ── */
+/* ââ Header do form ââ */
 #form-modal > div:first-child {
   background: #141414 !important;
   border-bottom: 1px solid rgba(255,255,255,.07) !important;
@@ -367,7 +367,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   padding: 18px 20px 14px !important;
 }
 
-/* ── Linha puxador ── */
+/* ââ Linha puxador ââ */
 #form-modal::before {
   content: '';
   display: block;
@@ -377,14 +377,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   margin: 12px auto 0;
 }
 
-/* ── Título do form ── */
+/* ââ TÃ­tulo do form ââ */
 #form-title {
   font-size: 17px !important;
   font-weight: 600 !important;
   color: #fff !important;
 }
 
-/* ── Botão Salvar ── */
+/* ââ BotÃ£o Salvar ââ */
 #form-save-btn {
   border-radius: 22px !important;
   padding: 8px 20px !important;
@@ -393,27 +393,27 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   letter-spacing: .2px !important;
 }
 
-/* ── Linhas do form ── */
+/* ââ Linhas do form ââ */
 .form-row {
   padding: 14px 20px !important;
   border-bottom: 1px solid rgba(255,255,255,.06) !important;
   gap: 14px !important;
 }
 
-/* ── Ícones form ── */
+/* ââ Ãcones form ââ */
 .form-ico {
   font-size: 16px !important;
   opacity: .5 !important;
   width: 22px !important;
 }
 
-/* ── Textos rows ── */
+/* ââ Textos rows ââ */
 .form-row > span:not(.form-ico) {
   color: rgba(255,255,255,.85) !important;
   font-size: 14px !important;
 }
 
-/* ── Valor ── */
+/* ââ Valor ââ */
 #f-valor {
   font-size: 26px !important;
   font-weight: 700 !important;
@@ -421,24 +421,24 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   letter-spacing: -.5px !important;
 }
 
-/* ── Descrição ── */
+/* ââ DescriÃ§Ã£o ââ */
 #f-desc {
   font-size: 15px !important;
   color: rgba(255,255,255,.9) !important;
 }
 #f-desc::placeholder { color: rgba(255,255,255,.3) !important; }
 
-/* ── Selects ── */
+/* ââ Selects ââ */
 .form-sel {
   color: rgba(255,255,255,.85) !important;
   font-size: 14px !important;
 }
 
-/* ── Toggle mais suave ── */
+/* ââ Toggle mais suave ââ */
 .toggle-sl { background: rgba(255,255,255,.15) !important; }
 .toggle-sw input:checked + .toggle-sl { background: #43a047 !important; }
 
-/* ── Mais informações ── */
+/* ââ Mais informaÃ§Ãµes ââ */
 #form-modal [onclick="toggleMaisInfo()"] {
   color: rgba(255,255,255,.4) !important;
   font-size: 13px !important;
@@ -446,7 +446,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   border-top: 1px solid rgba(255,255,255,.06) !important;
 }
 
-/* ── Seletor de categoria com ícone redondo ── */
+/* ââ Seletor de categoria com Ã­cone redondo ââ */
 #cat-ico, #subcat-ico {
   border-radius: 50% !important;
   width: 34px !important;
@@ -455,14 +455,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:-apple-sy
   opacity: .9 !important;
 }
 
-/* ── Data input dark ── */
+/* ââ Data input dark ââ */
 #f-data {
   color-scheme: dark !important;
   color: rgba(255,255,255,.75) !important;
   font-size: 13px !important;
 }
 
-/* ── Grupos de seção ── */
+/* ââ Grupos de seÃ§Ã£o ââ */
 #row-cartao > div:first-child,
 #row-cat-section > div:first-child,
 #row-conta > div:first-child,
@@ -535,7 +535,7 @@ div[style*="padding:2px 18px 2px"] {
         <div class="drill-title" id="drill-title"></div>
         <div class="drill-sub" id="drill-sub"></div>
       </div>
-      <button class="drill-close" onclick="closeDrillBtn()">✕</button>
+      <button class="drill-close" onclick="closeDrillBtn()">â</button>
     </div>
     <div class="drill-body" id="drill-body"></div>
   </div>
@@ -550,26 +550,26 @@ div[style*="padding:2px 18px 2px"] {
     <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#1e88e5,#0d47a1);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 8px 24px rgba(30,136,229,.35)">
       <svg width="38" height="38" viewBox="0 0 32 32"><rect width="8" height="18" x="2" y="14" rx="2" fill="#ef5350"/><rect width="8" height="24" x="12" y="8" rx="2" fill="#f9a825"/><rect width="8" height="30" x="22" y="2" rx="2" fill="#66bb6a"/><path d="M6 28 L28 6" stroke="#90caf9" stroke-width="2.5" stroke-linecap="round"/><circle cx="28" cy="6" r="3" fill="#90caf9"/></svg>
     </div>
-    <div style="font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px">Minhas Finanças</div>
+    <div style="font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px">Minhas FinanÃ§as</div>
     <div style="font-size:13px;color:rgba(255,255,255,.45);margin-top:4px">Controle financeiro inteligente</div>
   </div>
 
   <!-- CARD LOGIN -->
   <div style="width:100%;max-width:360px;background:#1e1e1e;border-radius:20px;padding:28px 24px;box-shadow:0 8px 32px rgba(0,0,0,.4)">
     
-    <!-- ABAS usuário/admin -->
+    <!-- ABAS usuÃ¡rio/admin -->
     <div style="display:flex;background:#2a2a2a;border-radius:12px;padding:3px;margin-bottom:24px">
-      <div id="tab-user" onclick="setLoginTab('user')" style="flex:1;text-align:center;padding:8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;background:#1e88e5;color:#fff;transition:all .2s">📱 Usuário</div>
-      <div id="tab-admin" onclick="setLoginTab('admin')" style="flex:1;text-align:center;padding:8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.5);transition:all .2s">🖥️ Admin</div>
+      <div id="tab-user" onclick="setLoginTab('user')" style="flex:1;text-align:center;padding:8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;background:#1e88e5;color:#fff;transition:all .2s">ð± UsuÃ¡rio</div>
+      <div id="tab-admin" onclick="setLoginTab('admin')" style="flex:1;text-align:center;padding:8px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:rgba(255,255,255,.5);transition:all .2s">ð¥ï¸ Admin</div>
     </div>
 
-    <div id="login-subtitle" style="font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:20px">Acesso mobile — app pessoal</div>
+    <div id="login-subtitle" style="font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-bottom:20px">Acesso mobile â app pessoal</div>
 
     <!-- EMAIL -->
     <div style="margin-bottom:14px">
       <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:6px;font-weight:500">E-MAIL</div>
       <div style="background:#2a2a2a;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.08)">
-        <span style="color:rgba(255,255,255,.4);font-size:16px">✉</span>
+        <span style="color:rgba(255,255,255,.4);font-size:16px">â</span>
         <input id="login-email" type="email" placeholder="seu@email.com" value="edson@financas.com"
           style="background:none;border:none;color:#fff;font-size:14px;outline:none;flex:1;font-family:inherit">
       </div>
@@ -579,14 +579,14 @@ div[style*="padding:2px 18px 2px"] {
     <div style="margin-bottom:22px">
       <div style="font-size:11px;color:rgba(255,255,255,.45);margin-bottom:6px;font-weight:500">SENHA</div>
       <div style="background:#2a2a2a;border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.08)">
-        <span style="color:rgba(255,255,255,.4);font-size:16px">🔒</span>
-        <input id="login-senha" type="password" placeholder="••••••••" value="123456"
+        <span style="color:rgba(255,255,255,.4);font-size:16px">ð</span>
+        <input id="login-senha" type="password" placeholder="â¢â¢â¢â¢â¢â¢â¢â¢" value="123456"
           style="background:none;border:none;color:#fff;font-size:14px;outline:none;flex:1;font-family:inherit">
-        <span onclick="toggleSenha()" style="color:rgba(255,255,255,.35);cursor:pointer;font-size:14px" id="eye-ico">👁</span>
+        <span onclick="toggleSenha()" style="color:rgba(255,255,255,.35);cursor:pointer;font-size:14px" id="eye-ico">ð</span>
       </div>
     </div>
 
-    <!-- BOTÃO ENTRAR -->
+    <!-- BOTÃO ENTRAR -->
     <button id="btn-login" onclick="doLogin()" 
       style="width:100%;padding:14px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(30,136,229,.35);letter-spacing:.3px;transition:opacity .15s">
       Entrar
@@ -598,14 +598,14 @@ div[style*="padding:2px 18px 2px"] {
     </div>
   </div>
 
-  <!-- RODAPÉ -->
+  <!-- RODAPÃ -->
   <div style="margin-top:28px;text-align:center;font-size:11px;color:rgba(255,255,255,.25)">
-    Versão 2.0 · Firebase Sync ativo
+    VersÃ£o 2.0 Â· Firebase Sync ativo
   </div>
 
   <!-- ERRO -->
   <div id="login-erro" style="display:none;position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#c62828;color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.3)">
-    ❌ E-mail ou senha incorretos
+    â E-mail ou senha incorretos
   </div>
 </div>
 
@@ -630,8 +630,8 @@ function setLoginTab(tab) {
   document.getElementById('tab-admin').style.background = isAdmin ? '#1e88e5' : 'transparent';
   document.getElementById('tab-admin').style.color      = isAdmin ? '#fff' : 'rgba(255,255,255,.5)';
   document.getElementById('login-subtitle').textContent = isAdmin
-    ? 'Acesso desktop — painel administrativo'
-    : 'Acesso mobile — app pessoal';
+    ? 'Acesso desktop â painel administrativo'
+    : 'Acesso mobile â app pessoal';
   document.getElementById('login-email').value = isAdmin ? 'admin@financas.com' : 'edson@financas.com';
   document.getElementById('login-senha').value = isAdmin ? 'admin123' : '123456';
 }
@@ -655,7 +655,7 @@ function doLogin() {
     btn.textContent = 'Entrar';
 
     if (user && user.senha === senha) {
-      // Login OK — anima saída
+      // Login OK â anima saÃ­da
       const scr = document.getElementById('login-screen');
       scr.style.transition = 'opacity .4s';
       scr.style.opacity = '0';
@@ -703,7 +703,7 @@ document.addEventListener('keydown', e => {
         <div class="drawer-name" id="drawer-name">Edson Lopes</div>
         <div class="drawer-email" id="drawer-email">edson@financas.com</div>
       </div>
-      <span class="drawer-arrow">›</span>
+      <span class="drawer-arrow">âº</span>
     </div>
   </div>
 
@@ -712,16 +712,16 @@ document.addEventListener('keydown', e => {
 
     <!-- PRINCIPAL -->
     <div class="drawer-item active" onclick="drawerNav('inicio')">
-      <span class="drawer-item-ico">⊞</span>Resumo
+      <span class="drawer-item-ico">â</span>Resumo
     </div>
     <div class="drawer-item" onclick="drawerNav('contas')">
-      <span class="drawer-item-ico">🏦</span>Contas
+      <span class="drawer-item-ico">ð¦</span>Contas
     </div>
     <div class="drawer-item" onclick="drawerNav('transacoes')">
-      <span class="drawer-item-ico">💸</span>Transações
+      <span class="drawer-item-ico">ð¸</span>TransaÃ§Ãµes
     </div>
     <div class="drawer-item" onclick="drawerNav('cartoes')">
-      <span class="drawer-item-ico">💳</span>Cartões de crédito
+      <span class="drawer-item-ico">ð³</span>CartÃµes de crÃ©dito
     </div>
 
     <div class="drawer-divider"></div>
@@ -729,12 +729,12 @@ document.addEventListener('keydown', e => {
     <!-- PLANEJAR -->
     <div class="drawer-section">Planejar</div>
     <div class="drawer-item" onclick="drawerNav('orcamentos')">
-      <span class="drawer-item-ico">%</span>Orçamentos
-      <span class="drawer-lock">🔒</span>
+      <span class="drawer-item-ico">%</span>OrÃ§amentos
+      <span class="drawer-lock">ð</span>
     </div>
     <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">🎯</span>Objetivos
-      <span class="drawer-lock">🔒</span>
+      <span class="drawer-item-ico">ð¯</span>Objetivos
+      <span class="drawer-lock">ð</span>
     </div>
 
     <div class="drawer-divider"></div>
@@ -742,58 +742,58 @@ document.addEventListener('keydown', e => {
     <!-- ANALISAR -->
     <div class="drawer-section">Analisar</div>
     <div class="drawer-item" onclick="openImportacao(); closeDrawer()">
-      <span class="drawer-item-ico">📥</span>Importar Extrato
+      <span class="drawer-item-ico">ð¥</span>Importar Extrato
     </div>
     <div class="drawer-item" onclick="drawerNav('relatorios')">
-      <span class="drawer-item-ico">📈</span>Relatórios
-      <span class="drawer-lock">🔒</span>
+      <span class="drawer-item-ico">ð</span>RelatÃ³rios
+      <span class="drawer-lock">ð</span>
     </div>
     <div class="drawer-item" onclick="drawerNav('gastos')">
-      <span class="drawer-item-ico">📊</span>Gráficos
+      <span class="drawer-item-ico">ð</span>GrÃ¡ficos
     </div>
     <div class="drawer-item" onclick="drawerNav('orcamentos')">
-      <span class="drawer-item-ico">⊛</span>Categorias
+      <span class="drawer-item-ico">â</span>Categorias
     </div>
     <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">🏷️</span>Tags
-      <span class="drawer-lock">🔒</span>
+      <span class="drawer-item-ico">ð·ï¸</span>Tags
+      <span class="drawer-lock">ð</span>
     </div>
     <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">📅</span>Calendário
+      <span class="drawer-item-ico">ð</span>CalendÃ¡rio
     </div>
 
     <div class="drawer-divider"></div>
 
     <!-- OUTROS -->
     <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">🔧</span>Ferramentas
-      <span class="drawer-lock">🔒</span>
+      <span class="drawer-item-ico">ð§</span>Ferramentas
+      <span class="drawer-lock">ð</span>
     </div>
     <div class="drawer-item" onclick="drawerNav('config')">
-      <span class="drawer-item-ico">⚙️</span>Configurações
+      <span class="drawer-item-ico">âï¸</span>ConfiguraÃ§Ãµes
     </div>
     <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">💎</span>Planos e Preços
+      <span class="drawer-item-ico">ð</span>Planos e PreÃ§os
     </div>
     <div class="drawer-item" onclick="showAjuda()">
-      <span class="drawer-item-ico">❓</span>Ajuda
+      <span class="drawer-item-ico">â</span>Ajuda
     </div>
     <div class="drawer-item" onclick="showSobre()">
-      <span class="drawer-item-ico">ℹ️</span>Sobre
+      <span class="drawer-item-ico">â¹ï¸</span>Sobre
     </div>
 
     <!-- SAIR -->
     <div class="drawer-divider"></div>
     <div class="drawer-item" onclick="doLogout()" style="color:rgba(229,57,53,.8)">
-      <span class="drawer-item-ico" style="color:rgba(229,57,53,.7)">🚪</span>Sair
+      <span class="drawer-item-ico" style="color:rgba(229,57,53,.7)">ðª</span>Sair
     </div>
 
   </nav>
 
-  <!-- FOOTER — MODO CLARO/ESCURO -->
+  <!-- FOOTER â MODO CLARO/ESCURO -->
   <div class="drawer-footer">
     <div class="drawer-theme-row" onclick="toggleTheme()">
-      <span style="font-size:18px" id="theme-ico">☀️</span>
+      <span style="font-size:18px" id="theme-ico">âï¸</span>
       <span id="theme-lbl">Modo claro</span>
       <div class="theme-toggle" id="theme-toggle"></div>
     </div>
@@ -804,11 +804,11 @@ document.addEventListener('keydown', e => {
 <!-- MODAL PREMIUM -->
 <div id="premium-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;align-items:center;justify-content:center;padding:24px">
   <div style="background:#1e1e1e;border-radius:20px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.5)">
-    <div style="font-size:40px;margin-bottom:12px">💎</div>
+    <div style="font-size:40px;margin-bottom:12px">ð</div>
     <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:8px">Recurso Premium</div>
-    <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.6">Este recurso está disponível no plano Premium. Desbloqueie todos os recursos por apenas R$ 9,90/mês.</div>
+    <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.6">Este recurso estÃ¡ disponÃ­vel no plano Premium. Desbloqueie todos os recursos por apenas R$ 9,90/mÃªs.</div>
     <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:13px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px">Ver Planos</button>
-    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:11px;background:none;color:rgba(255,255,255,.45);border:none;font-size:14px;cursor:pointer;font-family:inherit">Agora não</button>
+    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:11px;background:none;color:rgba(255,255,255,.45);border:none;font-size:14px;cursor:pointer;font-family:inherit">Agora nÃ£o</button>
   </div>
 </div>
 
@@ -838,11 +838,11 @@ function showPremium() {
 }
 function showAjuda() {
   closeDrawer();
-  showToastDrawer('❓ Ajuda: acesse minhasfinancas.app.br');
+  showToastDrawer('â Ajuda: acesse minhasfinancas.app.br');
 }
 function showSobre() {
   closeDrawer();
-  showToastDrawer('ℹ️ Minhas Finanças v2.0 · Firebase Sync');
+  showToastDrawer('â¹ï¸ Minhas FinanÃ§as v2.0 Â· Firebase Sync');
 }
 function doLogout() {
   closeDrawer();
@@ -857,9 +857,9 @@ let darkMode = true;
 function toggleTheme() {
   darkMode = !darkMode;
   document.getElementById('theme-toggle').classList.toggle('on', !darkMode);
-  document.getElementById('theme-ico').textContent = darkMode ? '☀️' : '🌙';
+  document.getElementById('theme-ico').textContent = darkMode ? 'âï¸' : 'ð';
   document.getElementById('theme-lbl').textContent = darkMode ? 'Modo claro' : 'Modo escuro';
-  // Aplica tema claro/escuro básico
+  // Aplica tema claro/escuro bÃ¡sico
   document.body.style.filter = darkMode ? 'none' : 'invert(1) hue-rotate(180deg)';
 }
 function showToastDrawer(msg) {
@@ -885,16 +885,16 @@ function showToastDrawer(msg) {
       <div class="topbar-name" id="topbar-name">Edson</div>
     </div>
     <div class="topbar-right">
-      <button class="tb-icon" onclick="syncNow()" style="background:none;border:none;font-size:18px;cursor:pointer">🔔</button>
+      <button class="tb-icon" onclick="syncNow()" style="background:none;border:none;font-size:18px;cursor:pointer">ð</button>
       <div class="avatar" id="topbar-avatar-lbl" onclick="openDrawer()" style="cursor:pointer">ED</div>
     </div>
   </div>
 
   <!-- MONTH BAR -->
   <div class="month-bar">
-    <button class="mn-btn" onclick="changeMonth(-1)">‹</button>
-    <div class="mn-label" id="mn-lbl">Março 2026</div>
-    <button class="mn-btn" onclick="changeMonth(1)">›</button>
+    <button class="mn-btn" onclick="changeMonth(-1)">â¹</button>
+    <div class="mn-label" id="mn-lbl">MarÃ§o 2026</div>
+    <button class="mn-btn" onclick="changeMonth(1)">âº</button>
     <div class="sync-pill" onclick="syncNow()">
       <span class="sync-dot" id="sync-dot"></span>
       <span id="sync-lbl">Sync</span>
@@ -903,18 +903,18 @@ function showToastDrawer(msg) {
 
   <!-- TABS -->
   <div class="tab-bar">
-    <div class="tab on" onclick="navTo('inicio',this)">Início</div>
+    <div class="tab on" onclick="navTo('inicio',this)">InÃ­cio</div>
     <div class="tab" onclick="navTo('gastos',this)">Gastos</div>
-    <div class="tab" onclick="navTo('cartoes',this)">Cartões</div>
+    <div class="tab" onclick="navTo('cartoes',this)">CartÃµes</div>
     <div class="tab" onclick="navTo('compras',this)">Compras</div>
     <div class="tab" onclick="navTo('lista',this)">Lista</div>
-    <div class="tab" onclick="navTo('servicos',this)">Serviços</div>
+    <div class="tab" onclick="navTo('servicos',this)">ServiÃ§os</div>
   </div>
 
   <!-- SCROLL CONTENT -->
   <div class="scroll-content">
 
-    <!-- ===== INÍCIO ===== -->
+    <!-- ===== INÃCIO ===== -->
     <div class="page on" id="pg-inicio">
       <!-- Hero saldo -->
       <div class="hero">
@@ -923,73 +923,73 @@ function showToastDrawer(msg) {
         <div class="chart-mini"><canvas id="sparkChart"></canvas></div>
         <div class="hero-row">
           <div class="hero-col"><div class="hero-col-lbl">Entradas</div><div class="hero-col-val pos">+R$ 5.200</div></div>
-          <div class="hero-col"><div class="hero-col-lbl">Saídas</div><div class="hero-col-val neg">-R$ 3.140</div></div>
+          <div class="hero-col"><div class="hero-col-lbl">SaÃ­das</div><div class="hero-col-val neg">-R$ 3.140</div></div>
           <div class="hero-col"><div class="hero-col-lbl">Economia</div><div class="hero-col-val">39,6%</div></div>
         </div>
       </div>
 
-      <div class="sync-banner">📱 <div><b>Sincronizado com desktop</b> — Dados atualizados agora</div></div>
+      <div class="sync-banner">ð± <div><b>Sincronizado com desktop</b> â Dados atualizados agora</div></div>
 
       <!-- Contas -->
       <div class="card">
-        <div class="card-hdr"><span class="card-title">🏦 Contas bancárias</span><span class="card-act" onclick="openAddConta()">+ Nova ›</span></div>
+        <div class="card-hdr"><span class="card-title">ð¦ Contas bancÃ¡rias</span><span class="card-act" onclick="openAddConta()">+ Nova âº</span></div>
         <div id="contas-list">
           <div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Carregando...</div>
         </div>
       </div>
 
-      <!-- Cartões resumo -->
+      <!-- CartÃµes resumo -->
       <div class="card">
-        <div class="card-hdr"><span class="card-title">💳 Cartões</span><span class="card-act" onclick="openAddCartao()">+ Novo ›</span></div>
+        <div class="card-hdr"><span class="card-title">ð³ CartÃµes</span><span class="card-act" onclick="openAddCartao()">+ Novo âº</span></div>
         <div id="cartoes-resumo">
           <div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Carregando...</div>
         </div>
       </div>
 
-      <div class="sec-title">Últimas movimentações</div>
+      <div class="sec-title">Ãltimas movimentaÃ§Ãµes</div>
       <div class="card" id="tx-home"></div>
     </div>
 
     <!-- ===== GASTOS ===== -->
     <div class="page" id="pg-gastos">
       <div class="mc-grid">
-        <div class="mc" onclick="openDrill('despesas')"><div class="mc-lbl">Total gasto</div><div class="mc-val" style="color:var(--rd2)">R$ 3.140</div><div class="mc-delta up">↑ 8% vs fev</div></div>
-        <div class="mc" onclick="openDrill('receitas')"><div class="mc-lbl">Saldo do mês</div><div class="mc-val" style="color:var(--gn4)">R$ 2.060</div><div class="mc-delta dn">Meta ✓</div></div>
-        <div class="mc" onclick="openDrill('cartoes-kpi')"><div class="mc-lbl">No crédito</div><div class="mc-val" style="color:var(--pu2);font-size:16px">R$ 5.340</div><div class="mc-delta" style="color:var(--tx2)">2 cartões</div></div>
-        <div class="mc"><div class="mc-lbl">Economia</div><div class="mc-val" style="color:var(--bl)">39,6%</div><div class="mc-delta dn">meta 37% ✓</div></div>
+        <div class="mc" onclick="openDrill('despesas')"><div class="mc-lbl">Total gasto</div><div class="mc-val" style="color:var(--rd2)">R$ 3.140</div><div class="mc-delta up">â 8% vs fev</div></div>
+        <div class="mc" onclick="openDrill('receitas')"><div class="mc-lbl">Saldo do mÃªs</div><div class="mc-val" style="color:var(--gn4)">R$ 2.060</div><div class="mc-delta dn">Meta â</div></div>
+        <div class="mc" onclick="openDrill('cartoes-kpi')"><div class="mc-lbl">No crÃ©dito</div><div class="mc-val" style="color:var(--pu2);font-size:16px">R$ 5.340</div><div class="mc-delta" style="color:var(--tx2)">2 cartÃµes</div></div>
+        <div class="mc"><div class="mc-lbl">Economia</div><div class="mc-val" style="color:var(--bl)">39,6%</div><div class="mc-delta dn">meta 37% â</div></div>
       </div>
 
       <div class="card" style="padding:12px 12px 8px">
         <div class="donut-wrap"><canvas id="donutChart"></canvas></div>
         <div class="legend-grid" id="donut-legend"></div>
-        <div style="text-align:center;font-size:11px;color:var(--tx3);margin-top:8px">👆 Toque na fatia para detalhar</div>
+        <div style="text-align:center;font-size:11px;color:var(--tx3);margin-top:8px">ð Toque na fatia para detalhar</div>
       </div>
 
-      <div class="sec-title">Orçamentos — clique para detalhar</div>
+      <div class="sec-title">OrÃ§amentos â clique para detalhar</div>
       <div class="card" id="orc-list"></div>
     </div>
 
-    <!-- ===== CARTÕES ===== -->
+    <!-- ===== CARTÃES ===== -->
     <div class="page" id="pg-cartoes">
-      <div class="alert-box">⚠️ Nubank: 62% do limite. Fecha em 8 dias.</div>
+      <div class="alert-box">â ï¸ Nubank: 62% do limite. Fecha em 8 dias.</div>
       <div class="mc-grid">
         <div class="mc"><div class="mc-lbl">Total faturas</div><div class="mc-val" style="color:var(--rd2);font-size:16px">R$ 5.340</div></div>
-        <div class="mc"><div class="mc-lbl">Dívidas</div><div class="mc-val" style="color:var(--gn4);font-size:16px">R$ 0</div><div class="mc-delta dn">Em dia ✓</div></div>
+        <div class="mc"><div class="mc-lbl">DÃ­vidas</div><div class="mc-val" style="color:var(--gn4);font-size:16px">R$ 0</div><div class="mc-delta dn">Em dia â</div></div>
       </div>
 
       <!-- Nubank -->
       <div class="card" onclick="openDrill('fatura-nubank')" style="cursor:pointer;margin-bottom:10px">
         <div class="cc-visual" style="background:linear-gradient(135deg,#6a1b9a,#4a148c)">
           <div class="ccv-net">NUBANK ROXINHO</div>
-          <div class="ccv-num">•••• •••• •••• 4821</div>
+          <div class="ccv-num">â¢â¢â¢â¢ â¢â¢â¢â¢ â¢â¢â¢â¢ 4821</div>
           <div class="ccv-row"><span>Edson S.</span><span>09/29</span></div>
         </div>
         <div class="cc-info">
-          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--tx2)">Fatura · vence 22/04</span><span style="color:var(--am2);font-size:12px;font-weight:600">62%</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--tx2)">Fatura Â· vence 22/04</span><span style="color:var(--am2);font-size:12px;font-weight:600">62%</span></div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:20px;font-weight:700;color:var(--rd2)">R$ 3.100,00</span><span style="font-size:12px;color:var(--tx2)">/ R$ 5.000</span></div>
           <div class="bar-wrap" style="height:6px"><div class="bar-fill" style="width:62%;background:var(--am2)"></div></div>
           <div class="cc-mini-grid">
-            <div class="cc-mini"><div class="cc-mini-lbl">Disponível</div><div class="cc-mini-val" style="color:var(--gn4)">R$ 1.900</div></div>
+            <div class="cc-mini"><div class="cc-mini-lbl">DisponÃ­vel</div><div class="cc-mini-val" style="color:var(--gn4)">R$ 1.900</div></div>
             <div class="cc-mini"><div class="cc-mini-lbl">Vencimento</div><div class="cc-mini-val">22/04</div></div>
             <div class="cc-mini"><div class="cc-mini-lbl">Parcelado</div><div class="cc-mini-val" style="color:var(--pu2)">R$ 480</div></div>
           </div>
@@ -1000,15 +1000,15 @@ function showToastDrawer(msg) {
       <div class="card" onclick="openDrill('fatura-santander')" style="cursor:pointer;margin-bottom:10px">
         <div class="cc-visual" style="background:linear-gradient(135deg,#b71c1c,#880e0e)">
           <div class="ccv-net">SANTANDER FREE</div>
-          <div class="ccv-num">•••• •••• •••• 7293</div>
+          <div class="ccv-num">â¢â¢â¢â¢ â¢â¢â¢â¢ â¢â¢â¢â¢ 7293</div>
           <div class="ccv-row"><span>Edson S.</span><span>03/28</span></div>
         </div>
         <div class="cc-info">
-          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--tx2)">Fatura · vence 17/04</span><span style="color:var(--gn4);font-size:12px;font-weight:600">28%</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--tx2)">Fatura Â· vence 17/04</span><span style="color:var(--gn4);font-size:12px;font-weight:600">28%</span></div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:20px;font-weight:700;color:var(--rd2)">R$ 2.240,00</span><span style="font-size:12px;color:var(--tx2)">/ R$ 8.000</span></div>
           <div class="bar-wrap" style="height:6px"><div class="bar-fill" style="width:28%;background:var(--gn4)"></div></div>
           <div class="cc-mini-grid">
-            <div class="cc-mini"><div class="cc-mini-lbl">Disponível</div><div class="cc-mini-val" style="color:var(--gn4)">R$ 5.760</div></div>
+            <div class="cc-mini"><div class="cc-mini-lbl">DisponÃ­vel</div><div class="cc-mini-val" style="color:var(--gn4)">R$ 5.760</div></div>
             <div class="cc-mini"><div class="cc-mini-lbl">Vencimento</div><div class="cc-mini-val">17/04</div></div>
             <div class="cc-mini"><div class="cc-mini-lbl">Parcelado</div><div class="cc-mini-val" style="color:var(--pu2)">R$ 120</div></div>
           </div>
@@ -1019,15 +1019,15 @@ function showToastDrawer(msg) {
       <div class="card" onclick="openDrill('fatura-mp')" style="cursor:pointer;margin-bottom:10px">
         <div class="cc-visual" style="background:linear-gradient(135deg,#009ee3,#0073bb)">
           <div class="ccv-net">MERCADO PAGO</div>
-          <div class="ccv-num">•••• •••• •••• 3310</div>
+          <div class="ccv-num">â¢â¢â¢â¢ â¢â¢â¢â¢ â¢â¢â¢â¢ 3310</div>
           <div class="ccv-row"><span>Edson S.</span><span>11/27</span></div>
         </div>
         <div class="cc-info">
-          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--tx2)">Fatura · vence 05/04</span><span style="color:var(--gn4);font-size:12px;font-weight:600">22%</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:12px;color:var(--tx2)">Fatura Â· vence 05/04</span><span style="color:var(--gn4);font-size:12px;font-weight:600">22%</span></div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font-size:20px;font-weight:700;color:var(--rd2)">R$ 650,00</span><span style="font-size:12px;color:var(--tx2)">/ R$ 3.000</span></div>
           <div class="bar-wrap" style="height:6px"><div class="bar-fill" style="width:22%;background:var(--gn4)"></div></div>
           <div class="cc-mini-grid">
-            <div class="cc-mini"><div class="cc-mini-lbl">Disponível</div><div class="cc-mini-val" style="color:var(--gn4)">R$ 2.350</div></div>
+            <div class="cc-mini"><div class="cc-mini-lbl">DisponÃ­vel</div><div class="cc-mini-val" style="color:var(--gn4)">R$ 2.350</div></div>
             <div class="cc-mini"><div class="cc-mini-lbl">Vencimento</div><div class="cc-mini-val">05/04</div></div>
             <div class="cc-mini"><div class="cc-mini-lbl">Parcelado</div><div class="cc-mini-val" style="color:var(--pu2)">R$ 0</div></div>
           </div>
@@ -1037,27 +1037,27 @@ function showToastDrawer(msg) {
       <!-- Alelo -->
       <div class="card" style="margin-bottom:10px">
         <div class="cc-visual" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">
-          <div class="ccv-net">ALELO MULTIBENEFÍCIOS</div>
-          <div class="ccv-num">•••• •••• •••• 9902</div>
-          <div class="ccv-row"><span>Edson S.</span><span>Benefícios</span></div>
+          <div class="ccv-net">ALELO MULTIBENEFÃCIOS</div>
+          <div class="ccv-num">â¢â¢â¢â¢ â¢â¢â¢â¢ â¢â¢â¢â¢ 9902</div>
+          <div class="ccv-row"><span>Edson S.</span><span>BenefÃ­cios</span></div>
         </div>
         <div class="alelo-grid">
-          <div class="alelo-item"><div class="alelo-lbl">🍽️ Refeição</div><div class="alelo-val" style="color:var(--gn4)">R$ 420</div></div>
-          <div class="alelo-item"><div class="alelo-lbl">🛒 Alimentação</div><div class="alelo-val" style="color:var(--bl2)">R$ 280</div></div>
-          <div class="alelo-item"><div class="alelo-lbl">⛽ Combustível</div><div class="alelo-val" style="color:var(--am2)">R$ 180</div></div>
+          <div class="alelo-item"><div class="alelo-lbl">ð½ï¸ RefeiÃ§Ã£o</div><div class="alelo-val" style="color:var(--gn4)">R$ 420</div></div>
+          <div class="alelo-item"><div class="alelo-lbl">ð AlimentaÃ§Ã£o</div><div class="alelo-val" style="color:var(--bl2)">R$ 280</div></div>
+          <div class="alelo-item"><div class="alelo-lbl">â½ CombustÃ­vel</div><div class="alelo-val" style="color:var(--am2)">R$ 180</div></div>
         </div>
-        <div style="padding:8px 13px;font-size:11px;color:var(--tx2);background:var(--bg3);border-top:1px solid var(--bd)">🚗 Aceito em postos, restaurantes e supermercados</div>
+        <div style="padding:8px 13px;font-size:11px;color:var(--tx2);background:var(--bg3);border-top:1px solid var(--bd)">ð Aceito em postos, restaurantes e supermercados</div>
       </div>
     </div>
 
     <!-- ===== COMPRAS ===== -->
     <div class="page" id="pg-compras">
-      <div class="info-box">💡 Horário atual: <b id="meal-detect">–</b></div>
+      <div class="info-box">ð¡ HorÃ¡rio atual: <b id="meal-detect">â</b></div>
       <div class="sec-title">Filtrar plataforma</div>
       <div class="mkt-chips" id="mkt-chips"></div>
-      <div class="sec-title">Refeições detectadas hoje</div>
+      <div class="sec-title">RefeiÃ§Ãµes detectadas hoje</div>
       <div class="card" id="meal-list"></div>
-      <div class="sec-title">Transações — toque para detalhar</div>
+      <div class="sec-title">TransaÃ§Ãµes â toque para detalhar</div>
       <div class="card" id="mkt-txs"></div>
     </div>
 
@@ -1065,9 +1065,9 @@ function showToastDrawer(msg) {
     <div class="page" id="pg-lista">
       <div class="mc-grid">
         <div class="mc"><div class="mc-lbl">Pendentes</div><div class="mc-val" id="p-count">0</div></div>
-        <div class="mc"><div class="mc-lbl">Concluídos</div><div class="mc-val" id="d-count">0</div></div>
+        <div class="mc"><div class="mc-lbl">ConcluÃ­dos</div><div class="mc-val" id="d-count">0</div></div>
       </div>
-      <div class="info-box" style="font-size:11px">🔍 Digite para buscar — departamento preenchido automaticamente</div>
+      <div class="info-box" style="font-size:11px">ð Digite para buscar â departamento preenchido automaticamente</div>
       <div class="search-wrap">
         <input id="si-inp" placeholder="Buscar produto... (ex: leite, arroz...)" oninput="searchProduct(this.value)" onkeydown="if(event.key==='Enter'){addFromSearch();event.preventDefault()}">
       </div>
@@ -1077,7 +1077,7 @@ function showToastDrawer(msg) {
       <div style="height:16px"></div>
     </div>
 
-    <!-- ===== SERVIÇOS ===== -->
+    <!-- ===== SERVIÃOS ===== -->
     <div class="page" id="pg-servicos">
       <div class="mc-grid">
         <div class="mc"><div class="mc-lbl">Total mensal</div><div class="mc-val" style="color:var(--rd2)" id="sub-m">R$ 0</div></div>
@@ -1087,8 +1087,8 @@ function showToastDrawer(msg) {
       <div class="total-box"><span style="font-size:13px;font-weight:600;color:var(--rd2)">Total mensal</span><span style="font-size:18px;font-weight:700;color:var(--rd2)" id="sub-total">R$ 0</span></div>
       <div class="card">
         <div class="add-row">
-          <input id="sn-name" placeholder="Nome do serviço">
-          <input id="sn-price" placeholder="R$/mês" class="sm">
+          <input id="sn-name" placeholder="Nome do serviÃ§o">
+          <input id="sn-price" placeholder="R$/mÃªs" class="sm">
           <button class="btn-bl" onclick="addSub()">+</button>
         </div>
       </div>
@@ -1101,76 +1101,76 @@ function showToastDrawer(msg) {
 
   <!-- BOTTOM NAV -->
   <div class="bottom-nav">
-    <div class="bn on" onclick="navTo('inicio',null,this)"><div class="bn-icon">🏠</div>Início</div>
-    <div class="bn" onclick="navTo('gastos',null,this)"><div class="bn-icon">📊</div>Gastos</div>
-    <div class="bn" onclick="navTo('cartoes',null,this)"><div class="bn-icon">💳</div>Cartões</div>
-    <div class="bn" onclick="navTo('compras',null,this)"><div class="bn-icon">🛍️</div>Compras</div>
-    <div class="bn" onclick="navTo('lista',null,this)"><div class="bn-icon">🛒</div>Lista</div>
+    <div class="bn on" onclick="navTo('inicio',null,this)"><div class="bn-icon">ð </div>InÃ­cio</div>
+    <div class="bn" onclick="navTo('gastos',null,this)"><div class="bn-icon">ð</div>Gastos</div>
+    <div class="bn" onclick="navTo('cartoes',null,this)"><div class="bn-icon">ð³</div>CartÃµes</div>
+    <div class="bn" onclick="navTo('compras',null,this)"><div class="bn-icon">ðï¸</div>Compras</div>
+    <div class="bn" onclick="navTo('lista',null,this)"><div class="bn-icon">ð</div>Lista</div>
   </div>
 </div><!-- /app -->
 
 <script>
 /* ===== DADOS ===== */
 const CATS=[
-  {n:'Alimentação',spend:920,budget:800,color:'#e53935',ico:'🍽️',txs:[
-    {d:'24/03',n:'St. Marche',v:-187.40,ico:'🛒',bg:'#e8f5e9'},
-    {d:'23/03',n:'iFood',v:-68.90,ico:'🛵',bg:'#fff3e0'},
-    {d:'16/03',n:'Keeta',v:-38.50,ico:'🟢',bg:'#e8f5e9'},
-    {d:'15/03',n:'Rappi',v:-28.90,ico:'🟠',bg:'#ffebee'},
-    {d:'14/03',n:'99Food',v:-55.00,ico:'🟡',bg:'#fffde7'},
-    {d:'10/03',n:'Hortifruti',v:-89.20,ico:'🥦',bg:'#e8f5e9'},
-    {d:'02/03',n:'Restaurante Central',v:-112.00,ico:'🍽️',bg:'#fff3e0'},
+  {n:'AlimentaÃ§Ã£o',spend:920,budget:800,color:'#e53935',ico:'ð½ï¸',txs:[
+    {d:'24/03',n:'St. Marche',v:-187.40,ico:'ð',bg:'#e8f5e9'},
+    {d:'23/03',n:'iFood',v:-68.90,ico:'ðµ',bg:'#fff3e0'},
+    {d:'16/03',n:'Keeta',v:-38.50,ico:'ð¢',bg:'#e8f5e9'},
+    {d:'15/03',n:'Rappi',v:-28.90,ico:'ð ',bg:'#ffebee'},
+    {d:'14/03',n:'99Food',v:-55.00,ico:'ð¡',bg:'#fffde7'},
+    {d:'10/03',n:'Hortifruti',v:-89.20,ico:'ð¥¦',bg:'#e8f5e9'},
+    {d:'02/03',n:'Restaurante Central',v:-112.00,ico:'ð½ï¸',bg:'#fff3e0'},
   ]},
-  {n:'Crédito',spend:600,budget:700,color:'#8e24aa',ico:'💳',txs:[
-    {d:'15/03',n:'Fatura Nubank — TV',v:-240,ico:'📺',bg:'#f3e5f5'},
-    {d:'10/03',n:'Fatura Nubank — roupas',v:-180,ico:'👕',bg:'#f3e5f5'},
-    {d:'05/03',n:'Fatura Santander — eletrônico',v:-180,ico:'📱',bg:'#f3e5f5'},
+  {n:'CrÃ©dito',spend:600,budget:700,color:'#8e24aa',ico:'ð³',txs:[
+    {d:'15/03',n:'Fatura Nubank â TV',v:-240,ico:'ðº',bg:'#f3e5f5'},
+    {d:'10/03',n:'Fatura Nubank â roupas',v:-180,ico:'ð',bg:'#f3e5f5'},
+    {d:'05/03',n:'Fatura Santander â eletrÃ´nico',v:-180,ico:'ð±',bg:'#f3e5f5'},
   ]},
-  {n:'Transporte',spend:340,budget:500,color:'#ef6c00',ico:'🚗',txs:[
-    {d:'22/03',n:'Uber',v:-38.90,ico:'🚗',bg:'#fff3e0'},
-    {d:'20/03',n:'Gasolina Shell',v:-180.00,ico:'⛽',bg:'#fff3e0'},
-    {d:'18/03',n:'99 Taxi',v:-32.00,ico:'🚕',bg:'#fff3e0'},
-    {d:'15/03',n:'Metrô (recarga)',v:-50.00,ico:'🚇',bg:'#e3f2fd'},
-    {d:'10/03',n:'Uber',v:-39.10,ico:'🚗',bg:'#fff3e0'},
+  {n:'Transporte',spend:340,budget:500,color:'#ef6c00',ico:'ð',txs:[
+    {d:'22/03',n:'Uber',v:-38.90,ico:'ð',bg:'#fff3e0'},
+    {d:'20/03',n:'Gasolina Shell',v:-180.00,ico:'â½',bg:'#fff3e0'},
+    {d:'18/03',n:'99 Taxi',v:-32.00,ico:'ð',bg:'#fff3e0'},
+    {d:'15/03',n:'MetrÃ´ (recarga)',v:-50.00,ico:'ð',bg:'#e3f2fd'},
+    {d:'10/03',n:'Uber',v:-39.10,ico:'ð',bg:'#fff3e0'},
   ]},
-  {n:'Streaming',spend:205,budget:250,color:'#1e88e5',ico:'📺',txs:[
-    {d:'22/03',n:'Netflix',v:-55.90,ico:'📺',bg:'#ffebee'},
-    {d:'15/03',n:'Disney+',v:-43.90,ico:'🎬',bg:'#e3f2fd'},
-    {d:'10/03',n:'Spotify',v:-26.90,ico:'🎵',bg:'#e8f5e9'},
-    {d:'08/03',n:'YouTube Premium',v:-27.90,ico:'▶️',bg:'#ffebee'},
-    {d:'03/03',n:'Globoplay',v:-24.90,ico:'🎞️',bg:'#ffebee'},
+  {n:'Streaming',spend:205,budget:250,color:'#1e88e5',ico:'ðº',txs:[
+    {d:'22/03',n:'Netflix',v:-55.90,ico:'ðº',bg:'#ffebee'},
+    {d:'15/03',n:'Disney+',v:-43.90,ico:'ð¬',bg:'#e3f2fd'},
+    {d:'10/03',n:'Spotify',v:-26.90,ico:'ðµ',bg:'#e8f5e9'},
+    {d:'08/03',n:'YouTube Premium',v:-27.90,ico:'â¶ï¸',bg:'#ffebee'},
+    {d:'03/03',n:'Globoplay',v:-24.90,ico:'ðï¸',bg:'#ffebee'},
   ]},
-  {n:'Contas fixas',spend:620,budget:700,color:'#0097a7',ico:'⚡',txs:[
-    {d:'20/03',n:'Conta de Luz',v:-212.00,ico:'⚡',bg:'#fff3e0'},
-    {d:'15/03',n:'Internet Vivo',v:-99.90,ico:'📡',bg:'#e3f2fd'},
-    {d:'10/03',n:'Condomínio',v:-280.00,ico:'🏢',bg:'#e8f5e9'},
-    {d:'05/03',n:'Água',v:-28.10,ico:'💧',bg:'#e3f2fd'},
+  {n:'Contas fixas',spend:620,budget:700,color:'#0097a7',ico:'â¡',txs:[
+    {d:'20/03',n:'Conta de Luz',v:-212.00,ico:'â¡',bg:'#fff3e0'},
+    {d:'15/03',n:'Internet Vivo',v:-99.90,ico:'ð¡',bg:'#e3f2fd'},
+    {d:'10/03',n:'CondomÃ­nio',v:-280.00,ico:'ð¢',bg:'#e8f5e9'},
+    {d:'05/03',n:'Ãgua',v:-28.10,ico:'ð§',bg:'#e3f2fd'},
   ]},
-  {n:'Saúde',spend:180,budget:400,color:'#43a047',ico:'💊',txs:[
-    {d:'18/03',n:'Drogasil',v:-42.80,ico:'💊',bg:'#e8f5e9'},
-    {d:'12/03',n:'Consulta médica',v:-90.00,ico:'🏥',bg:'#e8f5e9'},
-    {d:'05/03',n:'Academia',v:-47.20,ico:'🏋️',bg:'#e8f5e9'},
+  {n:'SaÃºde',spend:180,budget:400,color:'#43a047',ico:'ð',txs:[
+    {d:'18/03',n:'Drogasil',v:-42.80,ico:'ð',bg:'#e8f5e9'},
+    {d:'12/03',n:'Consulta mÃ©dica',v:-90.00,ico:'ð¥',bg:'#e8f5e9'},
+    {d:'05/03',n:'Academia',v:-47.20,ico:'ðï¸',bg:'#e8f5e9'},
   ]},
-  {n:'Lazer',spend:280,budget:300,color:'#f9a825',ico:'🎭',txs:[
-    {d:'22/03',n:'Cinema',v:-54.00,ico:'🎬',bg:'#fffde7'},
-    {d:'18/03',n:'Bar Brahma',v:-89.50,ico:'🍺',bg:'#fffde7'},
-    {d:'10/03',n:'Show',v:-136.50,ico:'🎵',bg:'#fffde7'},
+  {n:'Lazer',spend:280,budget:300,color:'#f9a825',ico:'ð­',txs:[
+    {d:'22/03',n:'Cinema',v:-54.00,ico:'ð¬',bg:'#fffde7'},
+    {d:'18/03',n:'Bar Brahma',v:-89.50,ico:'ðº',bg:'#fffde7'},
+    {d:'10/03',n:'Show',v:-136.50,ico:'ðµ',bg:'#fffde7'},
   ]},
 ];
 
 const TXS=[
-  {date:'24/03',n:'St. Marche',cat:'Alimentação',conta:'Nubank',amt:-187.40,ico:'🛒',bg:'#e8f5e9',app:'mercado'},
-  {date:'01/03',n:'Salário',cat:'Receita',conta:'Santander',amt:5200,ico:'💼',bg:'#e3f2fd',app:''},
-  {date:'23/03',n:'iFood',cat:'Alimentação',conta:'Nubank',amt:-68.90,ico:'🛵',bg:'#fff3e0',app:'ifood'},
-  {date:'22/03',n:'Netflix',cat:'Streaming',conta:'Nubank',amt:-55.90,ico:'📺',bg:'#ffebee',app:'streaming'},
-  {date:'20/03',n:'Conta de Luz',cat:'Contas fixas',conta:'Inter',amt:-212,ico:'⚡',bg:'#fff3e0',app:''},
-  {date:'18/03',n:'Amazon',cat:'Compras online',conta:'Nubank',amt:-189.90,ico:'📦',bg:'#fffde7',app:'amazon'},
-  {date:'17/03',n:'Mercado Livre',cat:'Compras online',conta:'Santander',amt:-320,ico:'🛍️',bg:'#fff3e0',app:'mercadolivre'},
-  {date:'16/03',n:'Keeta',cat:'Alimentação',conta:'Nubank',amt:-38.50,ico:'🟢',bg:'#e8f5e9',app:'keeta'},
-  {date:'15/03',n:'Rappi',cat:'Alimentação',conta:'Nubank',amt:-28.90,ico:'🟠',bg:'#ffebee',app:'rappi'},
-  {date:'14/03',n:'99Food',cat:'Alimentação',conta:'Nubank',amt:-55,ico:'🟡',bg:'#fffde7',app:'99food'},
-  {date:'13/03',n:'Shopee',cat:'Compras online',conta:'Nubank',amt:-98.50,ico:'🟠',bg:'#fff3e0',app:'shopee'},
-  {date:'12/03',n:'Drogasil',cat:'Saúde',conta:'Nubank',amt:-42.80,ico:'💊',bg:'#e8f5e9',app:''},
+  {date:'24/03',n:'St. Marche',cat:'AlimentaÃ§Ã£o',conta:'Nubank',amt:-187.40,ico:'ð',bg:'#e8f5e9',app:'mercado'},
+  {date:'01/03',n:'SalÃ¡rio',cat:'Receita',conta:'Santander',amt:5200,ico:'ð¼',bg:'#e3f2fd',app:''},
+  {date:'23/03',n:'iFood',cat:'AlimentaÃ§Ã£o',conta:'Nubank',amt:-68.90,ico:'ðµ',bg:'#fff3e0',app:'ifood'},
+  {date:'22/03',n:'Netflix',cat:'Streaming',conta:'Nubank',amt:-55.90,ico:'ðº',bg:'#ffebee',app:'streaming'},
+  {date:'20/03',n:'Conta de Luz',cat:'Contas fixas',conta:'Inter',amt:-212,ico:'â¡',bg:'#fff3e0',app:''},
+  {date:'18/03',n:'Amazon',cat:'Compras online',conta:'Nubank',amt:-189.90,ico:'ð¦',bg:'#fffde7',app:'amazon'},
+  {date:'17/03',n:'Mercado Livre',cat:'Compras online',conta:'Santander',amt:-320,ico:'ðï¸',bg:'#fff3e0',app:'mercadolivre'},
+  {date:'16/03',n:'Keeta',cat:'AlimentaÃ§Ã£o',conta:'Nubank',amt:-38.50,ico:'ð¢',bg:'#e8f5e9',app:'keeta'},
+  {date:'15/03',n:'Rappi',cat:'AlimentaÃ§Ã£o',conta:'Nubank',amt:-28.90,ico:'ð ',bg:'#ffebee',app:'rappi'},
+  {date:'14/03',n:'99Food',cat:'AlimentaÃ§Ã£o',conta:'Nubank',amt:-55,ico:'ð¡',bg:'#fffde7',app:'99food'},
+  {date:'13/03',n:'Shopee',cat:'Compras online',conta:'Nubank',amt:-98.50,ico:'ð ',bg:'#fff3e0',app:'shopee'},
+  {date:'12/03',n:'Drogasil',cat:'SaÃºde',conta:'Nubank',amt:-42.80,ico:'ð',bg:'#e8f5e9',app:''},
 ];
 
 const MKT=[
@@ -1187,20 +1187,20 @@ const MKT=[
 let mktF='todos';
 
 const MEAL_TYPES=[
-  {r:[5,9],label:'☀️ Café da manhã',icon:'☕'},
-  {r:[9,11],label:'🥐 Lanche manhã',icon:'🥐'},
-  {r:[11,14],label:'🍽️ Almoço',icon:'🍽️'},
-  {r:[14,17],label:'🍵 Lanche tarde',icon:'🍵'},
-  {r:[17,20],label:'🌅 Café da tarde',icon:'🌅'},
-  {r:[20,24],label:'🌙 Jantar',icon:'🌙'},
+  {r:[5,9],label:'âï¸ CafÃ© da manhÃ£',icon:'â'},
+  {r:[9,11],label:'ð¥ Lanche manhÃ£',icon:'ð¥'},
+  {r:[11,14],label:'ð½ï¸ AlmoÃ§o',icon:'ð½ï¸'},
+  {r:[14,17],label:'ðµ Lanche tarde',icon:'ðµ'},
+  {r:[17,20],label:'ð CafÃ© da tarde',icon:'ð'},
+  {r:[20,24],label:'ð Jantar',icon:'ð'},
 ];
-function getMealType(h){return MEAL_TYPES.find(m=>h>=m.r[0]&&h<m.r[1])||{label:'🍴 Refeição',icon:'🍴'};}
+function getMealType(h){return MEAL_TYPES.find(m=>h>=m.r[0]&&h<m.r[1])||{label:'ð´ RefeiÃ§Ã£o',icon:'ð´'};}
 
 const MEALS=[
-  {h:8,min:15,name:"Bob's Natural",app:'iFood',amt:28.90,ico:'☕'},
-  {h:12,min:30,name:'Madero Burger',app:'iFood',amt:42.50,ico:'🍔'},
-  {h:16,min:0,name:'Padaria Central',app:'Keeta',amt:18.90,ico:'🥐'},
-  {h:20,min:10,name:'Sushi Leblon',app:'Rappi',amt:89.00,ico:'🍣'},
+  {h:8,min:15,name:"Bob's Natural",app:'iFood',amt:28.90,ico:'â'},
+  {h:12,min:30,name:'Madero Burger',app:'iFood',amt:42.50,ico:'ð'},
+  {h:16,min:0,name:'Padaria Central',app:'Keeta',amt:18.90,ico:'ð¥'},
+  {h:20,min:10,name:'Sushi Leblon',app:'Rappi',amt:89.00,ico:'ð£'},
 ];
 
 /* ===== NAV ===== */
@@ -1226,7 +1226,7 @@ function setGreeting(){const h=new Date().getHours();document.getElementById('gr
 setGreeting();
 
 /* ===== MONTH ===== */
-const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MONTHS=['Janeiro','Fevereiro','MarÃ§o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 let curM=2,curY=2026;
 function changeMonth(d){curM+=d;if(curM<0){curM=11;curY--;}else if(curM>11){curM=0;curY++;}document.getElementById('mn-lbl').textContent=MONTHS[curM]+' '+curY;}
 
@@ -1244,7 +1244,7 @@ function renderSpark(){
 /* ===== TX HOME ===== */
 function renderTxHome(){
   const el=document.getElementById('tx-home');if(!el)return;
-  el.innerHTML=TXS.slice(0,7).map(t=>`<div class="row" onclick="openDrill('${t.cat}')"><div style="width:36px;height:36px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${t.ico}</div><div class="rinfo"><div class="rname">${t.n}</div><div class="rsub">${t.date} · ${t.cat}</div></div><div class="ramt"><div class="rval ${t.amt<0?'neg':'pos'}">${t.amt<0?'-R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div></div>`).join('');
+  el.innerHTML=TXS.slice(0,7).map(t=>`<div class="row" onclick="openDrill('${t.cat}')"><div style="width:36px;height:36px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${t.ico}</div><div class="rinfo"><div class="rname">${t.n}</div><div class="rsub">${t.date} Â· ${t.cat}</div></div><div class="ramt"><div class="rval ${t.amt<0?'neg':'pos'}">${t.amt<0?'-R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div></div>`).join('');
 }
 
 /* ===== GASTOS ===== */
@@ -1260,7 +1260,7 @@ function renderGastos(){
   const tot=CATS.reduce((a,c)=>a+c.spend,0);
   document.getElementById('donut-legend').innerHTML=CATS.map(c=>`<div class="leg-item"><div class="leg-sq" style="background:${c.color}"></div>${c.n} ${Math.round(c.spend/tot*100)}%</div>`).join('');
   const orc=document.getElementById('orc-list');
-  orc.innerHTML=CATS.map(c=>{const p=Math.min(Math.round(c.spend/c.budget*100),100);const ov=c.spend>c.budget;return`<div class="orc-row" onclick="openCatDrill(${JSON.stringify(c).replace(/"/g,'&quot;')})"><div class="orc-hdr"><div class="orc-dot" style="background:${c.color}"></div><div class="orc-name">${c.ico} ${c.n}</div><div class="orc-vals">${ov?'⚠ ':''}R$${c.spend}/R$${c.budget} (${p}%)</div><span style="color:var(--bl);font-size:11px">›</span></div><div class="orc-bar"><div class="orc-fill" style="width:${p}%;background:${ov?'var(--rd2)':c.color}"></div></div></div>`}).join('');
+  orc.innerHTML=CATS.map(c=>{const p=Math.min(Math.round(c.spend/c.budget*100),100);const ov=c.spend>c.budget;return`<div class="orc-row" onclick="openCatDrill(${JSON.stringify(c).replace(/"/g,'&quot;')})"><div class="orc-hdr"><div class="orc-dot" style="background:${c.color}"></div><div class="orc-name">${c.ico} ${c.n}</div><div class="orc-vals">${ov?'â  ':''}R$${c.spend}/R$${c.budget} (${p}%)</div><span style="color:var(--bl);font-size:11px">âº</span></div><div class="orc-bar"><div class="orc-fill" style="width:${p}%;background:${ov?'var(--rd2)':c.color}"></div></div></div>`}).join('');
 }
 
 /* ===== COMPRAS ===== */
@@ -1270,72 +1270,72 @@ function renderCompras(){
   const chips=document.getElementById('mkt-chips');
   chips.innerHTML=MKT.map(m=>`<div class="mkt-chip${m.id===mktF?' on':''}" style="${m.id===mktF?'background:'+m.color+';border-color:'+m.color+(m.tc?';color:'+m.tc:''):''}" onclick="setMkt('${m.id}')"><div class="mkt-logo" style="background:${m.color};color:${m.tc||'#fff'}">${m.label[0]}</div>${m.label}</div>`).join('');
   const mealEl=document.getElementById('meal-list');
-  mealEl.innerHTML=MEALS.map(m=>{const mt=getMealType(m.h);return`<div class="meal-row"><span class="meal-badge">${mt.icon} ${mt.label.split(' ').slice(1).join(' ')}</span><span style="font-size:16px;margin:0 4px">${m.ico}</span><div class="rinfo"><div class="rname">${m.name}</div><div class="rsub">${String(m.h).padStart(2,'0')}:${String(m.min).padStart(2,'0')} · ${m.app}</div></div><div class="rval neg">-R$${m.amt.toFixed(2)}</div></div>`}).join('');
+  mealEl.innerHTML=MEALS.map(m=>{const mt=getMealType(m.h);return`<div class="meal-row"><span class="meal-badge">${mt.icon} ${mt.label.split(' ').slice(1).join(' ')}</span><span style="font-size:16px;margin:0 4px">${m.ico}</span><div class="rinfo"><div class="rname">${m.name}</div><div class="rsub">${String(m.h).padStart(2,'0')}:${String(m.min).padStart(2,'0')} Â· ${m.app}</div></div><div class="rval neg">-R$${m.amt.toFixed(2)}</div></div>`}).join('');
   const txEl=document.getElementById('mkt-txs');
   let filtered=mktF==='todos'?TXS.filter(t=>t.app&&t.app!=='streaming'):TXS.filter(t=>t.app===mktF);
-  txEl.innerHTML=filtered.length?filtered.map(t=>`<div class="row" onclick="openDrill('${t.cat}')"><div style="width:34px;height:34px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${t.ico}</div><div class="rinfo"><div class="rname">${t.n}</div><div class="rsub">${t.date} · ${t.conta}</div></div><div class="rval neg">-R$${Math.abs(t.amt).toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nenhuma transação</div>';
+  txEl.innerHTML=filtered.length?filtered.map(t=>`<div class="row" onclick="openDrill('${t.cat}')"><div style="width:34px;height:34px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">${t.ico}</div><div class="rinfo"><div class="rname">${t.n}</div><div class="rsub">${t.date} Â· ${t.conta}</div></div><div class="rval neg">-R$${Math.abs(t.amt).toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nenhuma transaÃ§Ã£o</div>';
 }
 function setMkt(id){mktF=id;renderCompras();}
 
 /* ===== LISTA ===== */
 const PRODUCTS=[
-  {n:'Leite Integral',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🥛',un:'cx'},
-  {n:'Leite Desnatado',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🥛',un:'cx'},
-  {n:'Iogurte Natural',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🍶',un:'un'},
-  {n:'Queijo Mussarela',cat:'Frios',dept:'Frios e Laticínios',ico:'🧀',un:'kg'},
-  {n:'Manteiga',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🧈',un:'un'},
-  {n:'Ovo',cat:'Ovos',dept:'Frios e Laticínios',ico:'🥚',un:'dz'},
-  {n:'Arroz Branco',cat:'Grãos',dept:'Mercearia',ico:'🍚',un:'kg'},
-  {n:'Arroz Integral',cat:'Grãos',dept:'Mercearia',ico:'🍚',un:'kg'},
-  {n:'Feijão Carioca',cat:'Grãos',dept:'Mercearia',ico:'🫘',un:'kg'},
-  {n:'Feijão Preto',cat:'Grãos',dept:'Mercearia',ico:'🫘',un:'kg'},
-  {n:'Macarrão Espaguete',cat:'Massas',dept:'Mercearia',ico:'🍝',un:'pc'},
-  {n:'Farinha de Trigo',cat:'Farinhas',dept:'Mercearia',ico:'🌾',un:'kg'},
-  {n:'Açúcar Refinado',cat:'Açúcar',dept:'Mercearia',ico:'🍬',un:'kg'},
-  {n:'Óleo de Soja',cat:'Óleos',dept:'Mercearia',ico:'🫙',un:'un'},
-  {n:'Azeite de Oliva',cat:'Óleos',dept:'Mercearia',ico:'🫒',un:'un'},
-  {n:'Café em Pó',cat:'Bebidas',dept:'Mercearia',ico:'☕',un:'pc'},
-  {n:'Ketchup',cat:'Molhos',dept:'Mercearia',ico:'🍅',un:'un'},
-  {n:'Maionese',cat:'Molhos',dept:'Mercearia',ico:'🫙',un:'un'},
-  {n:'Refrigerante Cola',cat:'Bebidas',dept:'Bebidas',ico:'🥤',un:'un'},
-  {n:'Água Mineral',cat:'Bebidas',dept:'Bebidas',ico:'💧',un:'un'},
-  {n:'Vinho Tinto',cat:'Bebidas Alcoólicas',dept:'Bebidas',ico:'🍷',un:'gf'},
-  {n:'Frango Filé',cat:'Aves',dept:'Açougue',ico:'🍗',un:'kg'},
-  {n:'Carne Bovina',cat:'Carnes',dept:'Açougue',ico:'🥩',un:'kg'},
-  {n:'Carne Moída',cat:'Carnes',dept:'Açougue',ico:'🥩',un:'kg'},
-  {n:'Picanha',cat:'Carnes',dept:'Açougue',ico:'🥩',un:'kg'},
-  {n:'Linguiça Toscana',cat:'Embutidos',dept:'Açougue',ico:'🌭',un:'kg'},
-  {n:'Alface',cat:'Folhosas',dept:'Hortifruti',ico:'🥬',un:'pé'},
-  {n:'Tomate',cat:'Legumes',dept:'Hortifruti',ico:'🍅',un:'kg'},
-  {n:'Tomate Cereja',cat:'Legumes',dept:'Hortifruti',ico:'🍅',un:'cx'},
-  {n:'Cebola',cat:'Legumes',dept:'Hortifruti',ico:'🧅',un:'kg'},
-  {n:'Batata',cat:'Legumes',dept:'Hortifruti',ico:'🥔',un:'kg'},
-  {n:'Cenoura',cat:'Legumes',dept:'Hortifruti',ico:'🥕',un:'kg'},
-  {n:'Brócolis',cat:'Legumes',dept:'Hortifruti',ico:'🥦',un:'un'},
-  {n:'Banana Prata',cat:'Frutas',dept:'Hortifruti',ico:'🍌',un:'kg'},
-  {n:'Maçã Fuji',cat:'Frutas',dept:'Hortifruti',ico:'🍎',un:'kg'},
-  {n:'Laranja',cat:'Frutas',dept:'Hortifruti',ico:'🍊',un:'kg'},
-  {n:'Morango',cat:'Frutas',dept:'Hortifruti',ico:'🍓',un:'cx'},
-  {n:'Pão de Forma',cat:'Pães',dept:'Padaria',ico:'🍞',un:'pc'},
-  {n:'Pão Francês',cat:'Pães',dept:'Padaria',ico:'🥖',un:'kg'},
-  {n:'Detergente',cat:'Limpeza',dept:'Limpeza',ico:'🧴',un:'un'},
-  {n:'Sabão em Pó',cat:'Limpeza',dept:'Limpeza',ico:'🧺',un:'kg'},
-  {n:'Amaciante',cat:'Limpeza',dept:'Limpeza',ico:'🧴',un:'un'},
-  {n:'Papel Higiênico',cat:'Higiene',dept:'Higiene',ico:'🧻',un:'pc'},
-  {n:'Shampoo',cat:'Higiene',dept:'Higiene',ico:'🧴',un:'un'},
-  {n:'Sabonete',cat:'Higiene',dept:'Higiene',ico:'🧼',un:'un'},
-  {n:'Creme Dental',cat:'Higiene',dept:'Higiene',ico:'🪥',un:'un'},
+  {n:'Leite Integral',cat:'LaticÃ­nios',dept:'Frios e LaticÃ­nios',ico:'ð¥',un:'cx'},
+  {n:'Leite Desnatado',cat:'LaticÃ­nios',dept:'Frios e LaticÃ­nios',ico:'ð¥',un:'cx'},
+  {n:'Iogurte Natural',cat:'LaticÃ­nios',dept:'Frios e LaticÃ­nios',ico:'ð¶',un:'un'},
+  {n:'Queijo Mussarela',cat:'Frios',dept:'Frios e LaticÃ­nios',ico:'ð§',un:'kg'},
+  {n:'Manteiga',cat:'LaticÃ­nios',dept:'Frios e LaticÃ­nios',ico:'ð§',un:'un'},
+  {n:'Ovo',cat:'Ovos',dept:'Frios e LaticÃ­nios',ico:'ð¥',un:'dz'},
+  {n:'Arroz Branco',cat:'GrÃ£os',dept:'Mercearia',ico:'ð',un:'kg'},
+  {n:'Arroz Integral',cat:'GrÃ£os',dept:'Mercearia',ico:'ð',un:'kg'},
+  {n:'FeijÃ£o Carioca',cat:'GrÃ£os',dept:'Mercearia',ico:'ð«',un:'kg'},
+  {n:'FeijÃ£o Preto',cat:'GrÃ£os',dept:'Mercearia',ico:'ð«',un:'kg'},
+  {n:'MacarrÃ£o Espaguete',cat:'Massas',dept:'Mercearia',ico:'ð',un:'pc'},
+  {n:'Farinha de Trigo',cat:'Farinhas',dept:'Mercearia',ico:'ð¾',un:'kg'},
+  {n:'AÃ§Ãºcar Refinado',cat:'AÃ§Ãºcar',dept:'Mercearia',ico:'ð¬',un:'kg'},
+  {n:'Ãleo de Soja',cat:'Ãleos',dept:'Mercearia',ico:'ð«',un:'un'},
+  {n:'Azeite de Oliva',cat:'Ãleos',dept:'Mercearia',ico:'ð«',un:'un'},
+  {n:'CafÃ© em PÃ³',cat:'Bebidas',dept:'Mercearia',ico:'â',un:'pc'},
+  {n:'Ketchup',cat:'Molhos',dept:'Mercearia',ico:'ð',un:'un'},
+  {n:'Maionese',cat:'Molhos',dept:'Mercearia',ico:'ð«',un:'un'},
+  {n:'Refrigerante Cola',cat:'Bebidas',dept:'Bebidas',ico:'ð¥¤',un:'un'},
+  {n:'Ãgua Mineral',cat:'Bebidas',dept:'Bebidas',ico:'ð§',un:'un'},
+  {n:'Vinho Tinto',cat:'Bebidas AlcoÃ³licas',dept:'Bebidas',ico:'ð·',un:'gf'},
+  {n:'Frango FilÃ©',cat:'Aves',dept:'AÃ§ougue',ico:'ð',un:'kg'},
+  {n:'Carne Bovina',cat:'Carnes',dept:'AÃ§ougue',ico:'ð¥©',un:'kg'},
+  {n:'Carne MoÃ­da',cat:'Carnes',dept:'AÃ§ougue',ico:'ð¥©',un:'kg'},
+  {n:'Picanha',cat:'Carnes',dept:'AÃ§ougue',ico:'ð¥©',un:'kg'},
+  {n:'LinguiÃ§a Toscana',cat:'Embutidos',dept:'AÃ§ougue',ico:'ð­',un:'kg'},
+  {n:'Alface',cat:'Folhosas',dept:'Hortifruti',ico:'ð¥¬',un:'pÃ©'},
+  {n:'Tomate',cat:'Legumes',dept:'Hortifruti',ico:'ð',un:'kg'},
+  {n:'Tomate Cereja',cat:'Legumes',dept:'Hortifruti',ico:'ð',un:'cx'},
+  {n:'Cebola',cat:'Legumes',dept:'Hortifruti',ico:'ð§',un:'kg'},
+  {n:'Batata',cat:'Legumes',dept:'Hortifruti',ico:'ð¥',un:'kg'},
+  {n:'Cenoura',cat:'Legumes',dept:'Hortifruti',ico:'ð¥',un:'kg'},
+  {n:'BrÃ³colis',cat:'Legumes',dept:'Hortifruti',ico:'ð¥¦',un:'un'},
+  {n:'Banana Prata',cat:'Frutas',dept:'Hortifruti',ico:'ð',un:'kg'},
+  {n:'MaÃ§Ã£ Fuji',cat:'Frutas',dept:'Hortifruti',ico:'ð',un:'kg'},
+  {n:'Laranja',cat:'Frutas',dept:'Hortifruti',ico:'ð',un:'kg'},
+  {n:'Morango',cat:'Frutas',dept:'Hortifruti',ico:'ð',un:'cx'},
+  {n:'PÃ£o de Forma',cat:'PÃ£es',dept:'Padaria',ico:'ð',un:'pc'},
+  {n:'PÃ£o FrancÃªs',cat:'PÃ£es',dept:'Padaria',ico:'ð¥',un:'kg'},
+  {n:'Detergente',cat:'Limpeza',dept:'Limpeza',ico:'ð§´',un:'un'},
+  {n:'SabÃ£o em PÃ³',cat:'Limpeza',dept:'Limpeza',ico:'ð§º',un:'kg'},
+  {n:'Amaciante',cat:'Limpeza',dept:'Limpeza',ico:'ð§´',un:'un'},
+  {n:'Papel HigiÃªnico',cat:'Higiene',dept:'Higiene',ico:'ð§»',un:'pc'},
+  {n:'Shampoo',cat:'Higiene',dept:'Higiene',ico:'ð§´',un:'un'},
+  {n:'Sabonete',cat:'Higiene',dept:'Higiene',ico:'ð§¼',un:'un'},
+  {n:'Creme Dental',cat:'Higiene',dept:'Higiene',ico:'ðª¥',un:'un'},
 ];
-const DEPT_COLORS={'Frios e Laticínios':'#1e88e5','Mercearia':'#ef6c00','Açougue':'#e53935','Hortifruti':'#43a047','Padaria':'#f9a825','Bebidas':'#8e24aa','Limpeza':'#00838f','Higiene':'#1e88e5','Outros':'#9e9e9e'};
+const DEPT_COLORS={'Frios e LaticÃ­nios':'#1e88e5','Mercearia':'#ef6c00','AÃ§ougue':'#e53935','Hortifruti':'#43a047','Padaria':'#f9a825','Bebidas':'#8e24aa','Limpeza':'#00838f','Higiene':'#1e88e5','Outros':'#9e9e9e'};
 let siItems=[
-  {id:1,n:'Arroz Branco',cat:'Grãos',dept:'Mercearia',ico:'🍚',qty:'5 kg',done:false},
-  {id:2,n:'Feijão Carioca',cat:'Grãos',dept:'Mercearia',ico:'🫘',qty:'1 kg',done:false},
-  {id:3,n:'Frango Filé',cat:'Aves',dept:'Açougue',ico:'🍗',qty:'1 kg',done:false},
-  {id:4,n:'Alface',cat:'Folhosas',dept:'Hortifruti',ico:'🥬',qty:'1 pé',done:true},
-  {id:5,n:'Tomate Cereja',cat:'Legumes',dept:'Hortifruti',ico:'🍅',qty:'500g',done:false},
-  {id:6,n:'Detergente',cat:'Limpeza',dept:'Limpeza',ico:'🧴',qty:'2 un',done:false},
-  {id:7,n:'Leite Integral',cat:'Laticínios',dept:'Frios e Laticínios',ico:'🥛',qty:'2 cx',done:false},
-  {id:8,n:'Pão de Forma',cat:'Pães',dept:'Padaria',ico:'🍞',qty:'1 pc',done:true},
+  {id:1,n:'Arroz Branco',cat:'GrÃ£os',dept:'Mercearia',ico:'ð',qty:'5 kg',done:false},
+  {id:2,n:'FeijÃ£o Carioca',cat:'GrÃ£os',dept:'Mercearia',ico:'ð«',qty:'1 kg',done:false},
+  {id:3,n:'Frango FilÃ©',cat:'Aves',dept:'AÃ§ougue',ico:'ð',qty:'1 kg',done:false},
+  {id:4,n:'Alface',cat:'Folhosas',dept:'Hortifruti',ico:'ð¥¬',qty:'1 pÃ©',done:true},
+  {id:5,n:'Tomate Cereja',cat:'Legumes',dept:'Hortifruti',ico:'ð',qty:'500g',done:false},
+  {id:6,n:'Detergente',cat:'Limpeza',dept:'Limpeza',ico:'ð§´',qty:'2 un',done:false},
+  {id:7,n:'Leite Integral',cat:'LaticÃ­nios',dept:'Frios e LaticÃ­nios',ico:'ð¥',qty:'2 cx',done:false},
+  {id:8,n:'PÃ£o de Forma',cat:'PÃ£es',dept:'Padaria',ico:'ð',qty:'1 pc',done:true},
 ];
 let siNext=9,siFilter='Todos';
 
@@ -1358,7 +1358,7 @@ function addFromSearch(){
   const v=document.getElementById('si-inp').value.trim();if(!v)return;
   const p=PRODUCTS.find(x=>x.n.toLowerCase()===v.toLowerCase());
   if(p) addProduct(p);
-  else{siItems.unshift({id:siNext++,n:v,cat:'Outros',dept:'Outros',ico:'🛒',qty:'1 un',done:false});document.getElementById('si-inp').value='';document.getElementById('ac-drop').classList.remove('open');renderSI();renderCatChips();}
+  else{siItems.unshift({id:siNext++,n:v,cat:'Outros',dept:'Outros',ico:'ð',qty:'1 un',done:false});document.getElementById('si-inp').value='';document.getElementById('ac-drop').classList.remove('open');renderSI();renderCatChips();}
 }
 document.addEventListener('touchstart',e=>{if(!e.target.closest('.search-wrap')&&!e.target.closest('.ac-drop')) document.getElementById('ac-drop').classList.remove('open');},{passive:true});
 
@@ -1373,24 +1373,24 @@ function renderSI(){
   document.getElementById('p-count').textContent=siItems.filter(i=>!i.done).length;
   document.getElementById('d-count').textContent=siItems.filter(i=>i.done).length;
   if(!items.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">Nenhum item</div>';return;}
-  el.innerHTML=items.map(i=>`<div class="si-row"><div class="si-chk${i.done?' done':''}" onclick="toggleSI(${i.id})">${i.done?'✓':''}</div><div style="font-size:18px;margin:0 2px">${i.ico}</div><div style="flex:1;min-width:0"><div class="si-nm${i.done?' done':''}">${i.n}</div><div style="display:flex;align-items:center;gap:5px;margin-top:2px"><span style="font-size:11px;color:var(--tx2)">${i.qty}</span><span class="si-dept" style="background:${DEPT_COLORS[i.dept]||'#ccc'}22;color:${DEPT_COLORS[i.dept]||'#888'}">${i.dept}</span></div></div><span class="si-del" onclick="delSI(${i.id})">×</span></div>`).join('');
+  el.innerHTML=items.map(i=>`<div class="si-row"><div class="si-chk${i.done?' done':''}" onclick="toggleSI(${i.id})">${i.done?'â':''}</div><div style="font-size:18px;margin:0 2px">${i.ico}</div><div style="flex:1;min-width:0"><div class="si-nm${i.done?' done':''}">${i.n}</div><div style="display:flex;align-items:center;gap:5px;margin-top:2px"><span style="font-size:11px;color:var(--tx2)">${i.qty}</span><span class="si-dept" style="background:${DEPT_COLORS[i.dept]||'#ccc'}22;color:${DEPT_COLORS[i.dept]||'#888'}">${i.dept}</span></div></div><span class="si-del" onclick="delSI(${i.id})">Ã</span></div>`).join('');
 }
 function toggleSI(id){const i=siItems.find(x=>x.id===id);if(i)i.done=!i.done;renderSI();}
 function delSI(id){siItems=siItems.filter(x=>x.id!==id);renderSI();renderCatChips();}
 
-/* ===== SERVIÇOS ===== */
+/* ===== SERVIÃOS ===== */
 let subsArr=[
-  {n:'Netflix',logo:'N',color:'#e50914',price:55.90,cycle:'Mensal · dia 5'},
-  {n:'Spotify',logo:'S',color:'#1db954',price:26.90,cycle:'Mensal · dia 10'},
-  {n:'Disney+',logo:'D+',color:'#00a8e0',price:43.90,cycle:'Mensal · dia 15'},
-  {n:'Amazon Prime',logo:'A',color:'#ff9900',price:19.90,cycle:'Mensal · dia 22'},
-  {n:'YouTube Premium',logo:'YT',color:'#ff0000',price:27.90,cycle:'Mensal · dia 8'},
-  {n:'Globoplay',logo:'G',color:'#e6002e',price:24.90,cycle:'Mensal · dia 3'},
-  {n:'Internet Vivo',logo:'V',color:'#9b2eff',price:99.90,cycle:'Mensal · dia 20'},
+  {n:'Netflix',logo:'N',color:'#e50914',price:55.90,cycle:'Mensal Â· dia 5'},
+  {n:'Spotify',logo:'S',color:'#1db954',price:26.90,cycle:'Mensal Â· dia 10'},
+  {n:'Disney+',logo:'D+',color:'#00a8e0',price:43.90,cycle:'Mensal Â· dia 15'},
+  {n:'Amazon Prime',logo:'A',color:'#ff9900',price:19.90,cycle:'Mensal Â· dia 22'},
+  {n:'YouTube Premium',logo:'YT',color:'#ff0000',price:27.90,cycle:'Mensal Â· dia 8'},
+  {n:'Globoplay',logo:'G',color:'#e6002e',price:24.90,cycle:'Mensal Â· dia 3'},
+  {n:'Internet Vivo',logo:'V',color:'#9b2eff',price:99.90,cycle:'Mensal Â· dia 20'},
 ];
 function renderSubs(){
   const el=document.getElementById('sub-list');if(!el)return;
-  el.innerHTML=subsArr.map((s,i)=>`<div class="sub-row" onclick="openSubDrill(${JSON.stringify(s).replace(/"/g,'&quot;')})"><div class="sub-logo" style="background:${s.color}">${s.logo}</div><div class="sub-info"><div class="sub-name">${s.n}</div><div class="sub-cycle">${s.cycle}</div></div><div class="sub-amt">R$ ${s.price.toFixed(2).replace('.',',')}</div><span class="sub-del" onclick="event.stopPropagation();delSub(${i})">×</span></div>`).join('');
+  el.innerHTML=subsArr.map((s,i)=>`<div class="sub-row" onclick="openSubDrill(${JSON.stringify(s).replace(/"/g,'&quot;')})"><div class="sub-logo" style="background:${s.color}">${s.logo}</div><div class="sub-info"><div class="sub-name">${s.n}</div><div class="sub-cycle">${s.cycle}</div></div><div class="sub-amt">R$ ${s.price.toFixed(2).replace('.',',')}</div><span class="sub-del" onclick="event.stopPropagation();delSub(${i})">Ã</span></div>`).join('');
   const m=subsArr.reduce((a,s)=>a+s.price,0);
   document.getElementById('sub-total').textContent='R$ '+m.toFixed(2).replace('.',',');
   document.getElementById('sub-m').textContent='R$ '+Math.round(m);
@@ -1403,20 +1403,20 @@ function addSub(){const n=document.getElementById('sn-name').value.trim();const 
 let drillCh=null;
 function openCatDrill(cat){
   const d=document.getElementById('drill-overlay');
-  document.getElementById('drill-ico').textContent=cat.ico||'📊';
+  document.getElementById('drill-ico').textContent=cat.ico||'ð';
   document.getElementById('drill-ico').style.cssText=`background:${cat.color}22;color:${cat.color}`;
-  document.getElementById('drill-title').textContent=cat.n+' — Março 2026';
-  document.getElementById('drill-sub').textContent='Gasto: R$'+cat.spend+' · Orçamento: R$'+cat.budget;
+  document.getElementById('drill-title').textContent=cat.n+' â MarÃ§o 2026';
+  document.getElementById('drill-sub').textContent='Gasto: R$'+cat.spend+' Â· OrÃ§amento: R$'+cat.budget;
   const pct=Math.round(cat.spend/cat.budget*100);const ov=cat.spend>cat.budget;
   document.getElementById('drill-body').innerHTML=`
     <div class="drill-kpi-row">
       <div class="drill-kpi"><div class="drill-kpi-lbl">Gasto</div><div class="drill-kpi-val" style="color:${ov?'var(--rd2)':'var(--tx)'}">R$ ${cat.spend}</div></div>
-      <div class="drill-kpi"><div class="drill-kpi-lbl">Orçado</div><div class="drill-kpi-val">R$ ${cat.budget}</div></div>
-      <div class="drill-kpi"><div class="drill-kpi-lbl">Uso</div><div class="drill-kpi-val" style="color:${ov?'var(--rd2)':'var(--gn4)'}">${pct}%${ov?' ⚠':''}  </div></div>
+      <div class="drill-kpi"><div class="drill-kpi-lbl">OrÃ§ado</div><div class="drill-kpi-val">R$ ${cat.budget}</div></div>
+      <div class="drill-kpi"><div class="drill-kpi-lbl">Uso</div><div class="drill-kpi-val" style="color:${ov?'var(--rd2)':'var(--gn4)'}">${pct}%${ov?' â ':''}  </div></div>
     </div>
     <div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:14px"><div style="width:${Math.min(pct,100)}%;height:100%;background:${ov?'var(--rd2)':cat.color};border-radius:3px"></div></div>
     <div class="drill-chart"><canvas id="drill-chart-cv"></canvas></div>
-    <div class="drill-sec">Transações desta categoria</div>
+    <div class="drill-sec">TransaÃ§Ãµes desta categoria</div>
     ${cat.txs.map(t=>`<div class="drill-tx-row"><div class="drill-ico-sm" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.d}</div></div><div class="drill-amt" style="color:var(--rd2)">-R$${Math.abs(t.v).toFixed(2)}</div></div>`).join('')}`;
   d.classList.add('open');
   setTimeout(()=>{
@@ -1431,7 +1431,7 @@ function openSubDrill(sub){
   document.getElementById('drill-ico').textContent=sub.logo;
   document.getElementById('drill-ico').style.cssText=`background:${sub.color}22;color:${sub.color}`;
   document.getElementById('drill-title').textContent=sub.n;
-  document.getElementById('drill-sub').textContent='R$'+sub.price.toFixed(2)+'/mês · '+sub.cycle;
+  document.getElementById('drill-sub').textContent='R$'+sub.price.toFixed(2)+'/mÃªs Â· '+sub.cycle;
   document.getElementById('drill-body').innerHTML=`
     <div class="drill-kpi-row">
       <div class="drill-kpi"><div class="drill-kpi-lbl">Mensal</div><div class="drill-kpi-val" style="color:var(--rd2)">R$ ${sub.price.toFixed(2)}</div></div>
@@ -1439,7 +1439,7 @@ function openSubDrill(sub){
       <div class="drill-kpi"><div class="drill-kpi-lbl">3 meses</div><div class="drill-kpi-val">R$ ${(sub.price*3).toFixed(2)}</div></div>
     </div>
     <div class="drill-chart"><canvas id="drill-chart-cv"></canvas></div>
-    <div class="drill-sec">Últimas cobranças</div>
+    <div class="drill-sec">Ãltimas cobranÃ§as</div>
     ${['Jan/26','Fev/26','Mar/26'].map(m=>`<div class="drill-tx-row"><div class="drill-ico-sm" style="background:${sub.color}22;color:${sub.color}">${sub.logo}</div><div style="flex:1"><div class="drill-name">${sub.n}</div><div class="drill-date">${m}</div></div><div class="drill-amt" style="color:var(--rd2)">-R$${sub.price.toFixed(2)}</div></div>`).join('')}`;
   document.getElementById('drill-overlay').classList.add('open');
   setTimeout(()=>{
@@ -1462,34 +1462,34 @@ function openDrill(key){
   const overlay=document.getElementById('drill-overlay');
 
   const configs={
-    'contas':{ico:'🏦',color:'#1565c0',t:'Saldo consolidado',s:'3 contas · Atualizado agora'},
-    'receitas':{ico:'📥',color:'#43a047',t:'Receitas — Março 2026',s:'Total: R$ 5.200,00'},
-    'despesas':{ico:'📤',color:'#e53935',t:'Despesas — Março 2026',s:'Total: R$ 3.140,22'},
-    'cartoes-kpi':{ico:'💳',color:'#7b1fa2',t:'Cartões — Março 2026',s:'Total em faturas: R$ 5.990,00'},
-    'conta-nubank':{ico:'💜',color:'#820ad1',t:'Nubank — Extrato',s:'Saldo: R$ 3.210,80'},
-    'conta-santander':{ico:'❤️',color:'#ec0000',t:'Santander — Extrato',s:'Saldo: R$ 4.120,55'},
-    'conta-inter':{ico:'🧡',color:'#ff7a00',t:'Banco Inter — Extrato',s:'Saldo: R$ 1.089,00'},
-    'fatura-nubank':{ico:'💳',color:'#6a1b9a',t:'Nubank — Fatura Mar/26',s:'R$ 3.100,00 · Vence 22/04'},
-    'fatura-santander':{ico:'💳',color:'#b71c1c',t:'Santander — Fatura Mar/26',s:'R$ 2.240,00 · Vence 17/04'},
-    'fatura-mp':{ico:'💳',color:'#009ee3',t:'Mercado Pago — Fatura',s:'R$ 650,00 · Vence 05/04'},
-    'Receita':{ico:'💼',color:'#43a047',t:'Receitas',s:'Entradas do mês'},
-    'Compras online':{ico:'🛍️',color:'#ef6c00',t:'Compras online',s:'Março 2026'},
+    'contas':{ico:'ð¦',color:'#1565c0',t:'Saldo consolidado',s:'3 contas Â· Atualizado agora'},
+    'receitas':{ico:'ð¥',color:'#43a047',t:'Receitas â MarÃ§o 2026',s:'Total: R$ 5.200,00'},
+    'despesas':{ico:'ð¤',color:'#e53935',t:'Despesas â MarÃ§o 2026',s:'Total: R$ 3.140,22'},
+    'cartoes-kpi':{ico:'ð³',color:'#7b1fa2',t:'CartÃµes â MarÃ§o 2026',s:'Total em faturas: R$ 5.990,00'},
+    'conta-nubank':{ico:'ð',color:'#820ad1',t:'Nubank â Extrato',s:'Saldo: R$ 3.210,80'},
+    'conta-santander':{ico:'â¤ï¸',color:'#ec0000',t:'Santander â Extrato',s:'Saldo: R$ 4.120,55'},
+    'conta-inter':{ico:'ð§¡',color:'#ff7a00',t:'Banco Inter â Extrato',s:'Saldo: R$ 1.089,00'},
+    'fatura-nubank':{ico:'ð³',color:'#6a1b9a',t:'Nubank â Fatura Mar/26',s:'R$ 3.100,00 Â· Vence 22/04'},
+    'fatura-santander':{ico:'ð³',color:'#b71c1c',t:'Santander â Fatura Mar/26',s:'R$ 2.240,00 Â· Vence 17/04'},
+    'fatura-mp':{ico:'ð³',color:'#009ee3',t:'Mercado Pago â Fatura',s:'R$ 650,00 Â· Vence 05/04'},
+    'Receita':{ico:'ð¼',color:'#43a047',t:'Receitas',s:'Entradas do mÃªs'},
+    'Compras online':{ico:'ðï¸',color:'#ef6c00',t:'Compras online',s:'MarÃ§o 2026'},
   };
 
-  const cfg=configs[key]||{ico:'📊',color:'var(--bl)',t:key,s:'Detalhes'};
+  const cfg=configs[key]||{ico:'ð',color:'var(--bl)',t:key,s:'Detalhes'};
   ico.textContent=cfg.ico;ico.style.cssText=`background:${cfg.color}22;color:${cfg.color}`;
   title.textContent=cfg.t;sub.textContent=cfg.s;
 
   const txsByKey=key.startsWith('conta-')?TXS.filter(t=>t.conta===(key==='conta-nubank'?'Nubank':key==='conta-santander'?'Santander':'Inter')):key.startsWith('fatura-')?TXS.filter(t=>t.amt<0).slice(0,6):key==='despesas'?TXS.filter(t=>t.amt<0):key==='receitas'?TXS.filter(t=>t.amt>0):key==='contas'?TXS.slice(0,6):TXS.filter(t=>t.cat===key).slice(0,6);
 
   const kpiSection=`<div class="drill-kpi-row">
-    <div class="drill-kpi"><div class="drill-kpi-lbl">Transações</div><div class="drill-kpi-val">${txsByKey.length}</div></div>
+    <div class="drill-kpi"><div class="drill-kpi-lbl">TransaÃ§Ãµes</div><div class="drill-kpi-val">${txsByKey.length}</div></div>
     <div class="drill-kpi"><div class="drill-kpi-lbl">Total</div><div class="drill-kpi-val" style="color:${cfg.color}">R$${Math.abs(txsByKey.reduce((a,t)=>a+t.amt,0)).toFixed(0)}</div></div>
-    <div class="drill-kpi"><div class="drill-kpi-lbl">Mês</div><div class="drill-kpi-val">Mar/26</div></div>
+    <div class="drill-kpi"><div class="drill-kpi-lbl">MÃªs</div><div class="drill-kpi-val">Mar/26</div></div>
   </div>`;
 
-  body.innerHTML=kpiSection+'<div class="drill-sec">Movimentações</div>'+
-    (txsByKey.length?txsByKey.map(t=>`<div class="drill-tx-row"><div class="drill-ico-sm" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.date} · ${t.conta}</div></div><div class="drill-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'-R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:16px;color:var(--tx3);font-size:13px">Sem movimentações</div>');
+  body.innerHTML=kpiSection+'<div class="drill-sec">MovimentaÃ§Ãµes</div>'+
+    (txsByKey.length?txsByKey.map(t=>`<div class="drill-tx-row"><div class="drill-ico-sm" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.date} Â· ${t.conta}</div></div><div class="drill-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'-R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:16px;color:var(--tx3);font-size:13px">Sem movimentaÃ§Ãµes</div>');
   overlay.classList.add('open');
 }
 
@@ -1501,7 +1501,7 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
 </script>
 
 <!-- ============================================================
-     MODAL DE LANÇAMENTO — FAB + 4 TIPOS + FORMULÁRIOS COMPLETOS
+     MODAL DE LANÃAMENTO â FAB + 4 TIPOS + FORMULÃRIOS COMPLETOS
      ============================================================ -->
 
 <!-- OVERLAY ESCURO -->
@@ -1510,8 +1510,8 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
 <!-- FAB MENU (igual ao app original) -->
 <div id="fab-menu" style="display:none;position:fixed;bottom:80px;right:18px;z-index:400;display:none;flex-direction:column;gap:10px;align-items:flex-end">
   <div class="fab-opt" onclick="openForm('transferencia')" style="background:#b8860b">
-    <span class="fab-opt-lbl">Transferência</span>
-    <div class="fab-opt-ico" style="background:#b8860b">⇅</div>
+    <span class="fab-opt-lbl">TransferÃªncia</span>
+    <div class="fab-opt-ico" style="background:#b8860b">â</div>
   </div>
   <div class="fab-opt" onclick="openForm('receita')" style="background:#2e7d32">
     <span class="fab-opt-lbl">Receita</span>
@@ -1519,24 +1519,24 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
   </div>
   <div class="fab-opt" onclick="openForm('despesa')" style="background:#c62828">
     <span class="fab-opt-lbl">Despesa</span>
-    <div class="fab-opt-ico" style="background:#c62828">−</div>
+    <div class="fab-opt-ico" style="background:#c62828">â</div>
   </div>
   <div class="fab-opt" onclick="openForm('cartao')" style="background:#1565c0">
-    <span class="fab-opt-lbl">Despesa cartão</span>
-    <div class="fab-opt-ico" style="background:#1565c0">▬</div>
+    <span class="fab-opt-lbl">Despesa cartÃ£o</span>
+    <div class="fab-opt-ico" style="background:#1565c0">â¬</div>
   </div>
 </div>
 
 <!-- FAB PRINCIPAL -->
 <button id="fab-main" onclick="toggleFabMenu()" style="position:fixed;bottom:80px;right:18px;width:54px;height:54px;border-radius:50%;background:#1565c0;color:#fff;border:none;font-size:26px;cursor:pointer;z-index:401;box-shadow:0 4px 16px rgba(21,101,192,.5);transition:transform .2s,background .2s;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
 
-<!-- MODAL FORMULÁRIO -->
+<!-- MODAL FORMULÃRIO -->
 <div id="form-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;align-items:flex-end;justify-content:center;padding-bottom:0" onclick="closeFormOutside(event)">
   <div id="form-modal" style="background:#1a1a2e;border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;padding-bottom:24px;animation:slideUp .25s ease">
 
     <!-- HEADER -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;position:sticky;top:0;background:#1a1a2e;z-index:10;border-bottom:1px solid rgba(255,255,255,.1)">
-      <button onclick="closeForm()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center">✕</button>
+      <button onclick="closeForm()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center">â</button>
       <div>
         <div id="form-title" style="font-size:17px;font-weight:600;color:#fff;text-align:center">Nova Despesa</div>
         <div id="form-subtitle" style="font-size:11px;color:rgba(255,255,255,.5);text-align:center;margin-top:1px"></div>
@@ -1544,27 +1544,27 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
       <button id="form-save-btn" onclick="saveForm()" style="background:#e53935;color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Salvar</button>
     </div>
 
-    <!-- BODY FORMULÁRIO -->
+    <!-- BODY FORMULÃRIO -->
     <div style="padding:0">
 
-      <!-- DESCRIÇÃO -->
+      <!-- DESCRIÃÃO -->
       <div class="form-row">
-        <span class="form-ico">☰</span>
-        <input id="f-desc" type="text" placeholder="Descrição" style="flex:1;background:none;border:none;color:#fff;font-size:16px;outline:none;font-family:inherit" autocomplete="off">
+        <span class="form-ico">â°</span>
+        <input id="f-desc" type="text" placeholder="DescriÃ§Ã£o" style="flex:1;background:none;border:none;color:#fff;font-size:16px;outline:none;font-family:inherit" autocomplete="off">
       </div>
 
       <!-- VALOR -->
       <div class="form-row">
-        <span class="form-ico">💲</span>
+        <span class="form-ico">ð²</span>
         <input id="f-valor" type="number" placeholder="R$ 0,00" step="0.01" min="0" style="flex:1;background:none;border:none;color:#fff;font-size:22px;font-weight:600;outline:none;font-family:inherit" oninput="updateValorColor()">
       </div>
 
-      <!-- RECORRÊNCIA -->
+      <!-- RECORRÃNCIA -->
       <div class="form-row form-row-sel">
-        <span class="form-ico">🔄</span>
+        <span class="form-ico">ð</span>
         <select id="f-recorrencia" class="form-sel">
-          <option>Não recorrente</option>
-          <option>Diária</option>
+          <option>NÃ£o recorrente</option>
+          <option>DiÃ¡ria</option>
           <option>Semanal</option>
           <option>Mensal</option>
           <option>Bimestral</option>
@@ -1572,33 +1572,33 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
           <option>Semestral</option>
           <option>Anual</option>
         </select>
-        <span style="color:rgba(255,255,255,.4);font-size:14px">›</span>
+        <span style="color:rgba(255,255,255,.4);font-size:14px">âº</span>
       </div>
 
-      <!-- MULTICATEGORIAS (só despesa) -->
+      <!-- MULTICATEGORIAS (sÃ³ despesa) -->
       <div class="form-row" id="row-multi" style="display:none">
-        <span class="form-ico">⊞</span>
+        <span class="form-ico">â</span>
         <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Multicategorias</span>
         <label class="toggle-sw"><input type="checkbox" id="f-multi"><span class="toggle-sl"></span></label>
       </div>
 
       <!-- DATA VENCIMENTO -->
       <div class="form-row">
-        <span class="form-ico">📅</span>
+        <span class="form-ico">ð</span>
         <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data vencimento</span>
         <input id="f-data" type="date" style="background:none;border:none;color:rgba(255,255,255,.8);font-size:14px;outline:none;font-family:inherit;cursor:pointer">
       </div>
 
       <!-- EFETIVADA -->
       <div class="form-row">
-        <span class="form-ico">✔</span>
+        <span class="form-ico">â</span>
         <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Efetivada</span>
         <label class="toggle-sw"><input type="checkbox" id="f-efetivada" checked><span class="toggle-sl" id="sl-efetivada"></span></label>
       </div>
 
-      <!-- CARTÃO (só despesa cartão) -->
+      <!-- CARTÃO (sÃ³ despesa cartÃ£o) -->
       <div id="row-cartao" style="display:none">
-        <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Cartão de crédito</div>
+        <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">CartÃ£o de crÃ©dito</div>
         <div class="form-row form-row-sel">
           <div style="width:32px;height:32px;border-radius:50%;background:#009ee3;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">MP</div>
           <select id="f-cartao" class="form-sel" style="margin-left:10px">
@@ -1610,7 +1610,7 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
           <span style="background:var(--bl,#1565c0);color:#fff;font-size:10px;padding:2px 6px;border-radius:3px;margin-left:8px">VISA</span>
         </div>
         <div class="form-row form-row-sel">
-          <span class="form-ico">📋</span>
+          <span class="form-ico">ð</span>
           <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Fatura</span>
           <select id="f-fatura" class="form-sel">
             <option>Abril, 2026</option>
@@ -1624,27 +1624,27 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
       <div id="row-cat-section">
         <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)" id="cat-label">Categoria</div>
         <div class="form-row form-row-sel">
-          <div id="cat-ico" style="width:32px;height:32px;border-radius:50%;background:#e53935;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🍽️</div>
+          <div id="cat-ico" style="width:32px;height:32px;border-radius:50%;background:#e53935;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">ð½ï¸</div>
           <select id="f-cat" class="form-sel" style="margin-left:10px" onchange="updateCatIco()">
-            <optgroup label="— Despesas —">
-              <option value="ali" data-ico="🍽️" data-color="#e53935">Alimentação</option>
-              <option value="tra" data-ico="🚗" data-color="#ef6c00">Transporte</option>
-              <option value="sau" data-ico="💊" data-color="#43a047">Saúde</option>
-              <option value="laz" data-ico="🎭" data-color="#f9a825">Lazer</option>
-              <option value="edu" data-ico="📚" data-color="#1e88e5">Educação</option>
-              <option value="mor" data-ico="🏠" data-color="#8e24aa">Moradia</option>
-              <option value="rou" data-ico="👕" data-color="#e91e63">Vestuário</option>
-              <option value="str" data-ico="📺" data-color="#1e88e5">Streaming</option>
-              <option value="fix" data-ico="⚡" data-color="#0097a7">Contas fixas</option>
-              <option value="out" data-ico="📦" data-color="#9e9e9e">Outros</option>
+            <optgroup label="â Despesas â">
+              <option value="ali" data-ico="ð½ï¸" data-color="#e53935">AlimentaÃ§Ã£o</option>
+              <option value="tra" data-ico="ð" data-color="#ef6c00">Transporte</option>
+              <option value="sau" data-ico="ð" data-color="#43a047">SaÃºde</option>
+              <option value="laz" data-ico="ð­" data-color="#f9a825">Lazer</option>
+              <option value="edu" data-ico="ð" data-color="#1e88e5">EducaÃ§Ã£o</option>
+              <option value="mor" data-ico="ð " data-color="#8e24aa">Moradia</option>
+              <option value="rou" data-ico="ð" data-color="#e91e63">VestuÃ¡rio</option>
+              <option value="str" data-ico="ðº" data-color="#1e88e5">Streaming</option>
+              <option value="fix" data-ico="â¡" data-color="#0097a7">Contas fixas</option>
+              <option value="out" data-ico="ð¦" data-color="#9e9e9e">Outros</option>
             </optgroup>
-            <optgroup label="— Receitas —">
-              <option value="sal" data-ico="💼" data-color="#43a047">Salário</option>
-              <option value="fre" data-ico="💰" data-color="#2e7d32">Freelance</option>
-              <option value="inv" data-ico="📈" data-color="#1565c0">Investimentos</option>
-              <option value="alu" data-ico="🏘️" data-color="#6a1b9a">Aluguel recebido</option>
-              <option value="pre" data-ico="🎁" data-color="#c62828">Presente</option>
-              <option value="out2" data-ico="💡" data-color="#9e9e9e">Outros</option>
+            <optgroup label="â Receitas â">
+              <option value="sal" data-ico="ð¼" data-color="#43a047">SalÃ¡rio</option>
+              <option value="fre" data-ico="ð°" data-color="#2e7d32">Freelance</option>
+              <option value="inv" data-ico="ð" data-color="#1565c0">Investimentos</option>
+              <option value="alu" data-ico="ðï¸" data-color="#6a1b9a">Aluguel recebido</option>
+              <option value="pre" data-ico="ð" data-color="#c62828">Presente</option>
+              <option value="out2" data-ico="ð¡" data-color="#9e9e9e">Outros</option>
             </optgroup>
           </select>
           <span onclick="openSubCat()" style="color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;margin-left:8px">+</span>
@@ -1655,10 +1655,10 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
       <div>
         <div style="padding:2px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Subcategoria</div>
         <div class="form-row form-row-sel">
-          <div id="subcat-ico" style="width:32px;height:32px;border-radius:50%;background:#f9a825;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🍔</div>
+          <div id="subcat-ico" style="width:32px;height:32px;border-radius:50%;background:#f9a825;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">ð</div>
           <select id="f-subcat" class="form-sel" style="margin-left:10px">
-            <option>Almoço</option>
-            <option>Café da manhã</option>
+            <option>AlmoÃ§o</option>
+            <option>CafÃ© da manhÃ£</option>
             <option>Jantar</option>
             <option>Lanche</option>
             <option>Mercado</option>
@@ -1670,7 +1670,7 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
         </div>
       </div>
 
-      <!-- CONTA (não aparece no cartão) -->
+      <!-- CONTA (nÃ£o aparece no cartÃ£o) -->
       <div id="row-conta">
         <div style="padding:6px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Conta</div>
         <div class="form-row form-row-sel">
@@ -1680,96 +1680,96 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
             <option>Santander</option>
             <option>Banco Inter</option>
           </select>
-          <span style="color:rgba(255,255,255,.4);font-size:18px;margin-left:8px">≡</span>
+          <span style="color:rgba(255,255,255,.4);font-size:18px;margin-left:8px">â¡</span>
         </div>
       </div>
 
-      <!-- CONTA DESTINO (só transferência) -->
+      <!-- CONTA DESTINO (sÃ³ transferÃªncia) -->
       <div id="row-conta-destino" style="display:none">
         <div style="padding:4px 18px;display:flex;align-items:center;gap:10px">
-          <span style="font-size:11px;color:rgba(255,255,255,.3)">≡≡</span>
+          <span style="font-size:11px;color:rgba(255,255,255,.3)">â¡â¡</span>
           <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
-          <div style="width:28px;height:28px;border-radius:50%;background:#b8860b;display:flex;align-items:center;justify-content:center;font-size:13px">⇅</div>
+          <div style="width:28px;height:28px;border-radius:50%;background:#b8860b;display:flex;align-items:center;justify-content:center;font-size:13px">â</div>
           <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
         </div>
         <div style="padding:2px 18px 2px;font-size:12px;color:rgba(255,255,255,.45)">Conta destino</div>
         <div class="form-row form-row-sel">
-          <div style="width:32px;height:32px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">👛</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:#555;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">ð</div>
           <select id="f-conta-dest" class="form-sel" style="margin-left:10px">
             <option>Nubank</option>
             <option>Santander</option>
             <option>Banco Inter</option>
             <option>Carteira</option>
           </select>
-          <span style="color:rgba(255,255,255,.4);font-size:18px;margin-left:8px">≡</span>
+          <span style="color:rgba(255,255,255,.4);font-size:18px;margin-left:8px">â¡</span>
         </div>
       </div>
 
       <!-- TAGS -->
       <div class="form-row">
-        <span class="form-ico">🏷️</span>
+        <span class="form-ico">ð·ï¸</span>
         <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Tags</span>
-        <span style="color:rgba(255,255,255,.4);font-size:14px">›</span>
+        <span style="color:rgba(255,255,255,.4);font-size:14px">âº</span>
       </div>
 
-      <!-- MAIS INFORMAÇÕES (expansível) -->
+      <!-- MAIS INFORMAÃÃES (expansÃ­vel) -->
       <div onclick="toggleMaisInfo()" style="padding:14px 18px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:#f9a825;font-size:14px;font-weight:500">
-        <span id="mais-info-lbl">Mais informações</span>
-        <span id="mais-info-ico">▾</span>
+        <span id="mais-info-lbl">Mais informaÃ§Ãµes</span>
+        <span id="mais-info-ico">â¾</span>
       </div>
 
       <div id="mais-info-body" style="display:none">
-        <!-- DATA LANÇAMENTO -->
+        <!-- DATA LANÃAMENTO -->
         <div class="form-row">
-          <span class="form-ico">🕐</span>
-          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data lançamento</span>
+          <span class="form-ico">ð</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data lanÃ§amento</span>
           <span id="f-data-lanc-lbl" style="color:rgba(255,255,255,.6);font-size:13px">Hoje</span>
         </div>
-        <!-- DATA EFETIVAÇÃO -->
+        <!-- DATA EFETIVAÃÃO -->
         <div class="form-row">
-          <span class="form-ico">📆</span>
-          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data efetivação</span>
+          <span class="form-ico">ð</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Data efetivaÃ§Ã£o</span>
           <span style="color:rgba(255,255,255,.6);font-size:13px">Hoje</span>
         </div>
         <!-- ENCARGOS -->
         <div class="form-row">
-          <span class="form-ico">💵</span>
+          <span class="form-ico">ðµ</span>
           <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Encargos</span>
           <input type="number" placeholder="R$ 0,00" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:13px;width:80px;text-align:right;outline:none;font-family:inherit">
         </div>
-        <!-- OBSERVAÇÕES -->
+        <!-- OBSERVAÃÃES -->
         <div class="form-row">
-          <span class="form-ico">📝</span>
-          <input id="f-obs" type="text" placeholder="Observações e hashtags" style="flex:1;background:none;border:none;color:rgba(255,255,255,.7);font-size:14px;outline:none;font-family:inherit">
+          <span class="form-ico">ð</span>
+          <input id="f-obs" type="text" placeholder="ObservaÃ§Ãµes e hashtags" style="flex:1;background:none;border:none;color:rgba(255,255,255,.7);font-size:14px;outline:none;font-family:inherit">
         </div>
         <!-- ANEXO -->
         <div class="form-row">
-          <span class="form-ico">📎</span>
+          <span class="form-ico">ð</span>
           <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Adicionar anexo</span>
           <div style="display:flex;gap:10px">
-            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">🖼️</span>
-            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">📷</span>
-            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">📄</span>
+            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">ð¼ï¸</span>
+            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">ð·</span>
+            <span style="color:rgba(255,255,255,.4);font-size:18px;cursor:pointer">ð</span>
           </div>
         </div>
         <!-- TOGGLES -->
         <div class="form-row">
-          <span class="form-ico">📊</span>
-          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar em Estatísticas</span>
+          <span class="form-ico">ð</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar em EstatÃ­sticas</span>
           <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
         </div>
         <div class="form-row">
-          <span class="form-ico">🎯</span>
-          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar em Orçamentos</span>
+          <span class="form-ico">ð¯</span>
+          <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar em OrÃ§amentos</span>
           <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
         </div>
         <div class="form-row">
-          <span class="form-ico">💰</span>
+          <span class="form-ico">ð°</span>
           <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar na Economia mensal</span>
           <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
         </div>
         <div class="form-row">
-          <span class="form-ico">∑</span>
+          <span class="form-ico">â</span>
           <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Ignorar nos totais</span>
           <label class="toggle-sw"><input type="checkbox"><span class="toggle-sl"></span></label>
         </div>
@@ -1777,7 +1777,7 @@ setTimeout(()=>{renderSpark();renderTxHome();renderSubs();renderSI();renderCatCh
 
       <!-- SALVAR E CONTINUAR -->
       <div class="form-row" style="margin-top:4px">
-        <span class="form-ico">🔁</span>
+        <span class="form-ico">ð</span>
         <span style="color:rgba(255,255,255,.8);font-size:14px;flex:1">Salvar e continuar</span>
         <label class="toggle-sw"><input type="checkbox" id="f-continuar"><span class="toggle-sl"></span></label>
       </div>
@@ -1819,7 +1819,7 @@ function toggleFabMenu() {
     overlay.style.display = 'block';
     btn.style.transform = 'rotate(45deg)';
     btn.style.background = '#555';
-    // Anima cada opção
+    // Anima cada opÃ§Ã£o
     menu.querySelectorAll('.fab-opt').forEach((el,i) => {
       el.style.animationDelay = i*0.05+'s';
     });
@@ -1856,8 +1856,8 @@ function openForm(tipo) {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('f-data').value = today;
   document.getElementById('mais-info-body').style.display = 'none';
-  document.getElementById('mais-info-lbl').textContent = 'Mais informações';
-  document.getElementById('mais-info-ico').textContent = '▾';
+  document.getElementById('mais-info-lbl').textContent = 'Mais informaÃ§Ãµes';
+  document.getElementById('mais-info-ico').textContent = 'â¾';
 
   // Configura por tipo
   rowMulti.style.display = 'none';
@@ -1871,7 +1871,7 @@ function openForm(tipo) {
     saveBtn.style.background = '#2e7d32';
     if (slEfetivada) slEfetivada.style.background = '';
     document.getElementById('f-efetivada').checked = true;
-    // Seleciona categoria Salário por padrão
+    // Seleciona categoria SalÃ¡rio por padrÃ£o
     const sel = document.getElementById('f-cat');
     for (let opt of sel.options) if (opt.value === 'sal') { opt.selected = true; break; }
     updateCatIco();
@@ -1886,7 +1886,7 @@ function openForm(tipo) {
     updateCatIco();
   } else if (tipo === 'cartao') {
     title.textContent = 'Nova Despesa';
-    subtitle.textContent = 'Cartão de crédito';
+    subtitle.textContent = 'CartÃ£o de crÃ©dito';
     saveBtn.style.background = '#1565c0';
     rowCartao.style.display = '';
     rowConta.style.display = 'none';
@@ -1895,7 +1895,7 @@ function openForm(tipo) {
     for (let opt of sel.options) if (opt.value === 'ali') { opt.selected = true; break; }
     updateCatIco();
   } else if (tipo === 'transferencia') {
-    title.textContent = 'Nova Transferência';
+    title.textContent = 'Nova TransferÃªncia';
     subtitle.textContent = '';
     saveBtn.style.background = '#b8860b';
     document.getElementById('row-cat-section').style.display = 'none';
@@ -1910,7 +1910,7 @@ function openForm(tipo) {
 
 function closeForm() {
   document.getElementById('form-overlay').style.display = 'none';
-  // Reexibe seção categoria caso tenha sido escondida
+  // Reexibe seÃ§Ã£o categoria caso tenha sido escondida
   document.getElementById('row-cat-section').style.display = '';
   document.getElementById('row-conta-destino').style.display = 'none';
 }
@@ -1925,8 +1925,8 @@ function toggleMaisInfo() {
   const ico = document.getElementById('mais-info-ico');
   const open = body.style.display === 'none';
   body.style.display = open ? 'block' : 'none';
-  lbl.textContent = open ? 'Menos informações' : 'Mais informações';
-  ico.textContent = open ? '▴' : '▾';
+  lbl.textContent = open ? 'Menos informaÃ§Ãµes' : 'Mais informaÃ§Ãµes';
+  ico.textContent = open ? 'â´' : 'â¾';
 }
 
 function updateValorColor() {
@@ -1938,7 +1938,7 @@ function updateValorColor() {
 function updateCatIco() {
   const sel = document.getElementById('f-cat');
   const opt = sel.options[sel.selectedIndex];
-  const ico = opt.getAttribute('data-ico') || '📦';
+  const ico = opt.getAttribute('data-ico') || 'ð¦';
   const color = opt.getAttribute('data-color') || '#9e9e9e';
   const div = document.getElementById('cat-ico');
   div.textContent = ico;
@@ -1946,7 +1946,7 @@ function updateCatIco() {
 }
 
 function openSubCat() {
-  // Placeholder para expansão futura
+  // Placeholder para expansÃ£o futura
   const sub = document.getElementById('f-subcat');
   sub.focus();
 }
@@ -1963,14 +1963,14 @@ function saveForm() {
   if (!desc) { document.getElementById('f-desc').focus(); document.getElementById('f-desc').style.borderBottom='1px solid #e53935'; return; }
   if (!valor || valor <= 0) { document.getElementById('f-valor').focus(); return; }
 
-  // Monta objeto da transação
+  // Monta objeto da transaÃ§Ã£o
   const isReceita = currentFormType === 'receita';
   const tx = {
     id: Date.now(),
     name: desc,
     amount: isReceita ? valor : -valor,
     cat: catOpt.text,
-    catIco: catOpt.getAttribute('data-ico') || '📦',
+    catIco: catOpt.getAttribute('data-ico') || 'ð¦',
     catColor: catOpt.getAttribute('data-color') || '#9e9e9e',
     catBg: (catOpt.getAttribute('data-color') || '#9e9e9e') + '22',
     conta: conta,
@@ -1980,7 +1980,7 @@ function saveForm() {
     obs: document.getElementById('f-obs')?.value || ''
   };
 
-  // Adiciona à lista global de transações
+  // Adiciona Ã  lista global de transaÃ§Ãµes
   TXS.unshift({
     date: tx.date,
     n: tx.name,
@@ -2005,8 +2005,8 @@ function saveForm() {
     saveTransaction(tx);
   }
 
-  // Toast de confirmação
-  showToast(isReceita ? '✅ Receita salva!' : currentFormType === 'transferencia' ? '✅ Transferência salva!' : '✅ Despesa salva!', isReceita ? '#2e7d32' : currentFormType === 'transferencia' ? '#b8860b' : '#c62828');
+  // Toast de confirmaÃ§Ã£o
+  showToast(isReceita ? 'â Receita salva!' : currentFormType === 'transferencia' ? 'â TransferÃªncia salva!' : 'â Despesa salva!', isReceita ? '#2e7d32' : currentFormType === 'transferencia' ? '#b8860b' : '#c62828');
 
   // Fecha ou continua
   const continuar = document.getElementById('f-continuar').checked;
@@ -2035,12 +2035,12 @@ document.addEventListener('keydown', e => {
 
 
 <script>
-// FIX: Garante que funções do FAB estão no escopo global
-// (necessário quando scripts são carregados em ordem diferente)
+// FIX: Garante que funÃ§Ãµes do FAB estÃ£o no escopo global
+// (necessÃ¡rio quando scripts sÃ£o carregados em ordem diferente)
 document.addEventListener('DOMContentLoaded', function() {
-  // Se toggleFabMenu não está no window, redefine aqui
+  // Se toggleFabMenu nÃ£o estÃ¡ no window, redefine aqui
   if (typeof toggleFabMenu === 'undefined') {
-    console.warn('Redefinindo funções FAB no escopo global...');
+    console.warn('Redefinindo funÃ§Ãµes FAB no escopo global...');
     
     let _fabOpen = false;
     let _currentFormType = 'despesa';
@@ -2086,7 +2086,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const rowConta = document.getElementById('row-conta');
       const rowContaDest = document.getElementById('row-conta-destino');
 
-      if (!overlay) { alert('Formulário não encontrado'); return; }
+      if (!overlay) { alert('FormulÃ¡rio nÃ£o encontrado'); return; }
 
       // Reset
       const fDesc = document.getElementById('f-desc');
@@ -2097,7 +2097,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (fData) fData.value = new Date().toISOString().split('T')[0];
       document.getElementById('mais-info-body').style.display = 'none';
 
-      // Configuração por tipo
+      // ConfiguraÃ§Ã£o por tipo
       rowMulti.style.display = 'none';
       rowCartao.style.display = 'none';
       rowConta.style.display = '';
@@ -2106,8 +2106,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const configs = {
         receita: { title: 'Nova Receita', color: '#2e7d32', btnColor: '#2e7d32', catVal: 'sal' },
         despesa: { title: 'Nova Despesa', color: '#e53935', btnColor: '#e53935', catVal: 'ali' },
-        cartao: { title: 'Nova Despesa', subtitle: 'Cartão de crédito', color: '#1565c0', btnColor: '#1565c0', catVal: 'ali' },
-        transferencia: { title: 'Nova Transferência', color: '#b8860b', btnColor: '#b8860b', catVal: '' }
+        cartao: { title: 'Nova Despesa', subtitle: 'CartÃ£o de crÃ©dito', color: '#1565c0', btnColor: '#1565c0', catVal: 'ali' },
+        transferencia: { title: 'Nova TransferÃªncia', color: '#b8860b', btnColor: '#b8860b', catVal: '' }
       };
       const cfg = configs[tipo] || configs.despesa;
 
@@ -2149,15 +2149,15 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!body) return;
       const open = body.style.display === 'none' || body.style.display === '';
       body.style.display = open ? 'block' : 'none';
-      if (lbl) lbl.textContent = open ? 'Menos informações' : 'Mais informações';
-      if (ico) ico.textContent = open ? '▴' : '▾';
+      if (lbl) lbl.textContent = open ? 'Menos informaÃ§Ãµes' : 'Mais informaÃ§Ãµes';
+      if (ico) ico.textContent = open ? 'â´' : 'â¾';
     };
 
     window.updateCatIco = function() {
       const sel = document.getElementById('f-cat');
       if (!sel) return;
       const opt = sel.options[sel.selectedIndex];
-      const ico = opt.getAttribute('data-ico') || '📦';
+      const ico = opt.getAttribute('data-ico') || 'ð¦';
       const color = opt.getAttribute('data-color') || '#9e9e9e';
       const div = document.getElementById('cat-ico');
       if (div) { div.textContent = ico; div.style.background = color; }
@@ -2182,7 +2182,7 @@ document.addEventListener('DOMContentLoaded', function() {
         name: desc,
         amount: isReceita ? valor : -valor,
         cat: catOpt ? catOpt.text : 'Outros',
-        catIco: catOpt ? (catOpt.getAttribute('data-ico') || '📦') : '📦',
+        catIco: catOpt ? (catOpt.getAttribute('data-ico') || 'ð¦') : 'ð¦',
         catColor: catOpt ? (catOpt.getAttribute('data-color') || '#9e9e9e') : '#9e9e9e',
         conta: fConta ? fConta.value : 'Nubank',
         date: fData ? fData.value.split('-').reverse().join('/') : new Date().toLocaleDateString('pt-BR'),
@@ -2190,7 +2190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         tipo: _currentFormType
       };
 
-      // Adiciona à lista de transações
+      // Adiciona Ã  lista de transaÃ§Ãµes
       if (typeof TXS !== 'undefined') {
         TXS.unshift({ date: tx.date, n: tx.name, cat: tx.cat, conta: tx.conta, amt: tx.amount, ico: tx.catIco, bg: tx.catColor + '22', app: '' });
         if (typeof renderTxHome === 'function') renderTxHome();
@@ -2200,9 +2200,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (typeof window.saveTransaction === 'function') window.saveTransaction(tx);
 
       // Toast
-      const msgs = { receita: '✅ Receita salva!', transferencia: '✅ Transferência salva!', cartao: '✅ Despesa no cartão salva!' };
+      const msgs = { receita: 'â Receita salva!', transferencia: 'â TransferÃªncia salva!', cartao: 'â Despesa no cartÃ£o salva!' };
       const colors = { receita: '#2e7d32', transferencia: '#b8860b', cartao: '#1565c0' };
-      window.showToast(msgs[_currentFormType] || '✅ Despesa salva!', colors[_currentFormType] || '#c62828');
+      window.showToast(msgs[_currentFormType] || 'â Despesa salva!', colors[_currentFormType] || '#c62828');
 
       if (fContinuar && fContinuar.checked) {
         const fDesc = document.getElementById('f-desc');
@@ -2230,9 +2230,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (inp) inp.style.color = colors[_currentFormType] || '#fff';
     };
 
-    console.log('✅ Funções FAB redefinidas no escopo global!');
+    console.log('â FunÃ§Ãµes FAB redefinidas no escopo global!');
   } else {
-    console.log('✅ Funções FAB já disponíveis no escopo global!');
+    console.log('â FunÃ§Ãµes FAB jÃ¡ disponÃ­veis no escopo global!');
   }
 
   // Garante que ESC fecha o form e o FAB
@@ -2245,13 +2245,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- MODAL CADASTRO CONTA/CARTÃO -->
+<!-- MODAL CADASTRO CONTA/CARTÃO -->
 <div id="cadastro-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeCadastro()">
   <div style="background:#141414;border-radius:24px 24px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding-bottom:24px;animation:slideUp .25s ease">
     <div style="width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:12px auto 0"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.07)">
       <div id="cadastro-title" style="font-size:17px;font-weight:600;color:#fff">Nova Conta</div>
-      <button onclick="closeCadastro()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+      <button onclick="closeCadastro()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">â</button>
     </div>
     <div id="cadastro-body" style="padding:0"></div>
     <div style="padding:16px 20px 0;display:flex;gap:10px">
@@ -2263,18 +2263,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script id="dados-sistema">
 // ============================================================
-// SISTEMA DE DADOS — Contas, Cartões, Transações (editáveis)
+// SISTEMA DE DADOS â Contas, CartÃµes, TransaÃ§Ãµes (editÃ¡veis)
 // Tudo sincronizado com Firebase Realtime Database
 // ============================================================
 
-// ── BANCOS DISPONÍVEIS (para adicionar novas contas)
-window.BANCOS_DISPONIVEIS = const__BANCOS_DISPONIVEIS = [
+// ââ BANCOS DISPONÃVEIS (para adicionar novas contas)
+window.BANCOS_DISPONIVEIS = [
   { id: 'nubank',       nome: 'Nubank',          cor: '#820ad1', icone: 'Nu',  tipo: 'digital' },
   { id: 'santander',    nome: 'Santander',        cor: '#ec0000', icone: 'SAN', tipo: 'tradicional' },
   { id: 'inter',        nome: 'Banco Inter',      cor: '#ff7a00', icone: 'IN',  tipo: 'digital' },
-  { id: 'caixa',        nome: 'Caixa Econômica',  cor: '#005ca9', icone: 'CEF', tipo: 'tradicional' },
+  { id: 'caixa',        nome: 'Caixa EconÃ´mica',  cor: '#005ca9', icone: 'CEF', tipo: 'tradicional' },
   { id: 'bradesco',     nome: 'Bradesco',         cor: '#cc092f', icone: 'BRD', tipo: 'tradicional' },
-  { id: 'itau',         nome: 'Itaú',             cor: '#003d7b', icone: 'ITÁ', tipo: 'tradicional' },
+  { id: 'itau',         nome: 'ItaÃº',             cor: '#003d7b', icone: 'ITÃ', tipo: 'tradicional' },
   { id: 'bb',           nome: 'Banco do Brasil',  cor: '#f5d200', icone: 'BB',  tipo: 'tradicional', tcor: '#333' },
   { id: 'c6',           nome: 'C6 Bank',          cor: '#222222', icone: 'C6',  tipo: 'digital' },
   { id: 'original',     nome: 'Banco Original',   cor: '#00a859', icone: 'ORI', tipo: 'digital' },
@@ -2283,15 +2283,15 @@ window.BANCOS_DISPONIVEIS = const__BANCOS_DISPONIVEIS = [
   { id: 'pagseguro',    nome: 'PagSeguro',        cor: '#f6a623', icone: 'PAG', tipo: 'digital' },
   { id: 'sicredi',      nome: 'Sicredi',          cor: '#00853f', icone: 'SIC', tipo: 'cooperativa' },
   { id: 'sicoob',       nome: 'Sicoob',           cor: '#006c3e', icone: 'SCB', tipo: 'cooperativa' },
-  { id: 'carteira',     nome: 'Carteira',         cor: '#555555', icone: '👛', tipo: 'carteira' },
-  { id: 'outro',        nome: 'Outro banco',      cor: '#9e9e9e', icone: '🏦',  tipo: 'outro' },
+  { id: 'carteira',     nome: 'Carteira',         cor: '#555555', icone: 'ð', tipo: 'carteira' },
+  { id: 'outro',        nome: 'Outro banco',      cor: '#9e9e9e', icone: 'ð¦',  tipo: 'outro' },
 ];
 
-// ── CARTÕES DISPONÍVEIS
-window.CARTOES_DISPONIVEIS = const__CARTOES_DISPONIVEIS = [
+// ââ CARTÃES DISPONÃVEIS
+window.CARTOES_DISPONIVEIS = [
   { id: 'nubank_cc',    nome: 'Nubank',        cor: '#820ad1', icone: 'Nu',  bandeira: 'VISA' },
   { id: 'santander_cc', nome: 'Santander',     cor: '#ec0000', icone: 'SAN', bandeira: 'VISA' },
-  { id: 'itau_cc',      nome: 'Itaú',          cor: '#003d7b', icone: 'ITÁ', bandeira: 'VISA' },
+  { id: 'itau_cc',      nome: 'ItaÃº',          cor: '#003d7b', icone: 'ITÃ', bandeira: 'VISA' },
   { id: 'bradesco_cc',  nome: 'Bradesco',      cor: '#cc092f', icone: 'BRD', bandeira: 'VISA' },
   { id: 'bb_cc',        nome: 'BB',            cor: '#f5d200', icone: 'BB',  bandeira: 'VISA', tcor: '#333' },
   { id: 'caixa_cc',     nome: 'Caixa',         cor: '#005ca9', icone: 'CEF', bandeira: 'ELO' },
@@ -2302,11 +2302,11 @@ window.CARTOES_DISPONIVEIS = const__CARTOES_DISPONIVEIS = [
   { id: 'vr',           nome: 'VR',            cor: '#e53935', icone: 'VR',  bandeira: 'BENE' },
   { id: 'sodexo',       nome: 'Sodexo/Pluxee', cor: '#0069aa', icone: 'SOD', bandeira: 'BENE' },
   { id: 'ticket',       nome: 'Ticket',        cor: '#ff6900', icone: 'TKT', bandeira: 'BENE' },
-  { id: 'outro_cc',     nome: 'Outro cartão',  cor: '#9e9e9e', icone: '💳', bandeira: 'VISA' },
+  { id: 'outro_cc',     nome: 'Outro cartÃ£o',  cor: '#9e9e9e', icone: 'ð³', bandeira: 'VISA' },
 ];
 
-// ── DADOS DINÂMICOS (carregados do Firebase ou localStorage)
-window.appData = let__appData = {
+// ââ DADOS DINÃMICOS (carregados do Firebase ou localStorage)
+window.appData = {
   contas: [],
   cartoes: [],
   transacoes: [],
@@ -2316,17 +2316,17 @@ window.appData = let__appData = {
   ultimaAtualizacao: null
 };
 
-// ── DEFAULTS ao criar conta/cartão novo
-window.CONTA_DEFAULT = const__CONTA_DEFAULT = {
+// ââ DEFAULTS ao criar conta/cartÃ£o novo
+window.CONTA_DEFAULT = {
   id: null, banco: 'outro', nome: 'Minha Conta', saldo: 0, 
-  tipo: 'corrente', cor: '#9e9e9e', icone: '🏦', ativa: true
+  tipo: 'corrente', cor: '#9e9e9e', icone: 'ð¦', ativa: true
 };
-window.CARTAO_DEFAULT = const__CARTAO_DEFAULT = {
-  id: null, banco: 'outro_cc', nome: 'Meu Cartão', limite: 0, usado: 0,
-  cor: '#9e9e9e', icone: '💳', bandeira: 'VISA', fechamento: 1, vencimento: 10, ativo: true
+window.CARTAO_DEFAULT = {
+  id: null, banco: 'outro_cc', nome: 'Meu CartÃ£o', limite: 0, usado: 0,
+  cor: '#9e9e9e', icone: 'ð³', bandeira: 'VISA', fechamento: 1, vencimento: 10, ativo: true
 };
 
-// ── INICIALIZAÇÃO — carrega dados do Firebase ou localStorage
+// ââ INICIALIZAÃÃO â carrega dados do Firebase ou localStorage
 function initAppData() {
   // Tenta carregar do localStorage primeiro (offline)
   const saved = localStorage.getItem('mf_appdata');
@@ -2337,7 +2337,7 @@ function initAppData() {
     } catch(e) {}
   }
   
-  // Se vazio, carrega dados padrão (primeira vez)
+  // Se vazio, carrega dados padrÃ£o (primeira vez)
   if (!appData.contas.length) {
     appData.contas = [
       { id: 'c1', banco: 'nubank', nome: 'Nubank', saldo: 0, tipo: 'corrente', cor: '#820ad1', icone: 'Nu', ativa: true },
@@ -2348,18 +2348,18 @@ function initAppData() {
     saveLocalData();
   }
   
-  // Sincroniza com Firebase se disponível
+  // Sincroniza com Firebase se disponÃ­vel
   syncFromFirebase();
   renderAllData();
 }
 
-// ── SALVA no localStorage
+// ââ SALVA no localStorage
 function saveLocalData() {
   appData.ultimaAtualizacao = Date.now();
   localStorage.setItem('mf_appdata', JSON.stringify(appData));
 }
 
-// ── SALVA + SYNC Firebase
+// ââ SALVA + SYNC Firebase
 function saveAndSync() {
   saveLocalData();
   if (typeof window._userRef !== 'undefined' && window._userRef) {
@@ -2369,7 +2369,7 @@ function saveAndSync() {
   }
 }
 
-// ── CARREGA do Firebase
+// ââ CARREGA do Firebase
 function syncFromFirebase() {
   if (typeof window._userRef !== 'undefined' && window._userRef) {
     window._userRef.child('appData').on('value', snap => {
@@ -2392,7 +2392,7 @@ function updateSyncIndicator(ok) {
   if (lbl) lbl.textContent = ok ? 'Sync' : 'Reconectando...';
 }
 
-// ── RENDERIZA TODOS OS DADOS
+// ââ RENDERIZA TODOS OS DADOS
 function renderAllData() {
   renderContasList();
   renderCartoesList();
@@ -2401,7 +2401,7 @@ function renderAllData() {
   renderSI();
 }
 
-// ── CONTAS: renderiza na tela início
+// ââ CONTAS: renderiza na tela inÃ­cio
 function renderContasList() {
   const el = document.getElementById('contas-list');
   if (!el) return;
@@ -2421,11 +2421,11 @@ function renderContasList() {
         <div class="logo" style="background:${conta.cor}">${conta.icone}</div>
         <div class="rinfo">
           <div class="rname">${conta.nome}</div>
-          <div class="rsub">${conta.tipo === 'corrente' ? 'Conta corrente' : conta.tipo === 'poupanca' ? 'Poupança' : conta.tipo === 'digital' ? 'Conta digital' : 'Conta'}</div>
+          <div class="rsub">${conta.tipo === 'corrente' ? 'Conta corrente' : conta.tipo === 'poupanca' ? 'PoupanÃ§a' : conta.tipo === 'digital' ? 'Conta digital' : 'Conta'}</div>
         </div>
         <div class="ramt">
           <div class="rval ${saldo >= 0 ? 'pos' : 'neg'}">${formatMoney(saldo)}</div>
-          <span class="pill pill-g" style="font-size:9px">✎ editar</span>
+          <span class="pill pill-g" style="font-size:9px">â editar</span>
         </div>
       </div>`;
   }).join('') + `
@@ -2435,13 +2435,13 @@ function renderContasList() {
     </div>`;
 }
 
-// ── CARTÕES: renderiza na tela início  
+// ââ CARTÃES: renderiza na tela inÃ­cio  
 function renderCartoesList() {
   const el = document.getElementById('cartoes-resumo');
   if (!el) return;
   
   if (!appData.cartoes.length) {
-    el.innerHTML = '<div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhum cartão cadastrado.<br><span onclick="openAddCartao()" style="color:#1e88e5;cursor:pointer">+ Adicionar cartão</span></div>';
+    el.innerHTML = '<div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhum cartÃ£o cadastrado.<br><span onclick="openAddCartao()" style="color:#1e88e5;cursor:pointer">+ Adicionar cartÃ£o</span></div>';
     return;
   }
   
@@ -2452,7 +2452,7 @@ function renderCartoesList() {
       <div class="row" onclick="openEditCartao('${cartao.id}')">
         <div class="logo" style="background:${cartao.cor}">${cartao.icone}</div>
         <div class="rinfo">
-          <div class="rname">${cartao.nome} · <span style="color:${cor}">${pct}%</span></div>
+          <div class="rname">${cartao.nome} Â· <span style="color:${cor}">${pct}%</span></div>
           <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${cor}"></div></div>
         </div>
         <div class="ramt">
@@ -2463,17 +2463,17 @@ function renderCartoesList() {
   }).join('') + `
     <div class="row" onclick="openAddCartao()" style="border-top:1px dashed rgba(255,255,255,.1)">
       <div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:20px">+</div>
-      <div class="rinfo"><div class="rname" style="color:rgba(255,255,255,.5)">Adicionar cartão</div></div>
+      <div class="rinfo"><div class="rname" style="color:rgba(255,255,255,.5)">Adicionar cartÃ£o</div></div>
     </div>`;
 }
 
-// ── HELPER: formata moeda
+// ââ HELPER: formata moeda
 function formatMoney(v) {
   const n = parseFloat(v) || 0;
   return 'R$ ' + Math.abs(n).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-// ── ABRIR MODAL ADICIONAR CONTA
+// ââ ABRIR MODAL ADICIONAR CONTA
 function openAddConta() {
   openCadastroModal('conta', null);
 }
@@ -2489,7 +2489,7 @@ function openEditCartao(id) {
   openCadastroModal('cartao', cartao);
 }
 
-// ── MODAL DE CADASTRO (conta ou cartão)
+// ââ MODAL DE CADASTRO (conta ou cartÃ£o)
 function openCadastroModal(tipo, dados) {
   const overlay = document.getElementById('cadastro-overlay');
   const title = document.getElementById('cadastro-title');
@@ -2499,11 +2499,11 @@ function openCadastroModal(tipo, dados) {
   const isEdit = !!dados;
   
   if (tipo === 'conta') {
-    title.textContent = isEdit ? '✎ Editar Conta' : '+ Nova Conta';
+    title.textContent = isEdit ? 'â Editar Conta' : '+ Nova Conta';
     const d = dados || CONTA_DEFAULT;
     body.innerHTML = `
       <div class="form-row">
-        <span class="form-ico">🏦</span>
+        <span class="form-ico">ð¦</span>
         <div style="flex:1">
           <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Banco</div>
           <select id="cad-banco" class="form-sel" style="width:100%;padding:8px 0" onchange="updateContaCor()">
@@ -2512,26 +2512,26 @@ function openCadastroModal(tipo, dados) {
         </div>
       </div>
       <div class="form-row">
-        <span class="form-ico">✏️</span>
+        <span class="form-ico">âï¸</span>
         <div style="flex:1">
           <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Nome da conta</div>
           <input id="cad-nome" type="text" value="${d.nome || ''}" placeholder="Ex: Nubank Pessoal" class="form-sel" style="width:100%;padding:4px 0;font-size:15px">
         </div>
       </div>
       <div class="form-row">
-        <span class="form-ico">💰</span>
+        <span class="form-ico">ð°</span>
         <div style="flex:1">
           <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Saldo atual (R$)</div>
           <input id="cad-saldo" type="number" step="0.01" value="${d.saldo || 0}" placeholder="0,00" class="form-sel" style="width:100%;padding:4px 0;font-size:22px;font-weight:600;color:#4caf50">
         </div>
       </div>
       <div class="form-row">
-        <span class="form-ico">📋</span>
+        <span class="form-ico">ð</span>
         <div style="flex:1">
           <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Tipo</div>
           <select id="cad-tipo" class="form-sel" style="width:100%;padding:8px 0">
             <option value="corrente" ${d.tipo==='corrente'?'selected':''}>Conta Corrente</option>
-            <option value="poupanca" ${d.tipo==='poupanca'?'selected':''}>Poupança</option>
+            <option value="poupanca" ${d.tipo==='poupanca'?'selected':''}>PoupanÃ§a</option>
             <option value="digital" ${d.tipo==='digital'?'selected':''}>Conta Digital</option>
             <option value="investimento" ${d.tipo==='investimento'?'selected':''}>Investimento</option>
             <option value="carteira" ${d.tipo==='carteira'?'selected':''}>Carteira</option>
@@ -2539,41 +2539,41 @@ function openCadastroModal(tipo, dados) {
         </div>
       </div>
       ${isEdit ? `<div class="form-row" style="cursor:pointer" onclick="excluirConta('${d.id}')">
-        <span class="form-ico">🗑️</span>
+        <span class="form-ico">ðï¸</span>
         <span style="color:#ef5350;font-size:14px">Excluir esta conta</span>
       </div>` : ''}
       <input type="hidden" id="cad-id" value="${d.id || ''}">
       <input type="hidden" id="cad-tipo-modal" value="conta">`;
   } else {
-    // Cartão
-    title.textContent = isEdit ? '✎ Editar Cartão' : '+ Novo Cartão';
+    // CartÃ£o
+    title.textContent = isEdit ? 'â Editar CartÃ£o' : '+ Novo CartÃ£o';
     const d = dados || CARTAO_DEFAULT;
     body.innerHTML = `
       <div class="form-row">
-        <span class="form-ico">💳</span>
+        <span class="form-ico">ð³</span>
         <div style="flex:1">
-          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Cartão</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">CartÃ£o</div>
           <select id="cad-banco" class="form-sel" style="width:100%;padding:8px 0">
             ${CARTOES_DISPONIVEIS.map(b => `<option value="${b.id}" ${d.banco === b.id ? 'selected' : ''}>${b.nome} (${b.bandeira})</option>`).join('')}
           </select>
         </div>
       </div>
       <div class="form-row">
-        <span class="form-ico">✏️</span>
+        <span class="form-ico">âï¸</span>
         <div style="flex:1">
-          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Nome do cartão</div>
+          <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Nome do cartÃ£o</div>
           <input id="cad-nome" type="text" value="${d.nome || ''}" placeholder="Ex: Nubank Roxinho" class="form-sel" style="width:100%;padding:4px 0;font-size:15px">
         </div>
       </div>
       <div class="form-row">
-        <span class="form-ico">🏦</span>
+        <span class="form-ico">ð¦</span>
         <div style="flex:1">
           <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Limite total (R$)</div>
           <input id="cad-limite" type="number" step="0.01" value="${d.limite || 0}" placeholder="0,00" class="form-sel" style="width:100%;padding:4px 0;font-size:22px;font-weight:600;color:#1e88e5">
         </div>
       </div>
       <div class="form-row">
-        <span class="form-ico">📊</span>
+        <span class="form-ico">ð</span>
         <div style="flex:1">
           <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Fatura atual (R$)</div>
           <input id="cad-usado" type="number" step="0.01" value="${d.usado || 0}" placeholder="0,00" class="form-sel" style="width:100%;padding:4px 0;font-size:22px;font-weight:600;color:#ef5350">
@@ -2594,8 +2594,8 @@ function openCadastroModal(tipo, dados) {
         </div>
       </div>
       ${isEdit ? `<div class="form-row" style="cursor:pointer" onclick="excluirCartao('${d.id}')">
-        <span class="form-ico">🗑️</span>
-        <span style="color:#ef5350;font-size:14px">Excluir este cartão</span>
+        <span class="form-ico">ðï¸</span>
+        <span style="color:#ef5350;font-size:14px">Excluir este cartÃ£o</span>
       </div>` : ''}
       <input type="hidden" id="cad-id" value="${d.id || ''}">
       <input type="hidden" id="cad-tipo-modal" value="cartao">`;
@@ -2619,7 +2619,7 @@ function salvarCadastro() {
   const banco = document.getElementById('cad-banco')?.value;
   const nome = document.getElementById('cad-nome')?.value?.trim();
   
-  if (!nome) { showToast('Nome obrigatório', '#c62828'); return; }
+  if (!nome) { showToast('Nome obrigatÃ³rio', '#c62828'); return; }
   
   if (tipo === 'conta') {
     const saldo = parseFloat(document.getElementById('cad-saldo')?.value) || 0;
@@ -2630,7 +2630,7 @@ function salvarCadastro() {
       id: id || 'c_' + Date.now(),
       banco, nome, saldo, tipo: tipoC,
       cor: bancoObj.cor || '#9e9e9e',
-      icone: bancoObj.icone || '🏦',
+      icone: bancoObj.icone || 'ð¦',
       ativa: true
     };
     
@@ -2638,7 +2638,7 @@ function salvarCadastro() {
     if (idx >= 0) appData.contas[idx] = conta;
     else appData.contas.push(conta);
     
-    showToast(id ? '✅ Conta atualizada!' : '✅ Conta adicionada!', '#2e7d32');
+    showToast(id ? 'â Conta atualizada!' : 'â Conta adicionada!', '#2e7d32');
     
   } else {
     const limite = parseFloat(document.getElementById('cad-limite')?.value) || 0;
@@ -2651,7 +2651,7 @@ function salvarCadastro() {
       id: id || 'cc_' + Date.now(),
       banco, nome, limite, usado, fechamento, vencimento,
       cor: bancoObj.cor || '#9e9e9e',
-      icone: bancoObj.icone || '💳',
+      icone: bancoObj.icone || 'ð³',
       bandeira: bancoObj.bandeira || 'VISA',
       ativo: true
     };
@@ -2660,14 +2660,14 @@ function salvarCadastro() {
     if (idx >= 0) appData.cartoes[idx] = cartao;
     else appData.cartoes.push(cartao);
     
-    showToast(id ? '✅ Cartão atualizado!' : '✅ Cartão adicionado!', '#1565c0');
+    showToast(id ? 'â CartÃ£o atualizado!' : 'â CartÃ£o adicionado!', '#1565c0');
   }
   
   saveAndSync();
   closeCadastro();
   renderAllData();
   
-  // Atualiza o seletor de contas nos formulários de lançamento
+  // Atualiza o seletor de contas nos formulÃ¡rios de lanÃ§amento
   atualizarSelectContas();
 }
 
@@ -2677,16 +2677,16 @@ function excluirConta(id) {
   saveAndSync();
   closeCadastro();
   renderContasList();
-  showToast('🗑️ Conta removida', '#555');
+  showToast('ðï¸ Conta removida', '#555');
 }
 
 function excluirCartao(id) {
-  if (!confirm('Excluir este cartão?')) return;
+  if (!confirm('Excluir este cartÃ£o?')) return;
   appData.cartoes = appData.cartoes.filter(c => c.id !== id);
   saveAndSync();
   closeCadastro();
   renderCartoesList();
-  showToast('🗑️ Cartão removido', '#555');
+  showToast('ðï¸ CartÃ£o removido', '#555');
 }
 
 function closeCadastro() {
@@ -2694,7 +2694,7 @@ function closeCadastro() {
   if (overlay) overlay.style.display = 'none';
 }
 
-// ── Atualiza selects de conta nos formulários
+// ââ Atualiza selects de conta nos formulÃ¡rios
 function atualizarSelectContas() {
   const sel = document.getElementById('f-conta');
   if (!sel || !appData.contas.length) return;
@@ -2722,7 +2722,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(initAppData, 500);
 });
 
-// ── Expõe variáveis ao window (escopo global)
+// ââ ExpÃµe variÃ¡veis ao window (escopo global)
 window.BANCOS_DISPONIVEIS = typeof BANCOS_DISPONIVEIS !== "undefined" ? BANCOS_DISPONIVEIS : window.BANCOS_DISPONIVEIS;
 window.CARTOES_DISPONIVEIS = typeof CARTOES_DISPONIVEIS !== "undefined" ? CARTOES_DISPONIVEIS : window.CARTOES_DISPONIVEIS;
 window.appData = typeof appData !== "undefined" ? appData : window.appData;
@@ -2732,17 +2732,17 @@ window.CARTAO_DEFAULT = typeof CARTAO_DEFAULT !== "undefined" ? CARTAO_DEFAULT :
 if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAppData); } else { setTimeout(initAppData, 100); }
 </script>
 <script id="fix-scope">
-// Garante que todas as variáveis do sistema estão no window
+// Garante que todas as variÃ¡veis do sistema estÃ£o no window
 (function() {
-  // Re-executa o script dados-sistema no contexto do window se necessário
+  // Re-executa o script dados-sistema no contexto do window se necessÃ¡rio
   if (typeof window.BANCOS_DISPONIVEIS === 'undefined') {
     const script = document.getElementById('dados-sistema');
     if (script) {
       try {
-        // Executa com escopo global forçado
+        // Executa com escopo global forÃ§ado
         const fn = new Function(script.textContent);
         fn.call(window);
-        console.log('✅ Escopo global restaurado via new Function');
+        console.log('â Escopo global restaurado via new Function');
       } catch(e) {
         console.error('Erro ao restaurar escopo:', e);
       }
@@ -2756,24 +2756,24 @@ if (document.readyState === "loading") { document.addEventListener("DOMContentLo
 </script>
 
 <!-- ============================================================
-     MÓDULO DE IMPORTAÇÃO — OFX / CSV / TXT
-     Compatível com: Nubank, Santander, Itaú, Bradesco, Caixa,
+     MÃDULO DE IMPORTAÃÃO â OFX / CSV / TXT
+     CompatÃ­vel com: Nubank, Santander, ItaÃº, Bradesco, Caixa,
      BB, Inter, C6, Mercado Pago e qualquer banco brasileiro
      ============================================================ -->
 
-<!-- BOTÃO DE IMPORTAÇÃO (adicionar no topbar/menu) -->
+<!-- BOTÃO DE IMPORTAÃÃO (adicionar no topbar/menu) -->
 
-<!-- OVERLAY DE IMPORTAÇÃO -->
+<!-- OVERLAY DE IMPORTAÃÃO -->
 <div id="importacao-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:700;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeImportacao()">
   <div id="importacao-modal" style="background:#1a1a2e;border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:slideUp .25s ease">
 
     <!-- HEADER -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.08)">
       <div>
-        <div style="font-size:18px;font-weight:700;color:#fff">📥 Importar Extrato</div>
-        <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px">OFX, CSV, TXT — todos os bancos</div>
+        <div style="font-size:18px;font-weight:700;color:#fff">ð¥ Importar Extrato</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px">OFX, CSV, TXT â todos os bancos</div>
       </div>
-      <button onclick="closeImportacao()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+      <button onclick="closeImportacao()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">â</button>
     </div>
 
     <!-- STEPS -->
@@ -2797,36 +2797,36 @@ if (document.readyState === "loading") { document.addEventListener("DOMContentLo
           ondragover="importDragOver(event)"
           ondragleave="importDragLeave(event)"
           ondrop="importDrop(event)">
-          <div style="font-size:36px;margin-bottom:8px">📂</div>
+          <div style="font-size:36px;margin-bottom:8px">ð</div>
           <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px">Clique ou arraste o arquivo</div>
-          <div style="font-size:12px;color:rgba(255,255,255,.4)">OFX · CSV · TXT · XLS</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4)">OFX Â· CSV Â· TXT Â· XLS</div>
           <input id="import-file-input" type="file" accept=".ofx,.csv,.txt,.xls,.xlsx" style="display:none" onchange="importFileSelected(this)">
         </div>
 
         <!-- Como exportar por banco -->
         <div id="import-instrucoes" style="background:rgba(255,255,255,.05);border-radius:10px;padding:14px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.8;display:none">
-          <div style="font-weight:600;color:rgba(255,255,255,.8);margin-bottom:6px">📋 Como exportar do <span id="inst-banco-nome">banco</span>:</div>
+          <div style="font-weight:600;color:rgba(255,255,255,.8);margin-bottom:6px">ð Como exportar do <span id="inst-banco-nome">banco</span>:</div>
           <div id="inst-texto"></div>
         </div>
       </div>
 
-      <!-- STEP 2: Preview e confirmação -->
+      <!-- STEP 2: Preview e confirmaÃ§Ã£o -->
       <div id="import-step2" style="display:none">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
           <div id="import-preview-banco" style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">Nu</div>
           <div>
             <div style="font-size:15px;font-weight:600;color:#fff" id="import-preview-title">Extrato importado</div>
-            <div style="font-size:12px;color:rgba(255,255,255,.5)" id="import-preview-sub">0 transações encontradas</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5)" id="import-preview-sub">0 transaÃ§Ãµes encontradas</div>
           </div>
-          <button onclick="voltarStep1()" style="margin-left:auto;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px">← Voltar</button>
+          <button onclick="voltarStep1()" style="margin-left:auto;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px">â Voltar</button>
         </div>
 
         <!-- Filtros -->
         <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
           <span onclick="filtrarImport('todos')" id="if-todos" class="import-filter on">Todos</span>
-          <span onclick="filtrarImport('entrada')" id="if-entrada" class="import-filter">Entradas 📈</span>
-          <span onclick="filtrarImport('saida')" id="if-saida" class="import-filter">Saídas 📉</span>
-          <span onclick="filtrarImport('duplicado')" id="if-dup" class="import-filter">Duplicados ⚠️</span>
+          <span onclick="filtrarImport('entrada')" id="if-entrada" class="import-filter">Entradas ð</span>
+          <span onclick="filtrarImport('saida')" id="if-saida" class="import-filter">SaÃ­das ð</span>
+          <span onclick="filtrarImport('duplicado')" id="if-dup" class="import-filter">Duplicados â ï¸</span>
         </div>
 
         <!-- Resumo -->
@@ -2836,25 +2836,25 @@ if (document.readyState === "loading") { document.addEventListener("DOMContentLo
             <div style="font-size:14px;font-weight:700;color:#4caf50" id="imp-total-entrada">R$ 0</div>
           </div>
           <div style="background:rgba(229,57,53,.12);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">SAÍDAS</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">SAÃDAS</div>
             <div style="font-size:14px;font-weight:700;color:#ef5350" id="imp-total-saida">R$ 0</div>
           </div>
           <div style="background:rgba(30,136,229,.12);border-radius:8px;padding:10px;text-align:center">
-            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">TRANSAÇÕES</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">TRANSAÃÃES</div>
             <div style="font-size:14px;font-weight:700;color:#1e88e5" id="imp-total-count">0</div>
           </div>
         </div>
 
-        <!-- Lista de transações -->
+        <!-- Lista de transaÃ§Ãµes -->
         <div id="import-txs-list" style="max-height:280px;overflow-y:auto;border-radius:10px;border:1px solid rgba(255,255,255,.08)">
           <!-- Preenchido por JS -->
         </div>
 
-        <!-- Botões -->
+        <!-- BotÃµes -->
         <div style="display:flex;gap:10px;margin-top:16px">
           <button onclick="closeImportacao()" style="flex:1;padding:12px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit">Cancelar</button>
           <button onclick="confirmarImportacao()" style="flex:2;padding:12px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit" id="btn-confirmar-import">
-            ✅ Importar selecionados
+            â Importar selecionados
           </button>
         </div>
       </div>
@@ -2878,31 +2878,31 @@ if (document.readyState === "loading") { document.addEventListener("DOMContentLo
 </style>
 
 <script id="modulo-importacao">
-// ── BANCOS COM INSTRUÇÕES DE EXPORTAÇÃO
+// ââ BANCOS COM INSTRUÃÃES DE EXPORTAÃÃO
 const IMPORT_BANCOS = [
   { id: 'nubank',      nome: 'Nubank',      cor: '#820ad1', icone: 'Nu',  fmt: 'csv',
-    inst: 'App Nubank → Menu (☰) → Minha conta → Exportar fatura como CSV' },
+    inst: 'App Nubank â Menu (â°) â Minha conta â Exportar fatura como CSV' },
   { id: 'santander',   nome: 'Santander',   cor: '#ec0000', icone: 'SAN', fmt: 'ofx',
-    inst: 'Internet Banking → Extrato → Exportar → Formato OFX · Ou app: Extrato → Compartilhar → OFX' },
-  { id: 'itau',        nome: 'Itaú',        cor: '#003d7b', icone: 'ITÁ', fmt: 'ofx',
-    inst: 'Internet Banking → Extrato → Exportar dados → OFX · Acesse ibank.com.br' },
+    inst: 'Internet Banking â Extrato â Exportar â Formato OFX Â· Ou app: Extrato â Compartilhar â OFX' },
+  { id: 'itau',        nome: 'ItaÃº',        cor: '#003d7b', icone: 'ITÃ', fmt: 'ofx',
+    inst: 'Internet Banking â Extrato â Exportar dados â OFX Â· Acesse ibank.com.br' },
   { id: 'bradesco',    nome: 'Bradesco',    cor: '#cc092f', icone: 'BRD', fmt: 'ofx',
-    inst: 'Internet Banking → Extrato → Exportar → OFX · Ou pelo Bradesco Net Empresa' },
+    inst: 'Internet Banking â Extrato â Exportar â OFX Â· Ou pelo Bradesco Net Empresa' },
   { id: 'bb',          nome: 'BB',          cor: '#f5d200', icone: 'BB',  fmt: 'ofx', tcor: '#333',
-    inst: 'BB.com.br → Movimentação → Exportar → OFX · Selecione o período desejado' },
+    inst: 'BB.com.br â MovimentaÃ§Ã£o â Exportar â OFX Â· Selecione o perÃ­odo desejado' },
   { id: 'caixa',       nome: 'Caixa',       cor: '#005ca9', icone: 'CEF', fmt: 'csv',
-    inst: 'App Caixa → Extrato → Compartilhar → CSV · Ou acesse caixa.gov.br → Extrato' },
+    inst: 'App Caixa â Extrato â Compartilhar â CSV Â· Ou acesse caixa.gov.br â Extrato' },
   { id: 'inter',       nome: 'Inter',       cor: '#ff7a00', icone: 'IN',  fmt: 'csv',
-    inst: 'App Inter → Extrato → Exportar → CSV · Ou acesse bancointer.com.br' },
+    inst: 'App Inter â Extrato â Exportar â CSV Â· Ou acesse bancointer.com.br' },
   { id: 'c6',          nome: 'C6 Bank',     cor: '#222222', icone: 'C6',  fmt: 'ofx',
-    inst: 'App C6 → Extrato → ⋮ → Exportar OFX · Selecione o período' },
+    inst: 'App C6 â Extrato â â® â Exportar OFX Â· Selecione o perÃ­odo' },
   { id: 'mercadopago', nome: 'M. Pago',     cor: '#009ee3', icone: 'MP',  fmt: 'csv',
-    inst: 'Mercado Pago → Atividade → Filtrar → Exportar CSV' },
+    inst: 'Mercado Pago â Atividade â Filtrar â Exportar CSV' },
   { id: 'picpay',      nome: 'PicPay',      cor: '#11c76f', icone: 'PP',  fmt: 'csv',
-    inst: 'App PicPay → Extrato → Exportar CSV' },
+    inst: 'App PicPay â Extrato â Exportar CSV' },
   { id: 'sicoob',      nome: 'Sicoob',      cor: '#006c3e', icone: 'SCB', fmt: 'ofx',
-    inst: 'Portal Sicoob → Extrato → Exportar → OFX' },
-  { id: 'outro',       nome: 'Outro',       cor: '#9e9e9e', icone: '🏦', fmt: 'auto',
+    inst: 'Portal Sicoob â Extrato â Exportar â OFX' },
+  { id: 'outro',       nome: 'Outro',       cor: '#9e9e9e', icone: 'ð¦', fmt: 'auto',
     inst: 'Exporte o extrato em qualquer formato (OFX, CSV, TXT) e importe aqui.' },
 ];
 
@@ -2911,7 +2911,7 @@ let importTxs = [];
 let importTxsSel = new Set();
 let importFiltro = 'todos';
 
-// ── ABRE O MODAL
+// ââ ABRE O MODAL
 function openImportacao() {
   const overlay = document.getElementById('importacao-overlay');
   if (!overlay) return;
@@ -2943,7 +2943,7 @@ function selectImportBanco(id) {
   document.querySelectorAll('.import-banco-btn').forEach(el => el.classList.remove('sel'));
   document.getElementById('ibb-' + id)?.classList.add('sel');
   
-  // Mostra instruções
+  // Mostra instruÃ§Ãµes
   const inst = document.getElementById('import-instrucoes');
   const txt = document.getElementById('inst-texto');
   const nome = document.getElementById('inst-banco-nome');
@@ -2973,19 +2973,19 @@ function importFileSelected(input) {
   if (input.files[0]) processImportFile(input.files[0]);
 }
 
-// ── PROCESSA O ARQUIVO
+// ââ PROCESSA O ARQUIVO
 function processImportFile(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   const reader = new FileReader();
   
-  // Tenta detectar o banco pelo nome do arquivo se não selecionado
+  // Tenta detectar o banco pelo nome do arquivo se nÃ£o selecionado
   if (!importBancoSel) {
     const fname = file.name.toLowerCase();
     if (fname.includes('nubank')) selectImportBanco('nubank');
     else if (fname.includes('santander')) selectImportBanco('santander');
     else if (fname.includes('inter')) selectImportBanco('inter');
     else if (fname.includes('bradesco')) selectImportBanco('bradesco');
-    else if (fname.includes('itau') || fname.includes('itaú')) selectImportBanco('itau');
+    else if (fname.includes('itau') || fname.includes('itaÃº')) selectImportBanco('itau');
     else if (fname.includes('bb') || fname.includes('brasil')) selectImportBanco('bb');
     else if (fname.includes('caixa')) selectImportBanco('caixa');
     else selectImportBanco('outro');
@@ -3009,16 +3009,16 @@ function processImportFile(file) {
         }
       }
     } catch(err) {
-      showToastImport('❌ Erro ao ler arquivo: ' + err.message);
+      showToastImport('â Erro ao ler arquivo: ' + err.message);
       return;
     }
     
     if (!txs.length) {
-      showToastImport('⚠️ Nenhuma transação encontrada no arquivo');
+      showToastImport('â ï¸ Nenhuma transaÃ§Ã£o encontrada no arquivo');
       return;
     }
     
-    // Marca duplicatas (transações que já existem no appData)
+    // Marca duplicatas (transaÃ§Ãµes que jÃ¡ existem no appData)
     txs.forEach(tx => {
       tx.selecionado = !tx.duplicado;
       tx.id = 'imp_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
@@ -3035,7 +3035,7 @@ function processImportFile(file) {
   reader.readAsText(file, 'UTF-8');
 }
 
-// ── PARSER OFX
+// ââ PARSER OFX
 function parseOFX(content) {
   const txs = [];
   
@@ -3043,7 +3043,7 @@ function parseOFX(content) {
   const xmlStart = content.indexOf('<OFX>');
   const xmlContent = xmlStart >= 0 ? content.substring(xmlStart) : content;
   
-  // Regex para extrair transações do OFX
+  // Regex para extrair transaÃ§Ãµes do OFX
   const stmtPattern = /<STMTTRN>([\s\S]*?)<\/STMTTRN>/gi;
   let match;
   
@@ -3058,10 +3058,10 @@ function parseOFX(content) {
     const tipo = getVal('TRNTYPE'); // CREDIT, DEBIT, etc
     const dtpost = getVal('DTPOSTED');
     const valor = parseFloat(getVal('TRNAMT')) || 0;
-    const memo = getVal('MEMO') || getVal('NAME') || 'Transação';
+    const memo = getVal('MEMO') || getVal('NAME') || 'TransaÃ§Ã£o';
     const fitid = getVal('FITID');
     
-    // Formata data (YYYYMMDD → DD/MM/YYYY)
+    // Formata data (YYYYMMDD â DD/MM/YYYY)
     let data = '';
     if (dtpost && dtpost.length >= 8) {
       const y = dtpost.substring(0,4);
@@ -3086,7 +3086,7 @@ function parseOFX(content) {
   return txs.sort((a,b) => b.data.localeCompare(a.data));
 }
 
-// ── PARSER CSV (multi-banco)
+// ââ PARSER CSV (multi-banco)
 function parseCSV(content, bancoId) {
   const txs = [];
   const lines = content.split('\n').filter(l => l.trim());
@@ -3107,7 +3107,7 @@ function parseCSV(content, bancoId) {
     const get = (col) => col !== -1 ? (cols[col] || '').replace(/"/g,'').trim() : '';
     
     let data = get(colMap.data);
-    let memo = get(colMap.memo) || get(colMap.descricao) || 'Transação';
+    let memo = get(colMap.memo) || get(colMap.descricao) || 'TransaÃ§Ã£o';
     let valorStr = get(colMap.valor);
     let valorEntStr = get(colMap.entrada);
     let valorSaiStr = get(colMap.saida);
@@ -3168,20 +3168,20 @@ function detectCSVCols(header, bancoId) {
   };
   
   return {
-    data:      find('data', 'date', 'dt', 'competência', 'competencia'),
-    memo:      find('descrição', 'descricao', 'description', 'historico', 'histórico', 'memo', 'estabelecimento', 'lançamento', 'lancamento', 'title'),
+    data:      find('data', 'date', 'dt', 'competÃªncia', 'competencia'),
+    memo:      find('descriÃ§Ã£o', 'descricao', 'description', 'historico', 'histÃ³rico', 'memo', 'estabelecimento', 'lanÃ§amento', 'lancamento', 'title'),
     valor:     find('valor', 'amount', 'value', 'montante'),
-    entrada:   find('credito', 'crédito', 'entrada', 'credit', 'receita'),
-    saida:     find('debito', 'débito', 'saída', 'saida', 'debit', 'despesa'),
+    entrada:   find('credito', 'crÃ©dito', 'entrada', 'credit', 'receita'),
+    saida:     find('debito', 'dÃ©bito', 'saÃ­da', 'saida', 'debit', 'despesa'),
     categoria: find('categoria', 'category', 'tipo'),
   };
 }
 
 function parseValor(str) {
   if (!str) return 0;
-  // Remove R$, espaços, converte vírgula para ponto
+  // Remove R$, espaÃ§os, converte vÃ­rgula para ponto
   let s = str.replace(/R\$|\s/g,'').replace('.','').replace(',','.');
-  // Trata valores negativos com parênteses: (100,00) → -100
+  // Trata valores negativos com parÃªnteses: (100,00) â -100
   if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.slice(1,-1);
   return parseFloat(s) || 0;
 }
@@ -3211,35 +3211,35 @@ function limparMemo(memo) {
   return memo
     .replace(/\*+/g,' ')
     .replace(/\s+/g,' ')
-    .replace(/^\d{2}\/\d{2}\s+/, '')  // Remove data no início
-    .replace(/\d{2}:\d{2}:\d{2}/g,'')  // Remove horário
+    .replace(/^\d{2}\/\d{2}\s+/, '')  // Remove data no inÃ­cio
+    .replace(/\d{2}:\d{2}:\d{2}/g,'')  // Remove horÃ¡rio
     .trim()
     .substring(0, 60);
 }
 
-// ── CATEGORIZAÇÃO AUTOMÁTICA
+// ââ CATEGORIZAÃÃO AUTOMÃTICA
 function categorizarAuto(memo, valor) {
   const m = memo.toLowerCase();
   if (valor > 0) {
-    if (m.includes('salário') || m.includes('salario') || m.includes('pagto')) return { cat: 'Receita', ico: '💼', color: '#43a047' };
-    if (m.includes('pix recebido') || m.includes('transferência recebida')) return { cat: 'Receita', ico: '💰', color: '#43a047' };
-    return { cat: 'Receita', ico: '📥', color: '#43a047' };
+    if (m.includes('salÃ¡rio') || m.includes('salario') || m.includes('pagto')) return { cat: 'Receita', ico: 'ð¼', color: '#43a047' };
+    if (m.includes('pix recebido') || m.includes('transferÃªncia recebida')) return { cat: 'Receita', ico: 'ð°', color: '#43a047' };
+    return { cat: 'Receita', ico: 'ð¥', color: '#43a047' };
   }
-  if (m.includes('mercado') || m.includes('supermercado') || m.includes('hortifruti') || m.includes('ifood') || m.includes('rappi') || m.includes('uber eat')) return { cat: 'Alimentação', ico: '🍽️', color: '#e53935' };
-  if (m.includes('uber') || m.includes('99') || m.includes('gasolina') || m.includes('combustiv') || m.includes('posto') || m.includes('shell') || m.includes('ipiranga')) return { cat: 'Transporte', ico: '🚗', color: '#ef6c00' };
-  if (m.includes('netflix') || m.includes('spotify') || m.includes('disney') || m.includes('amazon prime') || m.includes('youtube')) return { cat: 'Streaming', ico: '📺', color: '#1e88e5' };
-  if (m.includes('farmácia') || m.includes('farmacia') || m.includes('drogaria') || m.includes('droga') || m.includes('hospital') || m.includes('clínica') || m.includes('consulta')) return { cat: 'Saúde', ico: '💊', color: '#43a047' };
-  if (m.includes('luz') || m.includes('enel') || m.includes('celpe') || m.includes('água') || m.includes('sabesp') || m.includes('internet') || m.includes('vivo') || m.includes('claro') || m.includes('tim') || m.includes('oi ')) return { cat: 'Contas fixas', ico: '⚡', color: '#0097a7' };
-  if (m.includes('aluguel') || m.includes('condomínio') || m.includes('condominio') || m.includes('iptu')) return { cat: 'Moradia', ico: '🏠', color: '#8e24aa' };
-  if (m.includes('amazon') || m.includes('mercado livre') || m.includes('shopee') || m.includes('magazine')) return { cat: 'Compras online', ico: '🛍️', color: '#f9a825' };
-  if (m.includes('academia') || m.includes('smartfit') || m.includes('bluefit')) return { cat: 'Saúde', ico: '🏋️', color: '#43a047' };
-  if (m.includes('pix') || m.includes('ted') || m.includes('doc') || m.includes('transferência')) return { cat: 'Transferência', ico: '💸', color: '#9e9e9e' };
-  return { cat: 'Outros', ico: '📦', color: '#9e9e9e' };
+  if (m.includes('mercado') || m.includes('supermercado') || m.includes('hortifruti') || m.includes('ifood') || m.includes('rappi') || m.includes('uber eat')) return { cat: 'AlimentaÃ§Ã£o', ico: 'ð½ï¸', color: '#e53935' };
+  if (m.includes('uber') || m.includes('99') || m.includes('gasolina') || m.includes('combustiv') || m.includes('posto') || m.includes('shell') || m.includes('ipiranga')) return { cat: 'Transporte', ico: 'ð', color: '#ef6c00' };
+  if (m.includes('netflix') || m.includes('spotify') || m.includes('disney') || m.includes('amazon prime') || m.includes('youtube')) return { cat: 'Streaming', ico: 'ðº', color: '#1e88e5' };
+  if (m.includes('farmÃ¡cia') || m.includes('farmacia') || m.includes('drogaria') || m.includes('droga') || m.includes('hospital') || m.includes('clÃ­nica') || m.includes('consulta')) return { cat: 'SaÃºde', ico: 'ð', color: '#43a047' };
+  if (m.includes('luz') || m.includes('enel') || m.includes('celpe') || m.includes('Ã¡gua') || m.includes('sabesp') || m.includes('internet') || m.includes('vivo') || m.includes('claro') || m.includes('tim') || m.includes('oi ')) return { cat: 'Contas fixas', ico: 'â¡', color: '#0097a7' };
+  if (m.includes('aluguel') || m.includes('condomÃ­nio') || m.includes('condominio') || m.includes('iptu')) return { cat: 'Moradia', ico: 'ð ', color: '#8e24aa' };
+  if (m.includes('amazon') || m.includes('mercado livre') || m.includes('shopee') || m.includes('magazine')) return { cat: 'Compras online', ico: 'ðï¸', color: '#f9a825' };
+  if (m.includes('academia') || m.includes('smartfit') || m.includes('bluefit')) return { cat: 'SaÃºde', ico: 'ðï¸', color: '#43a047' };
+  if (m.includes('pix') || m.includes('ted') || m.includes('doc') || m.includes('transferÃªncia')) return { cat: 'TransferÃªncia', ico: 'ð¸', color: '#9e9e9e' };
+  return { cat: 'Outros', ico: 'ð¦', color: '#9e9e9e' };
 }
 
-// ── MOSTRA STEP 2
+// ââ MOSTRA STEP 2
 function showImportStep2(filename) {
-  const banco = importBancoSel || { nome: 'Banco', cor: '#9e9e9e', icone: '🏦' };
+  const banco = importBancoSel || { nome: 'Banco', cor: '#9e9e9e', icone: 'ð¦' };
   
   document.getElementById('import-step1').style.display = 'none';
   document.getElementById('import-step2').style.display = '';
@@ -3248,7 +3248,7 @@ function showImportStep2(filename) {
   if (prevBanco) { prevBanco.style.background = banco.cor; prevBanco.textContent = banco.icone; }
   
   document.getElementById('import-preview-title').textContent = filename;
-  document.getElementById('import-preview-sub').textContent = importTxs.length + ' transações encontradas';
+  document.getElementById('import-preview-sub').textContent = importTxs.length + ' transaÃ§Ãµes encontradas';
   
   renderImportList();
   atualizarResumoImport();
@@ -3269,7 +3269,7 @@ function renderImportList() {
   else if (importFiltro === 'duplicado') txs = txs.filter(t => t.duplicado);
   
   if (!txs.length) {
-    el.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhuma transação nesta categoria</div>';
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhuma transaÃ§Ã£o nesta categoria</div>';
     return;
   }
   
@@ -3277,14 +3277,14 @@ function renderImportList() {
     const sel = importTxsSel.has(tx.id);
     const cor = tx.tipo === 'entrada' ? '#4caf50' : '#ef5350';
     const sinal = tx.tipo === 'entrada' ? '+' : '-';
-    const cat = tx.cat || { ico: '📦', color: '#9e9e9e' };
+    const cat = tx.cat || { ico: 'ð¦', color: '#9e9e9e' };
     return `
       <div class="import-tx-row ${sel ? 'selected' : ''} ${tx.duplicado ? 'duplicado' : ''}" onclick="toggleImportTx('${tx.id}')">
-        <div class="import-tx-chk ${sel ? 'on' : ''}">${sel ? '✓' : ''}</div>
+        <div class="import-tx-chk ${sel ? 'on' : ''}">${sel ? 'â' : ''}</div>
         <div style="width:28px;height:28px;border-radius:50%;background:${cat.color}22;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">${cat.ico}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:12px;font-weight:500;color:${tx.duplicado ? 'rgba(255,255,255,.4)' : '#fff'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tx.memo}${tx.duplicado ? ' ⚠️ já existe' : ''}</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4)">${tx.data} · ${cat.cat}</div>
+          <div style="font-size:12px;font-weight:500;color:${tx.duplicado ? 'rgba(255,255,255,.4)' : '#fff'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tx.memo}${tx.duplicado ? ' â ï¸ jÃ¡ existe' : ''}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4)">${tx.data} Â· ${cat.cat}</div>
         </div>
         <div style="font-size:13px;font-weight:600;color:${cor};flex-shrink:0">${sinal}R$ ${Math.abs(tx.valor).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
       </div>`;
@@ -3316,13 +3316,13 @@ function atualizarResumoImport() {
   document.getElementById('imp-total-count').textContent = selecionadas.length;
   
   const btn = document.getElementById('btn-confirmar-import');
-  if (btn) btn.textContent = `✅ Importar ${selecionadas.length} transações`;
+  if (btn) btn.textContent = `â Importar ${selecionadas.length} transaÃ§Ãµes`;
 }
 
-// ── CONFIRMA IMPORTAÇÃO
+// ââ CONFIRMA IMPORTAÃÃO
 function confirmarImportacao() {
   const selecionadas = importTxs.filter(t => importTxsSel.has(t.id));
-  if (!selecionadas.length) { showToastImport('Nenhuma transação selecionada'); return; }
+  if (!selecionadas.length) { showToastImport('Nenhuma transaÃ§Ã£o selecionada'); return; }
   
   const contaId = (typeof appData !== 'undefined' && appData.contas.length) 
     ? appData.contas[0].id : 'default';
@@ -3335,7 +3335,7 @@ function confirmarImportacao() {
       date: tx.data,
       n: tx.memo,
       cat: tx.cat?.cat || 'Outros',
-      ico: tx.cat?.ico || '📦',
+      ico: tx.cat?.ico || 'ð¦',
       bg: (tx.cat?.color || '#9e9e9e') + '22',
       amt: tx.valor,
       conta: banco?.nome || 'Importado',
@@ -3357,7 +3357,7 @@ function confirmarImportacao() {
     if (banco && appData.contas.length) {
       const conta = appData.contas.find(c => c.banco === banco.id) || appData.contas[0];
       const total = selecionadas.reduce((s,t) => s + t.valor, 0);
-      // Não sobrescreve — só informa
+      // NÃ£o sobrescreve â sÃ³ informa
     }
     
     if (typeof saveAndSync === 'function') saveAndSync();
@@ -3367,8 +3367,8 @@ function confirmarImportacao() {
   
   closeImportacao();
   const n = selecionadas.length;
-  if (typeof showToast === 'function') showToast(`✅ ${n} transações importadas!`, '#1565c0');
-  else alert(n + ' transações importadas com sucesso!');
+  if (typeof showToast === 'function') showToast(`â ${n} transaÃ§Ãµes importadas!`, '#1565c0');
+  else alert(n + ' transaÃ§Ãµes importadas com sucesso!');
 }
 
 function showToastImport(msg) {
