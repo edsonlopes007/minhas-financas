@@ -2268,7 +2268,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // ============================================================
 
 // ── BANCOS DISPONÍVEIS (para adicionar novas contas)
-const BANCOS_DISPONIVEIS = [
+window.BANCOS_DISPONIVEIS = const__BANCOS_DISPONIVEIS = [
   { id: 'nubank',       nome: 'Nubank',          cor: '#820ad1', icone: 'Nu',  tipo: 'digital' },
   { id: 'santander',    nome: 'Santander',        cor: '#ec0000', icone: 'SAN', tipo: 'tradicional' },
   { id: 'inter',        nome: 'Banco Inter',      cor: '#ff7a00', icone: 'IN',  tipo: 'digital' },
@@ -2288,7 +2288,7 @@ const BANCOS_DISPONIVEIS = [
 ];
 
 // ── CARTÕES DISPONÍVEIS
-const CARTOES_DISPONIVEIS = [
+window.CARTOES_DISPONIVEIS = const__CARTOES_DISPONIVEIS = [
   { id: 'nubank_cc',    nome: 'Nubank',        cor: '#820ad1', icone: 'Nu',  bandeira: 'VISA' },
   { id: 'santander_cc', nome: 'Santander',     cor: '#ec0000', icone: 'SAN', bandeira: 'VISA' },
   { id: 'itau_cc',      nome: 'Itaú',          cor: '#003d7b', icone: 'ITÁ', bandeira: 'VISA' },
@@ -2306,7 +2306,7 @@ const CARTOES_DISPONIVEIS = [
 ];
 
 // ── DADOS DINÂMICOS (carregados do Firebase ou localStorage)
-let appData = {
+window.appData = let__appData = {
   contas: [],
   cartoes: [],
   transacoes: [],
@@ -2317,11 +2317,11 @@ let appData = {
 };
 
 // ── DEFAULTS ao criar conta/cartão novo
-const CONTA_DEFAULT = {
+window.CONTA_DEFAULT = const__CONTA_DEFAULT = {
   id: null, banco: 'outro', nome: 'Minha Conta', saldo: 0, 
   tipo: 'corrente', cor: '#9e9e9e', icone: '🏦', ativa: true
 };
-const CARTAO_DEFAULT = {
+window.CARTAO_DEFAULT = const__CARTAO_DEFAULT = {
   id: null, banco: 'outro_cc', nome: 'Meu Cartão', limite: 0, usado: 0,
   cor: '#9e9e9e', icone: '💳', bandeira: 'VISA', fechamento: 1, vencimento: 10, ativo: true
 };
@@ -2721,6 +2721,38 @@ function atualizarSelectContas() {
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(initAppData, 500);
 });
+
+// ── Expõe variáveis ao window (escopo global)
+window.BANCOS_DISPONIVEIS = typeof BANCOS_DISPONIVEIS !== "undefined" ? BANCOS_DISPONIVEIS : window.BANCOS_DISPONIVEIS;
+window.CARTOES_DISPONIVEIS = typeof CARTOES_DISPONIVEIS !== "undefined" ? CARTOES_DISPONIVEIS : window.CARTOES_DISPONIVEIS;
+window.appData = typeof appData !== "undefined" ? appData : window.appData;
+window.CONTA_DEFAULT = typeof CONTA_DEFAULT !== "undefined" ? CONTA_DEFAULT : window.CONTA_DEFAULT;
+window.CARTAO_DEFAULT = typeof CARTAO_DEFAULT !== "undefined" ? CARTAO_DEFAULT : window.CARTAO_DEFAULT;
+// Auto-init
+if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", initAppData); } else { setTimeout(initAppData, 100); }
+</script>
+<script id="fix-scope">
+// Garante que todas as variáveis do sistema estão no window
+(function() {
+  // Re-executa o script dados-sistema no contexto do window se necessário
+  if (typeof window.BANCOS_DISPONIVEIS === 'undefined') {
+    const script = document.getElementById('dados-sistema');
+    if (script) {
+      try {
+        // Executa com escopo global forçado
+        const fn = new Function(script.textContent);
+        fn.call(window);
+        console.log('✅ Escopo global restaurado via new Function');
+      } catch(e) {
+        console.error('Erro ao restaurar escopo:', e);
+      }
+    }
+  }
+  // Garante initAppData
+  if (typeof window.initAppData === 'function' && typeof window.appData === 'undefined') {
+    window.initAppData();
+  }
+})();
 </script>
 
 <!-- ============================================================
