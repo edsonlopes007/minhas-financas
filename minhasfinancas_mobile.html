@@ -701,7 +701,7 @@ document.addEventListener('keydown', e => {
       <div class="drawer-avatar" id="drawer-avatar-lbl">ED</div>
       <div style="flex:1;min-width:0">
         <div class="drawer-name" id="drawer-name">Edson Lopes</div>
-        <div class="drawer-email" id="drawer-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="721716011d1c32141b1c131c1113015c111d1f">[email&#160;protected]</a></div>
+        <div class="drawer-email" id="drawer-email">edson@financas.com</div>
       </div>
       <span class="drawer-arrow">›</span>
     </div>
@@ -741,6 +741,9 @@ document.addEventListener('keydown', e => {
 
     <!-- ANALISAR -->
     <div class="drawer-section">Analisar</div>
+    <div class="drawer-item" onclick="openImportacao(); closeDrawer()">
+      <span class="drawer-item-ico">📥</span>Importar Extrato
+    </div>
     <div class="drawer-item" onclick="drawerNav('relatorios')">
       <span class="drawer-item-ico">📈</span>Relatórios
       <span class="drawer-lock">🔒</span>
@@ -809,7 +812,7 @@ document.addEventListener('keydown', e => {
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 function openDrawer() {
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
@@ -2708,4 +2711,638 @@ function atualizarSelectContas() {
   
   const selCartao = document.getElementById('f-cartao');
   if (selCartao) {
-    selCartao.innerHTML = appData.cartoes.filter(c => c.ativo).map(
+    selCartao.innerHTML = appData.cartoes.filter(c => c.ativo).map(c =>
+      `<option value="${c.id}">${c.nome}</option>`
+    ).join('');
+  }
+}
+
+// Inicia quando DOM carrega
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(initAppData, 500);
+});
+</script>
+
+<!-- ============================================================
+     MÓDULO DE IMPORTAÇÃO — OFX / CSV / TXT
+     Compatível com: Nubank, Santander, Itaú, Bradesco, Caixa,
+     BB, Inter, C6, Mercado Pago e qualquer banco brasileiro
+     ============================================================ -->
+
+<!-- BOTÃO DE IMPORTAÇÃO (adicionar no topbar/menu) -->
+
+<!-- OVERLAY DE IMPORTAÇÃO -->
+<div id="importacao-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:700;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeImportacao()">
+  <div id="importacao-modal" style="background:#1a1a2e;border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:slideUp .25s ease">
+
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:#fff">📥 Importar Extrato</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px">OFX, CSV, TXT — todos os bancos</div>
+      </div>
+      <button onclick="closeImportacao()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+
+    <!-- STEPS -->
+    <div style="padding:20px 22px">
+
+      <!-- STEP 1: Seleciona banco e arquivo -->
+      <div id="import-step1">
+        <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px">1. Selecione o banco</div>
+        
+        <!-- Grid de bancos -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px" id="import-banco-grid">
+          <!-- Preenchido por JS -->
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px">2. Selecione o arquivo</div>
+
+        <!-- Drop zone -->
+        <div id="import-dropzone" 
+          style="border:2px dashed rgba(255,255,255,.2);border-radius:14px;padding:32px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:16px"
+          onclick="document.getElementById('import-file-input').click()"
+          ondragover="importDragOver(event)"
+          ondragleave="importDragLeave(event)"
+          ondrop="importDrop(event)">
+          <div style="font-size:36px;margin-bottom:8px">📂</div>
+          <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:4px">Clique ou arraste o arquivo</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4)">OFX · CSV · TXT · XLS</div>
+          <input id="import-file-input" type="file" accept=".ofx,.csv,.txt,.xls,.xlsx" style="display:none" onchange="importFileSelected(this)">
+        </div>
+
+        <!-- Como exportar por banco -->
+        <div id="import-instrucoes" style="background:rgba(255,255,255,.05);border-radius:10px;padding:14px;font-size:12px;color:rgba(255,255,255,.6);line-height:1.8;display:none">
+          <div style="font-weight:600;color:rgba(255,255,255,.8);margin-bottom:6px">📋 Como exportar do <span id="inst-banco-nome">banco</span>:</div>
+          <div id="inst-texto"></div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Preview e confirmação -->
+      <div id="import-step2" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div id="import-preview-banco" style="width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">Nu</div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:#fff" id="import-preview-title">Extrato importado</div>
+            <div style="font-size:12px;color:rgba(255,255,255,.5)" id="import-preview-sub">0 transações encontradas</div>
+          </div>
+          <button onclick="voltarStep1()" style="margin-left:auto;background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.6);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px">← Voltar</button>
+        </div>
+
+        <!-- Filtros -->
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <span onclick="filtrarImport('todos')" id="if-todos" class="import-filter on">Todos</span>
+          <span onclick="filtrarImport('entrada')" id="if-entrada" class="import-filter">Entradas 📈</span>
+          <span onclick="filtrarImport('saida')" id="if-saida" class="import-filter">Saídas 📉</span>
+          <span onclick="filtrarImport('duplicado')" id="if-dup" class="import-filter">Duplicados ⚠️</span>
+        </div>
+
+        <!-- Resumo -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
+          <div style="background:rgba(67,160,71,.12);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">ENTRADAS</div>
+            <div style="font-size:14px;font-weight:700;color:#4caf50" id="imp-total-entrada">R$ 0</div>
+          </div>
+          <div style="background:rgba(229,57,53,.12);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">SAÍDAS</div>
+            <div style="font-size:14px;font-weight:700;color:#ef5350" id="imp-total-saida">R$ 0</div>
+          </div>
+          <div style="background:rgba(30,136,229,.12);border-radius:8px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px">TRANSAÇÕES</div>
+            <div style="font-size:14px;font-weight:700;color:#1e88e5" id="imp-total-count">0</div>
+          </div>
+        </div>
+
+        <!-- Lista de transações -->
+        <div id="import-txs-list" style="max-height:280px;overflow-y:auto;border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+          <!-- Preenchido por JS -->
+        </div>
+
+        <!-- Botões -->
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button onclick="closeImportacao()" style="flex:1;padding:12px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit">Cancelar</button>
+          <button onclick="confirmarImportacao()" style="flex:2;padding:12px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit" id="btn-confirmar-import">
+            ✅ Importar selecionados
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.import-filter{padding:5px 12px;border-radius:20px;font-size:11px;cursor:pointer;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-weight:500;transition:all .15s}
+.import-filter.on{background:#1e88e5;color:#fff}
+.import-banco-btn{padding:10px 8px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid transparent;transition:all .15s;font-size:11px;color:rgba(255,255,255,.7)}
+.import-banco-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+.import-banco-btn.sel{border-color:#1e88e5;background:rgba(30,136,229,.15);color:#fff}
+.import-tx-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer}
+.import-tx-row:last-child{border-bottom:none}
+.import-tx-row.selected{background:rgba(30,136,229,.08)}
+.import-tx-row.duplicado{opacity:.5}
+.import-tx-chk{width:18px;height:18px;border-radius:4px;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px}
+.import-tx-chk.on{background:#1e88e5;border-color:#1e88e5;color:#fff}
+</style>
+
+<script id="modulo-importacao">
+// ── BANCOS COM INSTRUÇÕES DE EXPORTAÇÃO
+const IMPORT_BANCOS = [
+  { id: 'nubank',      nome: 'Nubank',      cor: '#820ad1', icone: 'Nu',  fmt: 'csv',
+    inst: 'App Nubank → Menu (☰) → Minha conta → Exportar fatura como CSV' },
+  { id: 'santander',   nome: 'Santander',   cor: '#ec0000', icone: 'SAN', fmt: 'ofx',
+    inst: 'Internet Banking → Extrato → Exportar → Formato OFX · Ou app: Extrato → Compartilhar → OFX' },
+  { id: 'itau',        nome: 'Itaú',        cor: '#003d7b', icone: 'ITÁ', fmt: 'ofx',
+    inst: 'Internet Banking → Extrato → Exportar dados → OFX · Acesse ibank.com.br' },
+  { id: 'bradesco',    nome: 'Bradesco',    cor: '#cc092f', icone: 'BRD', fmt: 'ofx',
+    inst: 'Internet Banking → Extrato → Exportar → OFX · Ou pelo Bradesco Net Empresa' },
+  { id: 'bb',          nome: 'BB',          cor: '#f5d200', icone: 'BB',  fmt: 'ofx', tcor: '#333',
+    inst: 'BB.com.br → Movimentação → Exportar → OFX · Selecione o período desejado' },
+  { id: 'caixa',       nome: 'Caixa',       cor: '#005ca9', icone: 'CEF', fmt: 'csv',
+    inst: 'App Caixa → Extrato → Compartilhar → CSV · Ou acesse caixa.gov.br → Extrato' },
+  { id: 'inter',       nome: 'Inter',       cor: '#ff7a00', icone: 'IN',  fmt: 'csv',
+    inst: 'App Inter → Extrato → Exportar → CSV · Ou acesse bancointer.com.br' },
+  { id: 'c6',          nome: 'C6 Bank',     cor: '#222222', icone: 'C6',  fmt: 'ofx',
+    inst: 'App C6 → Extrato → ⋮ → Exportar OFX · Selecione o período' },
+  { id: 'mercadopago', nome: 'M. Pago',     cor: '#009ee3', icone: 'MP',  fmt: 'csv',
+    inst: 'Mercado Pago → Atividade → Filtrar → Exportar CSV' },
+  { id: 'picpay',      nome: 'PicPay',      cor: '#11c76f', icone: 'PP',  fmt: 'csv',
+    inst: 'App PicPay → Extrato → Exportar CSV' },
+  { id: 'sicoob',      nome: 'Sicoob',      cor: '#006c3e', icone: 'SCB', fmt: 'ofx',
+    inst: 'Portal Sicoob → Extrato → Exportar → OFX' },
+  { id: 'outro',       nome: 'Outro',       cor: '#9e9e9e', icone: '🏦', fmt: 'auto',
+    inst: 'Exporte o extrato em qualquer formato (OFX, CSV, TXT) e importe aqui.' },
+];
+
+let importBancoSel = null;
+let importTxs = [];
+let importTxsSel = new Set();
+let importFiltro = 'todos';
+
+// ── ABRE O MODAL
+function openImportacao() {
+  const overlay = document.getElementById('importacao-overlay');
+  if (!overlay) return;
+  
+  // Preenche grid de bancos
+  const grid = document.getElementById('import-banco-grid');
+  if (grid) {
+    grid.innerHTML = IMPORT_BANCOS.map(b => `
+      <div class="import-banco-btn" onclick="selectImportBanco('${b.id}')" id="ibb-${b.id}">
+        <div style="width:28px;height:28px;border-radius:6px;background:${b.cor};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${b.tcor||'#fff'};margin:0 auto 5px">${b.icone}</div>
+        <div style="font-size:10px">${b.nome}</div>
+      </div>`).join('');
+  }
+  
+  importBancoSel = null;
+  importTxs = [];
+  document.getElementById('import-step1').style.display = '';
+  document.getElementById('import-step2').style.display = 'none';
+  document.getElementById('import-instrucoes').style.display = 'none';
+  overlay.style.display = 'flex';
+}
+
+function closeImportacao() {
+  document.getElementById('importacao-overlay').style.display = 'none';
+}
+
+function selectImportBanco(id) {
+  importBancoSel = IMPORT_BANCOS.find(b => b.id === id);
+  document.querySelectorAll('.import-banco-btn').forEach(el => el.classList.remove('sel'));
+  document.getElementById('ibb-' + id)?.classList.add('sel');
+  
+  // Mostra instruções
+  const inst = document.getElementById('import-instrucoes');
+  const txt = document.getElementById('inst-texto');
+  const nome = document.getElementById('inst-banco-nome');
+  if (inst && txt && nome && importBancoSel) {
+    nome.textContent = importBancoSel.nome;
+    txt.textContent = importBancoSel.inst;
+    inst.style.display = '';
+  }
+}
+
+function importDragOver(e) {
+  e.preventDefault();
+  document.getElementById('import-dropzone').style.borderColor = '#1e88e5';
+  document.getElementById('import-dropzone').style.background = 'rgba(30,136,229,.05)';
+}
+function importDragLeave(e) {
+  document.getElementById('import-dropzone').style.borderColor = 'rgba(255,255,255,.2)';
+  document.getElementById('import-dropzone').style.background = '';
+}
+function importDrop(e) {
+  e.preventDefault();
+  importDragLeave(e);
+  const file = e.dataTransfer.files[0];
+  if (file) processImportFile(file);
+}
+function importFileSelected(input) {
+  if (input.files[0]) processImportFile(input.files[0]);
+}
+
+// ── PROCESSA O ARQUIVO
+function processImportFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+  
+  // Tenta detectar o banco pelo nome do arquivo se não selecionado
+  if (!importBancoSel) {
+    const fname = file.name.toLowerCase();
+    if (fname.includes('nubank')) selectImportBanco('nubank');
+    else if (fname.includes('santander')) selectImportBanco('santander');
+    else if (fname.includes('inter')) selectImportBanco('inter');
+    else if (fname.includes('bradesco')) selectImportBanco('bradesco');
+    else if (fname.includes('itau') || fname.includes('itaú')) selectImportBanco('itau');
+    else if (fname.includes('bb') || fname.includes('brasil')) selectImportBanco('bb');
+    else if (fname.includes('caixa')) selectImportBanco('caixa');
+    else selectImportBanco('outro');
+  }
+  
+  reader.onload = function(e) {
+    const content = e.target.result;
+    let txs = [];
+    
+    try {
+      if (ext === 'ofx' || content.includes('<OFX>') || content.includes('OFXHEADER')) {
+        txs = parseOFX(content);
+      } else if (ext === 'csv' || ext === 'txt') {
+        txs = parseCSV(content, importBancoSel?.id);
+      } else {
+        // Tenta auto-detectar
+        if (content.includes('<OFX>') || content.includes('OFXHEADER')) {
+          txs = parseOFX(content);
+        } else {
+          txs = parseCSV(content, importBancoSel?.id);
+        }
+      }
+    } catch(err) {
+      showToastImport('❌ Erro ao ler arquivo: ' + err.message);
+      return;
+    }
+    
+    if (!txs.length) {
+      showToastImport('⚠️ Nenhuma transação encontrada no arquivo');
+      return;
+    }
+    
+    // Marca duplicatas (transações que já existem no appData)
+    txs.forEach(tx => {
+      tx.selecionado = !tx.duplicado;
+      tx.id = 'imp_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+    });
+    
+    importTxs = txs;
+    importTxsSel = new Set(txs.filter(t => t.selecionado).map(t => t.id));
+    
+    showImportStep2(file.name);
+  };
+  
+  reader.readAsText(content => {}, 'UTF-8');
+  // Fix: usar readAsText corretamente
+  reader.readAsText(file, 'UTF-8');
+}
+
+// ── PARSER OFX
+function parseOFX(content) {
+  const txs = [];
+  
+  // Remove header SGML do OFX
+  const xmlStart = content.indexOf('<OFX>');
+  const xmlContent = xmlStart >= 0 ? content.substring(xmlStart) : content;
+  
+  // Regex para extrair transações do OFX
+  const stmtPattern = /<STMTTRN>([\s\S]*?)<\/STMTTRN>/gi;
+  let match;
+  
+  while ((match = stmtPattern.exec(xmlContent)) !== null) {
+    const txBlock = match[1];
+    
+    const getVal = (tag) => {
+      const m = txBlock.match(new RegExp(`<${tag}>([^<\n\r]+)`));
+      return m ? m[1].trim() : '';
+    };
+    
+    const tipo = getVal('TRNTYPE'); // CREDIT, DEBIT, etc
+    const dtpost = getVal('DTPOSTED');
+    const valor = parseFloat(getVal('TRNAMT')) || 0;
+    const memo = getVal('MEMO') || getVal('NAME') || 'Transação';
+    const fitid = getVal('FITID');
+    
+    // Formata data (YYYYMMDD → DD/MM/YYYY)
+    let data = '';
+    if (dtpost && dtpost.length >= 8) {
+      const y = dtpost.substring(0,4);
+      const m2 = dtpost.substring(4,6);
+      const d = dtpost.substring(6,8);
+      data = `${d}/${m2}/${y}`;
+    }
+    
+    // Detecta duplicata
+    const existe = typeof appData !== 'undefined' && appData.transacoes?.some(t => 
+      t.fitid === fitid || (t.date === data && Math.abs(t.amount - valor) < 0.01 && t.name === memo)
+    );
+    
+    txs.push({
+      fitid, data, memo: limparMemo(memo),
+      valor, tipo: valor >= 0 ? 'entrada' : 'saida',
+      duplicado: existe, selecionado: !existe,
+      cat: categorizarAuto(memo, valor)
+    });
+  }
+  
+  return txs.sort((a,b) => b.data.localeCompare(a.data));
+}
+
+// ── PARSER CSV (multi-banco)
+function parseCSV(content, bancoId) {
+  const txs = [];
+  const lines = content.split('\n').filter(l => l.trim());
+  
+  if (lines.length < 2) return txs;
+  
+  // Detecta separador
+  const sep = lines[0].includes(';') ? ';' : ',';
+  const header = lines[0].split(sep).map(h => h.trim().toLowerCase().replace(/"/g,''));
+  
+  // Mapeamento de colunas por banco
+  const colMap = detectCSVCols(header, bancoId);
+  
+  for (let i = 1; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i], sep);
+    if (cols.length < 2) continue;
+    
+    const get = (col) => col !== -1 ? (cols[col] || '').replace(/"/g,'').trim() : '';
+    
+    let data = get(colMap.data);
+    let memo = get(colMap.memo) || get(colMap.descricao) || 'Transação';
+    let valorStr = get(colMap.valor);
+    let valorEntStr = get(colMap.entrada);
+    let valorSaiStr = get(colMap.saida);
+    
+    // Normaliza data
+    data = normalizarData(data);
+    if (!data) continue;
+    
+    // Calcula valor
+    let valor = 0;
+    if (valorStr) {
+      valor = parseValor(valorStr);
+    } else if (valorEntStr || valorSaiStr) {
+      const ent = parseValor(valorEntStr);
+      const sai = parseValor(valorSaiStr);
+      valor = ent > 0 ? ent : -sai;
+    }
+    
+    if (valor === 0 && !valorStr && !valorEntStr && !valorSaiStr) continue;
+    
+    memo = limparMemo(memo);
+    
+    const existe = typeof appData !== 'undefined' && appData.transacoes?.some(t =>
+      t.date === data && Math.abs(t.amount - valor) < 0.01 && t.name === memo
+    );
+    
+    txs.push({
+      data, memo, valor,
+      tipo: valor >= 0 ? 'entrada' : 'saida',
+      duplicado: existe, selecionado: !existe,
+      cat: categorizarAuto(memo, valor)
+    });
+  }
+  
+  return txs.sort((a,b) => b.data.localeCompare(a.data));
+}
+
+function splitCSVLine(line, sep) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let ch of line) {
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+    if (ch === sep && !inQuotes) { result.push(current); current = ''; continue; }
+    current += ch;
+  }
+  result.push(current);
+  return result;
+}
+
+function detectCSVCols(header, bancoId) {
+  const find = (...terms) => {
+    for (const t of terms) {
+      const idx = header.findIndex(h => h.includes(t));
+      if (idx >= 0) return idx;
+    }
+    return -1;
+  };
+  
+  return {
+    data:      find('data', 'date', 'dt', 'competência', 'competencia'),
+    memo:      find('descrição', 'descricao', 'description', 'historico', 'histórico', 'memo', 'estabelecimento', 'lançamento', 'lancamento', 'title'),
+    valor:     find('valor', 'amount', 'value', 'montante'),
+    entrada:   find('credito', 'crédito', 'entrada', 'credit', 'receita'),
+    saida:     find('debito', 'débito', 'saída', 'saida', 'debit', 'despesa'),
+    categoria: find('categoria', 'category', 'tipo'),
+  };
+}
+
+function parseValor(str) {
+  if (!str) return 0;
+  // Remove R$, espaços, converte vírgula para ponto
+  let s = str.replace(/R\$|\s/g,'').replace('.','').replace(',','.');
+  // Trata valores negativos com parênteses: (100,00) → -100
+  if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.slice(1,-1);
+  return parseFloat(s) || 0;
+}
+
+function normalizarData(str) {
+  if (!str) return '';
+  str = str.trim();
+  // DD/MM/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return str;
+  // YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+    const [y,m,d] = str.substring(0,10).split('-');
+    return `${d}/${m}/${y}`;
+  }
+  // MM/DD/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
+    const [m,d,y] = str.split('/');
+    if (parseInt(m) > 12) return `${m}/${d}/${y}`;
+    return `${d}/${m}/${y}`;
+  }
+  // DD-MM-YYYY
+  if (/^\d{2}-\d{2}-\d{4}$/.test(str)) return str.replace(/-/g,'/');
+  return '';
+}
+
+function limparMemo(memo) {
+  return memo
+    .replace(/\*+/g,' ')
+    .replace(/\s+/g,' ')
+    .replace(/^\d{2}\/\d{2}\s+/, '')  // Remove data no início
+    .replace(/\d{2}:\d{2}:\d{2}/g,'')  // Remove horário
+    .trim()
+    .substring(0, 60);
+}
+
+// ── CATEGORIZAÇÃO AUTOMÁTICA
+function categorizarAuto(memo, valor) {
+  const m = memo.toLowerCase();
+  if (valor > 0) {
+    if (m.includes('salário') || m.includes('salario') || m.includes('pagto')) return { cat: 'Receita', ico: '💼', color: '#43a047' };
+    if (m.includes('pix recebido') || m.includes('transferência recebida')) return { cat: 'Receita', ico: '💰', color: '#43a047' };
+    return { cat: 'Receita', ico: '📥', color: '#43a047' };
+  }
+  if (m.includes('mercado') || m.includes('supermercado') || m.includes('hortifruti') || m.includes('ifood') || m.includes('rappi') || m.includes('uber eat')) return { cat: 'Alimentação', ico: '🍽️', color: '#e53935' };
+  if (m.includes('uber') || m.includes('99') || m.includes('gasolina') || m.includes('combustiv') || m.includes('posto') || m.includes('shell') || m.includes('ipiranga')) return { cat: 'Transporte', ico: '🚗', color: '#ef6c00' };
+  if (m.includes('netflix') || m.includes('spotify') || m.includes('disney') || m.includes('amazon prime') || m.includes('youtube')) return { cat: 'Streaming', ico: '📺', color: '#1e88e5' };
+  if (m.includes('farmácia') || m.includes('farmacia') || m.includes('drogaria') || m.includes('droga') || m.includes('hospital') || m.includes('clínica') || m.includes('consulta')) return { cat: 'Saúde', ico: '💊', color: '#43a047' };
+  if (m.includes('luz') || m.includes('enel') || m.includes('celpe') || m.includes('água') || m.includes('sabesp') || m.includes('internet') || m.includes('vivo') || m.includes('claro') || m.includes('tim') || m.includes('oi ')) return { cat: 'Contas fixas', ico: '⚡', color: '#0097a7' };
+  if (m.includes('aluguel') || m.includes('condomínio') || m.includes('condominio') || m.includes('iptu')) return { cat: 'Moradia', ico: '🏠', color: '#8e24aa' };
+  if (m.includes('amazon') || m.includes('mercado livre') || m.includes('shopee') || m.includes('magazine')) return { cat: 'Compras online', ico: '🛍️', color: '#f9a825' };
+  if (m.includes('academia') || m.includes('smartfit') || m.includes('bluefit')) return { cat: 'Saúde', ico: '🏋️', color: '#43a047' };
+  if (m.includes('pix') || m.includes('ted') || m.includes('doc') || m.includes('transferência')) return { cat: 'Transferência', ico: '💸', color: '#9e9e9e' };
+  return { cat: 'Outros', ico: '📦', color: '#9e9e9e' };
+}
+
+// ── MOSTRA STEP 2
+function showImportStep2(filename) {
+  const banco = importBancoSel || { nome: 'Banco', cor: '#9e9e9e', icone: '🏦' };
+  
+  document.getElementById('import-step1').style.display = 'none';
+  document.getElementById('import-step2').style.display = '';
+  
+  const prevBanco = document.getElementById('import-preview-banco');
+  if (prevBanco) { prevBanco.style.background = banco.cor; prevBanco.textContent = banco.icone; }
+  
+  document.getElementById('import-preview-title').textContent = filename;
+  document.getElementById('import-preview-sub').textContent = importTxs.length + ' transações encontradas';
+  
+  renderImportList();
+  atualizarResumoImport();
+}
+
+function voltarStep1() {
+  document.getElementById('import-step1').style.display = '';
+  document.getElementById('import-step2').style.display = 'none';
+}
+
+function renderImportList() {
+  const el = document.getElementById('import-txs-list');
+  if (!el) return;
+  
+  let txs = importTxs;
+  if (importFiltro === 'entrada') txs = txs.filter(t => t.tipo === 'entrada');
+  else if (importFiltro === 'saida') txs = txs.filter(t => t.tipo === 'saida');
+  else if (importFiltro === 'duplicado') txs = txs.filter(t => t.duplicado);
+  
+  if (!txs.length) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhuma transação nesta categoria</div>';
+    return;
+  }
+  
+  el.innerHTML = txs.map(tx => {
+    const sel = importTxsSel.has(tx.id);
+    const cor = tx.tipo === 'entrada' ? '#4caf50' : '#ef5350';
+    const sinal = tx.tipo === 'entrada' ? '+' : '-';
+    const cat = tx.cat || { ico: '📦', color: '#9e9e9e' };
+    return `
+      <div class="import-tx-row ${sel ? 'selected' : ''} ${tx.duplicado ? 'duplicado' : ''}" onclick="toggleImportTx('${tx.id}')">
+        <div class="import-tx-chk ${sel ? 'on' : ''}">${sel ? '✓' : ''}</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:${cat.color}22;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">${cat.ico}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:500;color:${tx.duplicado ? 'rgba(255,255,255,.4)' : '#fff'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${tx.memo}${tx.duplicado ? ' ⚠️ já existe' : ''}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4)">${tx.data} · ${cat.cat}</div>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:${cor};flex-shrink:0">${sinal}R$ ${Math.abs(tx.valor).toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
+      </div>`;
+  }).join('');
+}
+
+function toggleImportTx(id) {
+  if (importTxsSel.has(id)) importTxsSel.delete(id);
+  else importTxsSel.add(id);
+  renderImportList();
+  atualizarResumoImport();
+}
+
+function filtrarImport(filtro) {
+  importFiltro = filtro;
+  document.querySelectorAll('.import-filter').forEach(el => el.classList.remove('on'));
+  document.getElementById('if-' + filtro)?.classList.add('on');
+  renderImportList();
+}
+
+function atualizarResumoImport() {
+  const selecionadas = importTxs.filter(t => importTxsSel.has(t.id));
+  const entradas = selecionadas.filter(t => t.tipo === 'entrada').reduce((s,t) => s + Math.abs(t.valor), 0);
+  const saidas = selecionadas.filter(t => t.tipo === 'saida').reduce((s,t) => s + Math.abs(t.valor), 0);
+  
+  const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2});
+  document.getElementById('imp-total-entrada').textContent = fmt(entradas);
+  document.getElementById('imp-total-saida').textContent = fmt(saidas);
+  document.getElementById('imp-total-count').textContent = selecionadas.length;
+  
+  const btn = document.getElementById('btn-confirmar-import');
+  if (btn) btn.textContent = `✅ Importar ${selecionadas.length} transações`;
+}
+
+// ── CONFIRMA IMPORTAÇÃO
+function confirmarImportacao() {
+  const selecionadas = importTxs.filter(t => importTxsSel.has(t.id));
+  if (!selecionadas.length) { showToastImport('Nenhuma transação selecionada'); return; }
+  
+  const contaId = (typeof appData !== 'undefined' && appData.contas.length) 
+    ? appData.contas[0].id : 'default';
+  const banco = importBancoSel;
+  
+  // Adiciona ao appData
+  if (typeof appData !== 'undefined') {
+    const novas = selecionadas.map(tx => ({
+      id: tx.id,
+      date: tx.data,
+      n: tx.memo,
+      cat: tx.cat?.cat || 'Outros',
+      ico: tx.cat?.ico || '📦',
+      bg: (tx.cat?.color || '#9e9e9e') + '22',
+      amt: tx.valor,
+      conta: banco?.nome || 'Importado',
+      app: '',
+      fitid: tx.fitid || '',
+      importado: true,
+      importedAt: Date.now()
+    }));
+    
+    if (!appData.transacoes) appData.transacoes = [];
+    appData.transacoes = [...novas, ...appData.transacoes];
+    
+    // Atualiza TXS global se existir
+    if (typeof TXS !== 'undefined') {
+      novas.forEach(t => TXS.unshift({ date: t.date, n: t.n, cat: t.cat, conta: t.conta, amt: t.amt, ico: t.ico, bg: t.bg, app: '' }));
+    }
+    
+    // Atualiza saldo da conta
+    if (banco && appData.contas.length) {
+      const conta = appData.contas.find(c => c.banco === banco.id) || appData.contas[0];
+      const total = selecionadas.reduce((s,t) => s + t.valor, 0);
+      // Não sobrescreve — só informa
+    }
+    
+    if (typeof saveAndSync === 'function') saveAndSync();
+    if (typeof renderTxHome === 'function') renderTxHome();
+    if (typeof renderAllData === 'function') renderAllData();
+  }
+  
+  closeImportacao();
+  const n = selecionadas.length;
+  if (typeof showToast === 'function') showToast(`✅ ${n} transações importadas!`, '#1565c0');
+  else alert(n + ' transações importadas com sucesso!');
+}
+
+function showToastImport(msg) {
+  if (typeof showToast === 'function') showToast(msg, '#333');
+  else alert(msg);
+}
+</script>
+</body>
+</html>
