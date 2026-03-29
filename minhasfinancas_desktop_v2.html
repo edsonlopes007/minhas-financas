@@ -1006,11 +1006,11 @@ const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Ago
 let curM=2,curY=2026;
 function changeMonth(d){
   curM += d;
-  if (curM < 0) { curM = 11; curY--; }
-  else if (curM > 11) { curM = 0; curY++; }
+  if (curM < 0) { curM = 11; curY--; } else if (curM > 11) { curM = 0; curY++; }
   const lbl = document.getElementById('mn-lbl');
   if (lbl) lbl.textContent = MONTHS[curM] + ' ' + curY;
-  // Atualiza todos os renders
+  // Recarrega dados do novo mês
+  if (typeof loadTxFromAppData === 'function') loadTxFromAppData();
   if (typeof renderTxDash === 'function') renderTxDash();
   if (typeof renderTxFull === 'function') renderTxFull();
   if (typeof updateDashKPIs === 'function') updateDashKPIs();
