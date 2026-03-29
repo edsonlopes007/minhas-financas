@@ -709,88 +709,30 @@ document.addEventListener('keydown', e => {
 
   <!-- NAV -->
   <nav class="drawer-nav">
-
-    <!-- PRINCIPAL -->
-    <div class="drawer-item active" onclick="drawerNav('inicio')">
-      <span class="drawer-item-ico">⊞</span>Resumo
-    </div>
-    <div class="drawer-item" onclick="drawerNav('contas')">
-      <span class="drawer-item-ico">🏦</span>Contas
-    </div>
-    <div class="drawer-item" onclick="drawerNav('transacoes')">
-      <span class="drawer-item-ico">💸</span>Transações
-    </div>
-    <div class="drawer-item" onclick="drawerNav('cartoes')">
-      <span class="drawer-item-ico">💳</span>Cartões de crédito
-    </div>
-
+    <div class="drawer-item active" onclick="drawerNav('inicio')"><span class="drawer-item-ico">🏠</span>Início</div>
+    <div class="drawer-item" onclick="drawerNav('contas')"><span class="drawer-item-ico">🏦</span>Contas bancárias</div>
+    <div class="drawer-item" onclick="drawerNav('transacoes')"><span class="drawer-item-ico">💸</span>Transações</div>
+    <div class="drawer-item" onclick="drawerNav('cartoes')"><span class="drawer-item-ico">💳</span>Cartões de crédito</div>
     <div class="drawer-divider"></div>
-
-    <!-- PLANEJAR -->
     <div class="drawer-section">Planejar</div>
-    <div class="drawer-item" onclick="drawerNav('orcamentos')">
-      <span class="drawer-item-ico">%</span>Orçamentos
-      <span class="drawer-lock">🔒</span>
-    </div>
-    <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">🎯</span>Objetivos
-      <span class="drawer-lock">🔒</span>
-    </div>
-
+    <div class="drawer-item" onclick="openOrcamentos(); closeDrawer()"><span class="drawer-item-ico">🎯</span>Orçamentos & Metas</div>
+    <div class="drawer-item" onclick="openCalendario(); closeDrawer()"><span class="drawer-item-ico">📅</span>Calendário Financeiro</div>
     <div class="drawer-divider"></div>
-
-    <!-- ANALISAR -->
     <div class="drawer-section">Analisar</div>
-    <div class="drawer-item" onclick="openImportacao(); closeDrawer()">
-      <span class="drawer-item-ico">📥</span>Importar Extrato
-    </div>
-    <div class="drawer-item" onclick="drawerNav('relatorios')">
-      <span class="drawer-item-ico">📈</span>Relatórios
-      <span class="drawer-lock">🔒</span>
-    </div>
-    <div class="drawer-item" onclick="drawerNav('gastos')">
-      <span class="drawer-item-ico">📊</span>Gráficos
-    </div>
-    <div class="drawer-item" onclick="drawerNav('orcamentos')">
-      <span class="drawer-item-ico">⊛</span>Categorias
-    </div>
-    <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">🏷️</span>Tags
-      <span class="drawer-lock">🔒</span>
-    </div>
-    <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">📅</span>Calendário
-    </div>
-
+    <div class="drawer-item" onclick="openImportacao(); closeDrawer()"><span class="drawer-item-ico">📥</span>Importar Extrato</div>
+    <div class="drawer-item" onclick="openRelatorios(); closeDrawer()"><span class="drawer-item-ico">📊</span>Relatórios</div>
+    <div class="drawer-item" onclick="drawerNav('gastos')"><span class="drawer-item-ico">📈</span>Gráficos de Gastos</div>
     <div class="drawer-divider"></div>
-
-    <!-- OUTROS -->
-    <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">🔧</span>Ferramentas
-      <span class="drawer-lock">🔒</span>
-    </div>
-    <div class="drawer-item" onclick="drawerNav('config')">
-      <span class="drawer-item-ico">⚙️</span>Configurações
-    </div>
-    <div class="drawer-item" onclick="showPremium()">
-      <span class="drawer-item-ico">💎</span>Planos e Preços
-    </div>
-    <div class="drawer-item" onclick="showAjuda()">
-      <span class="drawer-item-ico">❓</span>Ajuda
-    </div>
-    <div class="drawer-item" onclick="showSobre()">
-      <span class="drawer-item-ico">ℹ️</span>Sobre
-    </div>
-
-    <!-- SAIR -->
+    <div class="drawer-section">Ferramentas</div>
+    <div class="drawer-item" onclick="openSimulador(); closeDrawer()"><span class="drawer-item-ico">🧮</span>Simulador Financeiro</div>
+    <div class="drawer-item" onclick="openDividasTracker(); closeDrawer()"><span class="drawer-item-ico">📋</span>Tracker de Dívidas</div>
     <div class="drawer-divider"></div>
-    <div class="drawer-item" onclick="doLogout()" style="color:rgba(229,57,53,.8)">
-      <span class="drawer-item-ico" style="color:rgba(229,57,53,.7)">🚪</span>Sair
-    </div>
-
+    <div class="drawer-item" onclick="drawerNav('config')"><span class="drawer-item-ico">⚙️</span>Configurações</div>
+    <div class="drawer-divider"></div>
+    <div class="drawer-item" onclick="doLogout()" style="color:rgba(229,57,53,.8)"><span class="drawer-item-ico" style="color:rgba(229,57,53,.7)">🚪</span>Sair</div>
   </nav>
 
-  <!-- FOOTER — MODO CLARO/ESCURO -->
+    <!-- FOOTER — MODO CLARO/ESCURO -->
   <div class="drawer-footer">
     <div class="drawer-theme-row" onclick="toggleTheme()">
       <span style="font-size:18px" id="theme-ico">☀️</span>
@@ -802,93 +744,7 @@ document.addEventListener('keydown', e => {
 </div>
 
 <!-- MODAL PREMIUM -->
-<div id="premium-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:800;align-items:center;justify-content:center;padding:24px">
-  <div style="background:#1e1e1e;border-radius:20px;padding:28px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.5)">
-    <div style="font-size:40px;margin-bottom:12px">💎</div>
-    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:8px">Recurso Premium</div>
-    <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.6">Este recurso está disponível no plano Premium. Desbloqueie todos os recursos por apenas R$ 9,90/mês.</div>
-    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:13px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px">Ver Planos</button>
-    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:11px;background:none;color:rgba(255,255,255,.45);border:none;font-size:14px;cursor:pointer;font-family:inherit">Agora não</button>
-  </div>
-</div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-function openDrawer() {
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('drawer-overlay').classList.add('open');
-  document.getElementById('hamburger-btn').classList.add('open');
-}
-function closeDrawer() {
-  document.getElementById('drawer').classList.remove('open');
-  document.getElementById('drawer-overlay').classList.remove('open');
-  document.getElementById('hamburger-btn').classList.remove('open');
-}
-function drawerNav(page) {
-  closeDrawer();
-  document.querySelectorAll('.drawer-item').forEach(el => el.classList.remove('active'));
-  event && event.currentTarget && event.currentTarget.classList.add('active');
-  const tabs = document.querySelectorAll('.tab');
-  const pageMap = ['inicio','gastos','cartoes','compras','lista','servicos'];
-  const tabEl = tabs[pageMap.indexOf(page)] || null;
-  if (typeof navTo === 'function') navTo(page, tabEl, null);
-}
-function showPremium() {
-  closeDrawer();
-  document.getElementById('premium-modal').style.display = 'flex';
-}
-function showAjuda() {
-  closeDrawer();
-  showToastDrawer('❓ Ajuda: acesse minhasfinancas.app.br');
-}
-function showSobre() {
-  closeDrawer();
-  showToastDrawer('ℹ️ Minhas Finanças v2.0 · Firebase Sync');
-}
-function doLogout() {
-  closeDrawer();
-  const scr = document.getElementById('login-screen');
-  if (scr) {
-    scr.style.opacity = '0';
-    scr.style.display = 'flex';
-    setTimeout(() => { scr.style.transition = 'opacity .3s'; scr.style.opacity = '1'; }, 10);
-  }
-}
-let darkMode = true;
-function toggleTheme() {
-  darkMode = !darkMode;
-  document.getElementById('theme-toggle').classList.toggle('on', !darkMode);
-  document.getElementById('theme-ico').textContent = darkMode ? '☀️' : '🌙';
-  document.getElementById('theme-lbl').textContent = darkMode ? 'Modo claro' : 'Modo escuro';
-  // Aplica tema claro/escuro básico
-  document.body.style.filter = darkMode ? 'none' : 'invert(1) hue-rotate(180deg)';
-}
-function showToastDrawer(msg) {
-  if (typeof showToast === 'function') { showToast(msg, '#333'); return; }
-  const t = document.createElement('div');
-  t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap';
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2500);
-}
-</script>
-
-<div class="app">
-  <div class="status-area"></div>
-
-  <!-- TOPBAR -->
-  <div class="topbar" style="gap:10px">
-    <button id="hamburger-btn" onclick="openDrawer()">
-      <span></span><span></span><span></span>
-    </button>
-    <div style="flex:1">
-      <div class="topbar-greeting" id="greeting-lbl">Boa tarde,</div>
-      <div class="topbar-name" id="topbar-name">Edson</div>
-    </div>
-    <div class="topbar-right">
-      <button class="tb-icon" onclick="syncNow()" style="background:none;border:none;font-size:18px;cursor:pointer">🔔</button>
-      <div class="avatar" id="topbar-avatar-lbl" onclick="openDrawer()" style="cursor:pointer">ED</div>
-    </div>
-  </div>
 
   <!-- MONTH BAR -->
   <div class="month-bar">
