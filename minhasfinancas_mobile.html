@@ -701,7 +701,7 @@ document.addEventListener('keydown', e => {
       <div class="drawer-avatar" id="drawer-avatar-lbl">ED</div>
       <div style="flex:1;min-width:0">
         <div class="drawer-name" id="drawer-name">Edson Lopes</div>
-        <div class="drawer-email" id="drawer-email">edson@financas.com</div>
+        <div class="drawer-email" id="drawer-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18485928e8fa187888f808f828092cf828e8c">[email&#160;protected]</a></div>
       </div>
       <span class="drawer-arrow">›</span>
     </div>
@@ -812,7 +812,7 @@ document.addEventListener('keydown', e => {
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function openDrawer() {
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
@@ -2008,6 +2008,38 @@ function saveForm() {
   // Toast de confirmação
   showToast(isReceita ? '✅ Receita salva!' : currentFormType === 'transferencia' ? '✅ Transferência salva!' : '✅ Despesa salva!', isReceita ? '#2e7d32' : currentFormType === 'transferencia' ? '#b8860b' : '#c62828');
 
+
+  // ── PERSISTÊNCIA: salva no appData e Firebase
+  const txObj = {
+    id: tx.id || Date.now(),
+    date: tx.date || (data ? data.split('-').reverse().join('/') : new Date().toLocaleDateString('pt-BR')),
+    n: tx.name || desc,
+    cat: tx.cat || (catOpt ? catOpt.text : 'Outros'),
+    ico: tx.catIco || (catOpt ? catOpt.getAttribute('data-ico') : '📦') || '📦',
+    bg: (tx.catColor || '#9e9e9e') + '22',
+    amt: isReceita ? Math.abs(valor) : -Math.abs(valor),
+    conta: tx.conta || conta || 'Nubank',
+    app: '',
+    tipo: currentFormType,
+    efetivada: efetivada
+  };
+  
+  // Adiciona ao appData global
+  const dataRef = typeof appData !== 'undefined' ? appData : (typeof window.appData !== 'undefined' ? window.appData : null);
+  if (dataRef) {
+    if (!dataRef.transacoes) dataRef.transacoes = [];
+    dataRef.transacoes.unshift(txObj);
+    if (typeof window.appData === 'undefined') window.appData = dataRef;
+  }
+  
+  // Persiste no localStorage e Firebase
+  if (typeof saveAndSync === 'function') saveAndSync();
+  else if (typeof saveLocalData === 'function') saveLocalData();
+  
+  // Atualiza KPIs do dashboard
+  if (typeof updateDashKPIs === 'function') setTimeout(updateDashKPIs, 100);
+  if (typeof updateMobileKPIs === 'function') setTimeout(updateMobileKPIs, 100);
+
   // Fecha ou continua
   const continuar = document.getElementById('f-continuar').checked;
   if (!continuar) {
@@ -2664,6 +2696,8 @@ function salvarCadastro() {
   }
   
   saveAndSync();
+  if (typeof updateDashKPIs === "function") setTimeout(updateDashKPIs, 200);
+  if (typeof updateMobileKPIs === "function") setTimeout(updateMobileKPIs, 200);
   closeCadastro();
   renderAllData();
   
@@ -3378,14 +3412,24 @@ function showToastImport(msg) {
 </script>
 
 <script id="update-kpis-mob">
-function updateMobileKPIs(){
-  const data=typeof appData!=='undefined'?appData:window.appData;
-  if(!data||!data.contas)return;
-  if(typeof renderContasList==='function')renderContasList();
-  if(typeof renderCartoesList==='function')renderCartoesList();
-}
-window.updateMobileKPIs=updateMobileKPIs;
-document.addEventListener('DOMContentLoaded',()=>{setTimeout(updateMobileKPIs,1500);});
-</script>
-</body>
-</html>
+// Atualiza saldo do card principal no mobile com dados reais
+function updateMobileKPIs() {
+  if (typeof appData === 'undefined' && typeof window.appData === 'undefined') return;
+  const data = typeof appData !== 'undefined' ? appData : window.appData;
+  if (!data || !data.contas) return;
+
+  const contas = (data.contas || []).filter(c => c.ativa !== false);
+  const saldoTotal = contas.reduce((s, c) => s + (parseFloat(c.saldo) || 0), 0);
+  
+  // Atualiza o card de saldo
+  const saldoEl = document.querySelector('.card-saldo, [class*="saldo"] .val, .saldo-val');
+  const saldoEls = document.querySelectorAll('[id*="saldo-total"], .saldo-num');
+  saldoEls.forEach(el => {
+    el.textContent = 'R$ ' + saldoTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+  });
+
+  // Também atualiza o card principal se tiver o valor hardcoded
+  const cards = document.querySelectorAll('.card .val, .saldo-card');
+  // Renderiza a lista de contas dinâmica
+  if (typeof renderContasList === 'function') renderContasList();
+  if 
