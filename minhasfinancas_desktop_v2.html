@@ -559,27 +559,27 @@ document.addEventListener('keydown', e => {
       <div class="kpi-row">
         <div class="kpi-card blue" onclick="openDrill('contas')">
           <div class="kpi-icon">🏦</div><div class="kpi-label">Saldo total</div>
-          <div class="kpi-val">R$ 8.420</div><div class="kpi-sub">3 contas ativas</div>
+          <div class="kpi-val" id="kpi-saldo">R$ 8.420</div><div class="kpi-sub" id="kpi-saldo-sub">3 contas ativas</div>
           <div class="kpi-hint">👆 clique para detalhar</div>
         </div>
         <div class="kpi-card green" onclick="openDrill('receitas')">
           <div class="kpi-icon">📥</div><div class="kpi-label">Receitas</div>
-          <div class="kpi-val">R$ 5.200</div><div class="kpi-sub">↑ 5% vs fev</div>
+          <div class="kpi-val" id="kpi-receitas">R$ 5.200</div><div class="kpi-sub">↑ 5% vs fev</div>
           <div class="kpi-hint">👆 clique para detalhar</div>
         </div>
         <div class="kpi-card red" onclick="openDrill('despesas')">
           <div class="kpi-icon">📤</div><div class="kpi-label">Despesas</div>
-          <div class="kpi-val">R$ 3.140</div><div class="kpi-sub">↑ 8% vs fev</div>
+          <div class="kpi-val" id="kpi-despesas">R$ 3.140</div><div class="kpi-sub">↑ 8% vs fev</div>
           <div class="kpi-hint">👆 clique para detalhar</div>
         </div>
         <div class="kpi-card amber" onclick="openDrill('movimentacoes')">
           <div class="kpi-icon">🔄</div><div class="kpi-label">Movimentações</div>
-          <div class="kpi-val">R$ 0</div><div class="kpi-sub">Transferências</div>
+          <div class="kpi-val" id="kpi-movimentacoes">R$ 0</div><div class="kpi-sub">Transferências</div>
           <div class="kpi-hint">👆 clique para detalhar</div>
         </div>
         <div class="kpi-card purple" onclick="openDrill('cartoes-kpi')">
           <div class="kpi-icon">💳</div><div class="kpi-label">Cartões (fatura)</div>
-          <div class="kpi-val">R$ 5.340</div><div class="kpi-sub">2 cartões ativos</div>
+          <div class="kpi-val" id="kpi-faturas">R$ 5.340</div><div class="kpi-sub" id="kpi-faturas-sub">2 cartões ativos</div>
           <div class="kpi-hint">👆 clique para detalhar</div>
         </div>
       </div>
@@ -3300,6 +3300,30 @@ function showToastImport(msg) {
   if (typeof showToast === 'function') showToast(msg, '#333');
   else alert(msg);
 }
+</script>
+
+<script id="update-kpis">
+function updateDashKPIs(){
+  const data=typeof appData!=='undefined'?appData:window.appData;
+  if(!data||!data.contas)return;
+  const fmt=v=>'R$ '+Math.abs(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+  const contas=(data.contas||[]).filter(c=>c.ativa!==false);
+  const saldo=contas.reduce((s,c)=>s+(parseFloat(c.saldo)||0),0);
+  const el=document.getElementById('kpi-saldo');if(el)el.textContent=fmt(saldo);
+  const sub=document.getElementById('kpi-saldo-sub');if(sub)sub.textContent=contas.length+' conta'+(contas.length!==1?'s':'')+' ativa'+(contas.length!==1?'s':'');
+  const cartoes=(data.cartoes||[]).filter(c=>c.ativo!==false);
+  const fatura=cartoes.reduce((s,c)=>s+(parseFloat(c.usado)||0),0);
+  const el2=document.getElementById('kpi-faturas');if(el2)el2.textContent=fmt(fatura);
+  const sub2=document.getElementById('kpi-faturas-sub');if(sub2)sub2.textContent=cartoes.length+' cartão'+(cartoes.length!==1?'ões':'')+' ativo'+(cartoes.length!==1?'s':'');
+  const txs=data.transacoes||[];
+  const m=String(new Date().getMonth()+1).padStart(2,'0'),a=String(new Date().getFullYear());
+  let rec=0,dep=0;
+  txs.forEach(t=>{const d=t.date||'';if(d.includes('/')){const p=d.split('/');if(p[1]===m&&p[2]===a){const v=parseFloat(t.amt||0);if(v>0)rec+=v;else dep+=Math.abs(v);}}});
+  const er=document.getElementById('kpi-receitas');if(er&&rec>0)er.textContent=fmt(rec);
+  const ed=document.getElementById('kpi-despesas');if(ed&&dep>0)ed.textContent=fmt(dep);
+}
+window.updateDashKPIs=updateDashKPIs;
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(updateDashKPIs,1000);setTimeout(updateDashKPIs,3000);});
 </script>
 </body>
 </html>
