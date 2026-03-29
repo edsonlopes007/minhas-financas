@@ -924,9 +924,23 @@ const CATS=[
 ];
 
 let TXS=[];
-function loadTxFromAppData(){const d=typeof appData!=='undefined'?appData:window.appData;if(d&&d.transacoes&&d.transacoes.length){TXS=d.transacoes.map(t=>({date:t.date||'',n:t.n||'',cat:t.cat||'Outros',conta:t.conta||'',amt:parseFloat(t.amt||0),ico:t.ico||'📦',bg:t.bg||'#f5f5f5',app:''}));}else TXS=[];}
-function getTxsByMonth(m,y){const mm=String(m+1).padStart(2,'0'),yy=String(y);return TXS.filter(t=>{const p=(t.date||'').split('/');return p[1]===mm&&p[2]===yy;});}
-window.loadTxFromAppData=loadTxFromAppData;window.getTxsByMonth=getTxsByMonth;
+function loadTxFromAppData(){
+  const d=typeof appData!=='undefined'?appData:(typeof window.appData!=='undefined'?window.appData:null);
+  if(d&&d.transacoes&&d.transacoes.length){
+    TXS=d.transacoes.map(t=>({date:t.date||'',n:t.n||t.name||'',cat:t.cat||'Outros',conta:t.conta||'',amt:parseFloat(t.amt||0),ico:t.ico||'📦',bg:t.bg||'#f5f5f5',app:t.app||''}));
+  } else { TXS=[]; }
+}
+function getTxsByMonth(m,y){
+  const mm=String(m+1).padStart(2,'0'),yy=String(y);
+  return TXS.filter(t=>{const p=(t.date||'').split('/');return p[1]===mm&&p[2]===yy;});
+}
+function calcMonthTotals(m,y){
+  const txs=getTxsByMonth(m,y);
+  return {entradas:txs.filter(t=>t.amt>0).reduce((s,t)=>s+t.amt,0),saidas:txs.filter(t=>t.amt<0).reduce((s,t)=>s+Math.abs(t.amt),0),txs};
+}
+window.loadTxFromAppData=loadTxFromAppData;
+window.getTxsByMonth=getTxsByMonth;
+window.calcMonthTotals=calcMonthTotals;
 
 const MKT=[
   {id:'todos',label:'Todos',color:'#1565c0'},
@@ -980,7 +994,7 @@ function toggleSidebar(){document.getElementById('sidebar').classList.toggle('op
 setInterval(()=>{const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');},1000);
 const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 let curM=2,curY=2026;
-function changeMonth(d){curM+=d;if(curM<0){curM=11;curY--;}else if(curM>11){curM=0;curY++;}const lbl=document.getElementById('mn-lbl');if(lbl)lbl.textContent=MONTHS[curM]+' '+curY;if(typeof loadTxFromAppData==='function')loadTxFromAppData();if(typeof renderTxDash==='function')renderTxDash();if(typeof renderTxFull==='function')renderTxFull();if(typeof updateDashKPIs==='function')updateDashKPIs();}else if(curM>11){curM=0;curY++;}document.getElementById('mn-lbl').textContent=MONTHS[curM]+' '+curY;}
+function changeMonth(d){curM+=d;if(curM<0){curM=11;curY--;}else if(curM>11){curM=0;curY++;}document.getElementById('mn-lbl').textContent=MONTHS[curM]+' '+curY;}
 
 function syncNow(){const d=document.getElementById('sync-dot'),l=document.getElementById('sync-lbl');d.style.background='#ef6c00';l.textContent='Sincronizando...';setTimeout(()=>{d.style.background='#43a047';l.textContent='Sincronizado com app';},1800);}
 
