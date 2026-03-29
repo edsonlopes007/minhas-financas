@@ -794,12 +794,6 @@ document.addEventListener('keydown', e => {
 
 </div>
 
-    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:8px">Recurso Premium</div>
-    <div style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:24px;line-height:1.6">Este recurso está disponível no plano Premium. Desbloqueie todos os recursos por apenas R$ 9,90/mês.</div>
-    
-    <button onclick="document.getElementById('premium-modal').style.display='none'" style="width:100%;padding:11px;background:none;color:rgba(255,255,255,.45);border:none;font-size:14px;cursor:pointer;font-family:inherit">Agora não</button>
-  </div>
-</div>
 
 <script>
 function openDrawer() {
@@ -821,10 +815,7 @@ function drawerNav(page) {
   const tabEl = tabs[pageMap.indexOf(page)] || null;
   if (typeof navTo === 'function') navTo(page, tabEl, null);
 }
-function showPremium() {
-  closeDrawer();
-  document.getElementById('premium-modal').style.display = 'flex';
-}
+function showPremium(){}
 function showAjuda() {
   closeDrawer();
   showToastDrawer('❓ Ajuda: acesse minhasfinancas.app.br');
