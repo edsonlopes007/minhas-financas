@@ -2488,31 +2488,60 @@ function renderCartoesList() {
   const el = document.getElementById('cartoes-resumo');
   if (!el) return;
   
-  if (!appData.cartoes.length) {
+  if (!appData.cartoes || !appData.cartoes.length) {
     el.innerHTML = '<div style="padding:16px;text-align:center;color:rgba(255,255,255,.4);font-size:13px">Nenhum cartão cadastrado.<br><span onclick="openAddCartao()" style="color:#1e88e5;cursor:pointer">+ Adicionar cartão</span></div>';
     return;
   }
-  
-  el.innerHTML = appData.cartoes.filter(c => c.ativo).map(cartao => {
-    const pct = cartao.limite > 0 ? Math.min(Math.round((cartao.usado / cartao.limite) * 100), 100) : 0;
-    const cor = pct > 70 ? 'var(--am2)' : pct > 90 ? 'var(--rd2)' : 'var(--gn4)';
-    return `
-      <div class="row" onclick="openEditCartao('${cartao.id}')">
-        <div class="logo" style="background:${cartao.cor}">${cartao.icone}</div>
-        <div class="rinfo">
-          <div class="rname">${cartao.nome} · <span style="color:${cor}">${pct}%</span></div>
-          <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${cor}"></div></div>
+
+  // Mês atual exibido
+  const mesAtual = (typeof window.curM !== 'undefined' && window.curM !== null) ? window.curM : new Date().getMonth();
+  const anoAtual = (typeof window.curY !== 'undefined' && window.curY !== null) ? window.curY : new Date().getFullYear();
+  const mm = String(mesAtual + 1).padStart(2, '0');
+  const yy = String(anoAtual);
+
+  // Calcula fatura de cada cartão para o mês selecionado
+  // (soma das despesas de cartão lançadas naquele mês)
+  const txsMes = (appData.transacoes || []).filter(t => {
+    const p = (t.date || '').split('/');
+    return p[1] === mm && p[2] === yy && (t.tipo === 'cartao' || t.tipo === 'despesa-cartao');
+  });
+
+  // Agrupa por cartão
+  const faturaMap = {};
+  txsMes.forEach(t => {
+    const key = t.cartaoId || t.conta || '';
+    faturaMap[key] = (faturaMap[key] || 0) + Math.abs(parseFloat(t.amt || 0));
+  });
+
+  // Total geral de cartões no mês
+  const totalFaturaMes = txsMes.reduce((s, t) => s + Math.abs(parseFloat(t.amt || 0)), 0);
+  const fmt = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+
+  el.innerHTML = appData.cartoes.filter(c => c.ativo !== false).map(cartao => {
+    // Fatura: usa o lançado no mês. Se não tem lançamento = 0
+    const faturaMes = faturaMap[cartao.id] || faturaMap[cartao.nome] || 0;
+    const limite = parseFloat(cartao.limite) || 0;
+    const pct = limite > 0 ? Math.min(Math.round((faturaMes / limite) * 100), 100) : 0;
+    const cor = pct > 90 ? 'var(--rd2)' : pct > 70 ? 'var(--am2)' : 'var(--gn4)';
+    
+    return `<div class="row" onclick="openEditCartao('${cartao.id}')">
+      <div class="logo" style="background:${cartao.cor}">${cartao.icone || cartao.nome?.substring(0,2) || 'CC'}</div>
+      <div class="rinfo">
+        <div class="rname">${cartao.nome} <span style="font-size:10px;color:rgba(255,255,255,.4);font-weight:400">${pct}%</span></div>
+        <div class="rsub" style="margin-top:4px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${cor};border-radius:2px;transition:width .4s"></div>
         </div>
-        <div class="ramt">
-          <div class="rval neg">${formatMoney(cartao.usado)}</div>
-          <div class="rprev">de ${formatMoney(cartao.limite)}</div>
-        </div>
-      </div>`;
-  }).join('') + `
-    <div class="row" onclick="openAddCartao()" style="border-top:1px dashed rgba(255,255,255,.1)">
-      <div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);font-size:20px">+</div>
-      <div class="rinfo"><div class="rname" style="color:rgba(255,255,255,.5)">Adicionar cartão</div></div>
+      </div>
+      <div class="ramt" style="text-align:right">
+        <div class="rval ${faturaMes > 0 ? 'neg' : ''}" style="font-size:13px">${faturaMes > 0 ? fmt(faturaMes) : 'R$ 0,00'}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px">de ${fmt(limite)}</div>
+      </div>
     </div>`;
+  }).join('');
+
+  // Atualiza o total de faturas no KPI se existir
+  const kpiFat = document.getElementById('kpi-faturas');
+  if (kpiFat) kpiFat.textContent = fmt(totalFaturaMes);
 }
 
 // ── HELPER: formata moeda
@@ -3663,15 +3692,18 @@ window.renderTxHome = function() {
 // ── Fix changeMonth para recarregar dados do mês
 const _origChangeMonth = window.changeMonth;
 window.changeMonth = function(d) {
-  if (typeof curM !== 'undefined') {
-    curM += d;
-    if (curM < 0) { curM = 11; curY--; } else if (curM > 11) { curM = 0; curY++; }
-    const lbl = document.getElementById('mn-lbl');
-    const MN = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    if (lbl) lbl.textContent = MN[curM] + ' ' + curY;
-  } else if (_origChangeMonth) { _origChangeMonth(d); }
+  // usa window.curM/curY que são garantidos pelo hero-acumulativo
+  window.curM = (typeof window.curM !== 'undefined' && window.curM !== null) ? window.curM : new Date().getMonth();
+  window.curY = (typeof window.curY !== 'undefined' && window.curY !== null) ? window.curY : new Date().getFullYear();
+  window.curM += d;
+  if (window.curM < 0) { window.curM = 11; window.curY--; }
+  else if (window.curM > 11) { window.curM = 0; window.curY++; }
+  const lbl = document.getElementById('mn-lbl');
+  const MN = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  if (lbl) lbl.textContent = MN[window.curM] + ' ' + window.curY;
   loadTxFromAppData();
   window.renderTxHome();
+  if (typeof renderCartoesList === 'function') renderCartoesList();
   updateHeroSaldo();
 };
 
@@ -4132,6 +4164,7 @@ function updateHeroSaldo() {
     if (lbl) lbl.textContent = MN[window.curM] + ' ' + window.curY;
     if (typeof loadTxFromAppData === 'function') loadTxFromAppData();
     if (typeof window.renderTxHome === 'function') window.renderTxHome();
+    if (typeof renderCartoesList === 'function') renderCartoesList();
     updateHeroSaldo();
   };
 })();
