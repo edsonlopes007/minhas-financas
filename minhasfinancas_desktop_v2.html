@@ -481,6 +481,15 @@ function dDoLogin() {
         if (typeof renderComprasDesk === 'function') renderComprasDesk();
       }, 100);
     }, 400);
+      // Carrega dados dinâmicos após login
+      setTimeout(function() {
+        if (typeof loadTxFromAppData === 'function') loadTxFromAppData();
+        if (typeof updateDashKPIs === 'function') updateDashKPIs();
+        if (typeof renderTxDash === 'function') renderTxDash();
+        if (typeof renderContasList === 'function') renderContasList();
+        if (typeof renderCartoesList === 'function') renderCartoesList();
+        console.log('✅ Dados dinâmicos carregados após login');
+      }, 600);
   } else {
     const e = document.getElementById('d-login-erro');
     e.style.display = 'block';
@@ -923,24 +932,25 @@ const CATS=[
   ]},
 ];
 
-let TXS=[];
-function loadTxFromAppData(){
-  const d=typeof appData!=='undefined'?appData:(typeof window.appData!=='undefined'?window.appData:null);
-  if(d&&d.transacoes&&d.transacoes.length){
-    TXS=d.transacoes.map(t=>({date:t.date||'',n:t.n||t.name||'',cat:t.cat||'Outros',conta:t.conta||'',amt:parseFloat(t.amt||0),ico:t.ico||'📦',bg:t.bg||'#f5f5f5',app:t.app||''}));
-  } else { TXS=[]; }
+// TXS dinâmico — carregado do appData.transacoes
+let TXS = [];
+function loadTxFromAppData() {
+  const data = typeof appData !== 'undefined' ? appData : (typeof window.appData !== 'undefined' ? window.appData : null);
+  if (data && data.transacoes && data.transacoes.length > 0) {
+    TXS = data.transacoes.map(t => ({
+      date: t.date || '', n: t.n || t.name || '',
+      cat: t.cat || 'Outros', conta: t.conta || '',
+      amt: parseFloat(t.amt || 0),
+      ico: t.ico || '📦', bg: t.bg || '#f5f5f5', app: t.app || ''
+    }));
+  } else { TXS = []; }
 }
-function getTxsByMonth(m,y){
-  const mm=String(m+1).padStart(2,'0'),yy=String(y);
-  return TXS.filter(t=>{const p=(t.date||'').split('/');return p[1]===mm&&p[2]===yy;});
+function getTxsByMonth(mes, ano) {
+  const m = String(mes+1).padStart(2,'0'), y = String(ano);
+  return TXS.filter(t => { const p=(t.date||'').split('/'); return p[1]===m && p[2]===y; });
 }
-function calcMonthTotals(m,y){
-  const txs=getTxsByMonth(m,y);
-  return {entradas:txs.filter(t=>t.amt>0).reduce((s,t)=>s+t.amt,0),saidas:txs.filter(t=>t.amt<0).reduce((s,t)=>s+Math.abs(t.amt),0),txs};
-}
-window.loadTxFromAppData=loadTxFromAppData;
-window.getTxsByMonth=getTxsByMonth;
-window.calcMonthTotals=calcMonthTotals;
+window.loadTxFromAppData = loadTxFromAppData;
+window.getTxsByMonth = getTxsByMonth;
 
 const MKT=[
   {id:'todos',label:'Todos',color:'#1565c0'},
@@ -994,51 +1004,16 @@ function toggleSidebar(){document.getElementById('sidebar').classList.toggle('op
 setInterval(()=>{const n=new Date();document.getElementById('clock').textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');},1000);
 const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 let curM=2,curY=2026;
-function changeMonth(d){curM+=d;if(curM<0){curM=11;curY--;}else if(curM>11){curM=0;curY++;}document.getElementById('mn-lbl').textContent=MONTHS[curM]+' '+curY;}
-
-function syncNow(){const d=document.getElementById('sync-dot'),l=document.getElementById('sync-lbl');d.style.background='#ef6c00';l.textContent='Sincronizando...';setTimeout(()=>{d.style.background='#43a047';l.textContent='Sincronizado com app';},1800);}
-
-/* ===== DRILL-DOWN ===== */
-let drillChartInst=null;
-function openDrill(key){
-  const overlay=document.getElementById('drill-overlay');
-  const body=document.getElementById('drill-body');
-  const ico=document.getElementById('drill-ico');
-  const title=document.getElementById('drill-title');
-  const sub=document.getElementById('drill-sub');
-
-  const configs={
-    'despesas':{ico:'📤',color:'#e53935',t:'Despesas — Março 2026',s:'Total: R$ 3.140,22 · 7 categorias'},
-    'receitas':{ico:'📥',color:'#43a047',t:'Receitas — Março 2026',s:'Total: R$ 5.200,00'},
-    'contas':{ico:'🏦',color:'#1565c0',t:'Saldo consolidado — Março 2026',s:'3 contas · Atualizado agora'},
-    'movimentacoes':{ico:'🔄',color:'#ef6c00',t:'Movimentações — Março 2026',s:'Transferências entre contas'},
-    'cartoes-kpi':{ico:'💳',color:'#7b1fa2',t:'Cartões de crédito — Março 2026',s:'Total em faturas: R$ 5.990,00'},
-    'conta-nubank':{ico:'💜',color:'#820ad1',t:'Nubank — Extrato',s:'Saldo atual: R$ 3.210,80'},
-    'conta-santander':{ico:'❤️',color:'#ec0000',t:'Santander — Extrato',s:'Saldo atual: R$ 4.120,55'},
-    'conta-inter':{ico:'🧡',color:'#ff7a00',t:'Banco Inter — Extrato',s:'Saldo atual: R$ 1.089,00'},
-    'fatura-nubank':{ico:'💳',color:'#6a1b9a',t:'Nubank — Fatura Março 2026',s:'Total: R$ 3.100,00 · Vence 22/04'},
-    'fatura-santander':{ico:'💳',color:'#b71c1c',t:'Santander — Fatura Março 2026',s:'Total: R$ 2.240,00 · Vence 17/04'},
-    'fatura-mp':{ico:'💳',color:'#009ee3',t:'Mercado Pago — Fatura Março 2026',s:'Total: R$ 650,00 · Vence 05/04'},
-  };
-
-  // Categoria direto pelo nome
-  const catConfig=CATS.find(c=>c.n===key);
-  if(catConfig){
-    openCatDrill(catConfig);return;
-  }
-  // Sub direto
-  const subSvc=subsArr.find((s,i)=>s.n===key||i===parseInt(key));
-  if(subSvc){openSubDrill(subSvc);return;}
-
-  const cfg=configs[key]||{ico:'📊',color:'var(--bl)',t:key,s:'Detalhes'};
-  ico.style.background=cfg.color+'22';
-  ico.style.color=cfg.color;
-  ico.textContent=cfg.ico;
-  title.textContent=cfg.t;
-  sub.textContent=cfg.s;
-  body.innerHTML=buildDrillBody(key,cfg.color);
-  overlay.classList.add('open');
-  setTimeout(()=>buildDrillChart(key,cfg.color),100);
+function changeMonth(d){
+  curM += d;
+  if (curM < 0) { curM = 11; curY--; }
+  else if (curM > 11) { curM = 0; curY++; }
+  const lbl = document.getElementById('mn-lbl');
+  if (lbl) lbl.textContent = MONTHS[curM] + ' ' + curY;
+  // Atualiza todos os renders
+  if (typeof renderTxDash === 'function') renderTxDash();
+  if (typeof renderTxFull === 'function') renderTxFull();
+  if (typeof updateDashKPIs === 'function') updateDashKPIs();
 }
 
 function openCatDrill(cat){
@@ -1160,8 +1135,20 @@ function renderDashCharts(){
 }
 
 function renderTxDash(){
-  const el=document.getElementById('tx-dash');if(!el)return;
-  el.innerHTML=TXS.slice(0,6).map(t=>`<div class="tx-row" onclick="openDrill('${t.cat}')"><div class="tx-ico" style="background:${t.bg}">${t.ico}</div><div class="tx-info"><div class="tx-name">${t.n}</div><div class="tx-sub"><span class="tx-dot" style="background:${t.amt<0?'#e53935':'#43a047'}"></span>${t.date} · ${t.cat}</div></div><div class="tx-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'- R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div>`).join('');
+  loadTxFromAppData();
+  const el = document.getElementById('tx-dash') || document.querySelector('.tx-list, [id*="tx-home"]');
+  if (!el) return;
+  const txsMes = getTxsByMonth(curM, curY);
+  if (!txsMes.length) {
+    el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--tx3);font-size:13px">Nenhuma movimentação em '+MONTHS[curM]+' '+curY+'<br><small>Use + Lançamento para adicionar</small></div>';
+    return;
+  }
+  el.innerHTML = txsMes.slice(0,7).map(t=>`
+    <div class="drill-tx-row">
+      <div class="drill-ico" style="background:${t.bg}">${t.ico}</div>
+      <div class="drill-name">${t.n}<div class="drill-date">${t.date} · ${t.cat}</div></div>
+      <div class="drill-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'-':'+'}R$ ${Math.abs(t.amt).toFixed(2)}</div>
+    </div>`).join('');
 }
 
 function renderCCDash(){
@@ -1203,9 +1190,28 @@ function renderRankList(){
 /* ===== TRANSAÇÕES ===== */
 let txFilter='';
 function renderTxFull(){
-  const body=document.getElementById('tx-full-body');if(!body)return;
-  const filtered=txFilter?TXS.filter(t=>t.n.toLowerCase().includes(txFilter)||t.cat.toLowerCase().includes(txFilter)):TXS;
-  body.innerHTML=filtered.map(t=>`<tr onclick="openDrill('${t.cat}')" style="cursor:pointer"><td>${t.date}</td><td><div class="td-name"><div style="width:26px;height:26px;border-radius:50%;background:${t.bg};display:flex;align-items:center;justify-content:center;font-size:12px">${t.ico}</div>${t.n}</div></td><td><span class="badge ${t.cat==='Receita'?'badge-g':t.amt<0?'badge-r':'badge-b'}" style="cursor:pointer">${t.cat}</span></td><td>${t.conta}</td><td class="td-val ${t.amt<0?'neg':'pos'}">${t.amt<0?'- R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</td><td><span class="badge ${t.amt<0?'badge-r':'badge-g'}">${t.amt<0?'Despesa':'Receita'}</span></td></tr>`).join('');
+  loadTxFromAppData();
+  const el = document.querySelector('#pg-transacoes tbody, #pg-transacoes .tx-list');
+  if (!el) return;
+  const txsMes = getTxsByMonth(curM, curY);
+  if (!txsMes.length) {
+    const parent = el.closest('table') || el;
+    if (parent.tagName === 'TABLE') {
+      el.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--tx3)">Nenhuma transação em '+MONTHS[curM]+' '+curY+'<br><small>Use + Lançamento para adicionar</small></td></tr>';
+    } else {
+      el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--tx3)">Nenhuma transação em '+MONTHS[curM]+' '+curY+'</div>';
+    }
+    return;
+  }
+  el.innerHTML = txsMes.map(t=>`
+    <tr>
+      <td>${t.date}</td>
+      <td class="td-name"><span style="font-size:18px">${t.ico}</span> ${t.n}</td>
+      <td><span class="badge badge-b">${t.cat}</span></td>
+      <td>${t.conta}</td>
+      <td class="td-val ${t.amt<0?'neg':'pos'}">${t.amt<0?'- R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</td>
+      <td><span class="badge ${t.amt<0?'badge-r':'badge-g'}">${t.amt<0?'Despesa':'Receita'}</span></td>
+    </tr>`).join('');
 }
 function filterTx(v){txFilter=v.toLowerCase();renderTxFull();}
 
