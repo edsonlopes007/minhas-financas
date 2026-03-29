@@ -1883,6 +1883,38 @@ function saveForm() {
   // Toast de confirmação
   showToast(isReceita ? '✅ Receita salva!' : currentFormType === 'transferencia' ? '✅ Transferência salva!' : '✅ Despesa salva!', isReceita ? '#2e7d32' : currentFormType === 'transferencia' ? '#b8860b' : '#c62828');
 
+
+  // ── PERSISTÊNCIA: salva no appData e Firebase
+  const txObj = {
+    id: tx.id || Date.now(),
+    date: tx.date || (data ? data.split('-').reverse().join('/') : new Date().toLocaleDateString('pt-BR')),
+    n: tx.name || desc,
+    cat: tx.cat || (catOpt ? catOpt.text : 'Outros'),
+    ico: tx.catIco || (catOpt ? catOpt.getAttribute('data-ico') : '📦') || '📦',
+    bg: (tx.catColor || '#9e9e9e') + '22',
+    amt: isReceita ? Math.abs(valor) : -Math.abs(valor),
+    conta: tx.conta || conta || 'Nubank',
+    app: '',
+    tipo: currentFormType,
+    efetivada: efetivada
+  };
+  
+  // Adiciona ao appData global
+  const dataRef = typeof appData !== 'undefined' ? appData : (typeof window.appData !== 'undefined' ? window.appData : null);
+  if (dataRef) {
+    if (!dataRef.transacoes) dataRef.transacoes = [];
+    dataRef.transacoes.unshift(txObj);
+    if (typeof window.appData === 'undefined') window.appData = dataRef;
+  }
+  
+  // Persiste no localStorage e Firebase
+  if (typeof saveAndSync === 'function') saveAndSync();
+  else if (typeof saveLocalData === 'function') saveLocalData();
+  
+  // Atualiza KPIs do dashboard
+  if (typeof updateDashKPIs === 'function') setTimeout(updateDashKPIs, 100);
+  if (typeof updateMobileKPIs === 'function') setTimeout(updateMobileKPIs, 100);
+
   // Fecha ou continua
   const continuar = document.getElementById('f-continuar').checked;
   if (!continuar) {
@@ -2589,6 +2621,8 @@ function salvarCadastro() {
   }
   
   saveAndSync();
+  if (typeof updateDashKPIs === "function") setTimeout(updateDashKPIs, 200);
+  if (typeof updateMobileKPIs === "function") setTimeout(updateMobileKPIs, 200);
   closeCadastro();
   renderAllData();
   
@@ -3303,27 +3337,69 @@ function showToastImport(msg) {
 </script>
 
 <script id="update-kpis">
-function updateDashKPIs(){
-  const data=typeof appData!=='undefined'?appData:window.appData;
-  if(!data||!data.contas)return;
-  const fmt=v=>'R$ '+Math.abs(parseFloat(v)||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
-  const contas=(data.contas||[]).filter(c=>c.ativa!==false);
-  const saldo=contas.reduce((s,c)=>s+(parseFloat(c.saldo)||0),0);
-  const el=document.getElementById('kpi-saldo');if(el)el.textContent=fmt(saldo);
-  const sub=document.getElementById('kpi-saldo-sub');if(sub)sub.textContent=contas.length+' conta'+(contas.length!==1?'s':'')+' ativa'+(contas.length!==1?'s':'');
-  const cartoes=(data.cartoes||[]).filter(c=>c.ativo!==false);
-  const fatura=cartoes.reduce((s,c)=>s+(parseFloat(c.usado)||0),0);
-  const el2=document.getElementById('kpi-faturas');if(el2)el2.textContent=fmt(fatura);
-  const sub2=document.getElementById('kpi-faturas-sub');if(sub2)sub2.textContent=cartoes.length+' cartão'+(cartoes.length!==1?'ões':'')+' ativo'+(cartoes.length!==1?'s':'');
-  const txs=data.transacoes||[];
-  const m=String(new Date().getMonth()+1).padStart(2,'0'),a=String(new Date().getFullYear());
-  let rec=0,dep=0;
-  txs.forEach(t=>{const d=t.date||'';if(d.includes('/')){const p=d.split('/');if(p[1]===m&&p[2]===a){const v=parseFloat(t.amt||0);if(v>0)rec+=v;else dep+=Math.abs(v);}}});
-  const er=document.getElementById('kpi-receitas');if(er&&rec>0)er.textContent=fmt(rec);
-  const ed=document.getElementById('kpi-despesas');if(ed&&dep>0)ed.textContent=fmt(dep);
+// ── Atualiza KPIs do dashboard com dados reais do appData
+function updateDashKPIs() {
+  if (typeof appData === 'undefined' && typeof window.appData === 'undefined') return;
+  const data = typeof appData !== 'undefined' ? appData : window.appData;
+  if (!data) return;
+
+  const fmt = v => {
+    const n = parseFloat(v) || 0;
+    return 'R$ ' + Math.abs(n).toLocaleString('pt-BR', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+  };
+
+  // Saldo total das contas
+  const contas = (data.contas || []).filter(c => c.ativa !== false);
+  const saldoTotal = contas.reduce((s, c) => s + (parseFloat(c.saldo) || 0), 0);
+  const el_saldo = document.getElementById('kpi-saldo');
+  if (el_saldo) el_saldo.textContent = fmt(saldoTotal);
+  const el_saldo_sub = document.getElementById('kpi-saldo-sub');
+  if (el_saldo_sub) el_saldo_sub.textContent = contas.length + ' conta' + (contas.length !== 1 ? 's' : '') + ' ativa' + (contas.length !== 1 ? 's' : '');
+
+  // Fatura total dos cartões
+  const cartoes = (data.cartoes || []).filter(c => c.ativo !== false);
+  const faturaTotal = cartoes.reduce((s, c) => s + (parseFloat(c.usado) || 0), 0);
+  const el_fat = document.getElementById('kpi-faturas');
+  if (el_fat) el_fat.textContent = fmt(faturaTotal);
+  const el_fat_sub = document.getElementById('kpi-faturas-sub');
+  if (el_fat_sub) el_fat_sub.textContent = cartoes.length + ' cartão' + (cartoes.length !== 1 ? 'ões' : '') + ' ativo' + (cartoes.length !== 1 ? 's' : '');
+
+  // Receitas e Despesas do mês atual (das transações)
+  const txs = data.transacoes || (typeof TXS !== 'undefined' ? TXS : []);
+  const now = new Date();
+  const mes = String(now.getMonth() + 1).padStart(2, '0');
+  const ano = String(now.getFullYear());
+  
+  let receitas = 0, despesas = 0;
+  txs.forEach(t => {
+    const d = t.date || t.data || '';
+    // Formato DD/MM/YYYY
+    if (d.includes('/')) {
+      const parts = d.split('/');
+      if (parts[1] === mes && parts[2] === ano) {
+        const v = parseFloat(t.amt || t.amount || t.valor || 0);
+        if (v > 0) receitas += v;
+        else despesas += Math.abs(v);
+      }
+    }
+  });
+
+  const el_rec = document.getElementById('kpi-receitas');
+  if (el_rec && receitas > 0) el_rec.textContent = fmt(receitas);
+  const el_desp = document.getElementById('kpi-despesas');
+  if (el_desp && despesas > 0) el_desp.textContent = fmt(despesas);
+
+  console.log('✅ KPIs atualizados:', {saldoTotal, faturaTotal, receitas, despesas});
 }
-window.updateDashKPIs=updateDashKPIs;
-document.addEventListener('DOMContentLoaded',()=>{setTimeout(updateDashKPIs,1000);setTimeout(updateDashKPIs,3000);});
+
+// Chama quando os dados estiverem prontos
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(updateDashKPIs, 1000);
+  setTimeout(updateDashKPIs, 3000); // retry após Firebase sync
+});
+
+// Exporta para window
+window.updateDashKPIs = updateDashKPIs;
 </script>
 </body>
 </html>
