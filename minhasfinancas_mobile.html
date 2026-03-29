@@ -3376,5 +3376,16 @@ function showToastImport(msg) {
   else alert(msg);
 }
 </script>
+
+<script id="update-kpis-mob">
+function updateMobileKPIs(){
+  const data=typeof appData!=='undefined'?appData:window.appData;
+  if(!data||!data.contas)return;
+  if(typeof renderContasList==='function')renderContasList();
+  if(typeof renderCartoesList==='function')renderCartoesList();
+}
+window.updateMobileKPIs=updateMobileKPIs;
+document.addEventListener('DOMContentLoaded',()=>{setTimeout(updateMobileKPIs,1500);});
+</script>
 </body>
 </html>
