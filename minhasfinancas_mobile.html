@@ -4089,5 +4089,84 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(closeAll, 1000);
 })();
 </script>
+
+<!-- MODAIS FUNCIONAIS v21 -->
+<div id="orc-overlay" style="display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;background:rgba(0,0,0,.8);z-index:700;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeOrcamentos()">
+  <div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:32px">
+    <div style="width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:12px auto 0"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="font-size:18px;font-weight:700;color:#fff">🎯 Orçamentos &amp; Metas</div>
+      <button onclick="closeOrcamentos()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div id="orc-list" style="padding:0 20px;min-height:60px"></div>
+    <div style="padding:16px 20px 0">
+      <button onclick="openAddMeta()" style="width:100%;padding:14px;background:linear-gradient(135deg,#1e88e5,#1565c0);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">＋ Nova Meta</button>
+    </div>
+    <div id="orc-form" style="display:none;padding:16px 20px 0">
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:12px">✏️ Nova Meta de Economia</div>
+        <input id="m-nome" type="text" placeholder="O que quer comprar? Ex: Geladeira, Viagem..." style="width:100%;padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+          <input id="m-valor" type="number" placeholder="Valor total R$" style="padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#1e88e5;font-size:18px;font-weight:700;font-family:inherit;box-sizing:border-box">
+          <input id="m-atual" type="number" placeholder="Já guardou R$" style="padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#43a047;font-size:18px;font-weight:700;font-family:inherit;box-sizing:border-box">
+        </div>
+        <input id="m-mensal" type="number" placeholder="Guardar por mês R$" style="width:100%;padding:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:15px;font-family:inherit;box-sizing:border-box;margin-bottom:10px">
+        <div id="m-icos" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <span onclick="selIco(this,'🏠')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">🏠</span><span onclick="selIco(this,'🚗')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">🚗</span><span onclick="selIco(this,'✈️')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">✈️</span><span onclick="selIco(this,'📱')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">📱</span><span onclick="selIco(this,'🖥️')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">🖥️</span><span onclick="selIco(this,'🎓')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">🎓</span><span onclick="selIco(this,'🛋️')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">🛋️</span><span onclick="selIco(this,'🏖️')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid transparent">🏖️</span><span onclick="selIco(this,'🎯')" style="cursor:pointer;font-size:22px;padding:6px;border-radius:8px;border:2px solid #1e88e5">🎯</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button onclick="document.getElementById('orc-form').style.display='none'" style="flex:1;padding:11px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:none;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit">Cancelar</button>
+          <button onclick="salvarMeta()" style="flex:2;padding:11px;background:#1e88e5;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Salvar Meta 💾</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="rel-overlay" style="display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;background:rgba(0,0,0,.8);z-index:700;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeRelatorios()">
+  <div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:32px">
+    <div style="width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:12px auto 0"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="font-size:18px;font-weight:700;color:#fff">📊 Relatórios</div>
+      <button onclick="closeRelatorios()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div id="rel-body" style="padding:20px"></div>
+  </div>
+</div>
+<div id="cal-overlay" style="display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;background:rgba(0,0,0,.8);z-index:700;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeCalendario()">
+  <div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:32px">
+    <div style="width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:12px auto 0"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="font-size:18px;font-weight:700;color:#fff">📅 Calendário Financeiro</div>
+      <button onclick="closeCalendario()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div id="cal-body" style="padding:20px"></div>
+  </div>
+</div>
+<div id="sim-overlay" style="display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;background:rgba(0,0,0,.8);z-index:700;align-items:flex-end;justify-content:center" onclick="if(event.target===this)closeSimulador()">
+  <div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding-bottom:32px">
+    <div style="width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:12px auto 0"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid rgba(255,255,255,.07)">
+      <div style="font-size:18px;font-weight:700;color:#fff">🧮 Simulador Financeiro</div>
+      <button onclick="closeSimulador()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:16px 20px 0">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button onclick="simT('economia')" id="st-economia" style="flex:1;padding:10px 4px;background:#1e88e5;color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💰 Economia</button>
+        <button onclick="simT('parcela')" id="st-parcela" style="flex:1;padding:10px 4px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:none;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit">💳 Parcela</button>
+        <button onclick="simT('juros')" id="st-juros" style="flex:1;padding:10px 4px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:none;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit">📈 Juros</button>
+      </div>
+      <div id="sim-body"></div>
+    </div>
+  </div>
+</div>
+<script id="init-close-overlays">
+(function(){
+  var ids=['orc-overlay','rel-overlay','cal-overlay','sim-overlay','orc-form'];
+  function closeAll(){ids.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});}
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',closeAll);}
+  else{closeAll();}
+  setTimeout(closeAll,1000);
+})();
+</script>
 </body>
 </html>
