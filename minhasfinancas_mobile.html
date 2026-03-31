@@ -4349,5 +4349,35 @@ window.renderGastos=function(){
 </script>
 
 
+
+<script id="norm-init">
+(function(){
+  function norm(){
+    const d=(typeof appData!=='undefined'?appData:null)||window.appData;
+    if(!d||!d.transacoes||!d.transacoes.length||d._amtsNormalizados)return;
+    const media=d.transacoes.map(t=>Math.abs(parseFloat(t.amt||0))).reduce((s,v)=>s+v,0)/d.transacoes.length;
+    if(media>200){
+      d.transacoes.forEach(t=>{t.amt=Math.round(parseFloat(t.amt||0))/100;});
+      d._amtsNormalizados=true;
+      if(typeof appData!=='undefined')appData._amtsNormalizados=true;
+      console.log('Normalizado /100 media='+Math.round(media));
+      setTimeout(function(){
+        if(typeof updateHeroSaldo==='function')updateHeroSaldo();
+        if(typeof renderTxHome==='function')renderTxHome();
+        if(typeof renderCartoesList==='function')renderCartoesList();
+        if(typeof renderContasList==='function')renderContasList();
+      },100);
+    }
+  }
+  window._normalizarValores=norm;
+  let t=0;
+  const iv=setInterval(function(){
+    t++;
+    const d=(typeof appData!=='undefined'?appData:null)||window.appData;
+    if(d&&d.transacoes&&d.transacoes.length){norm();clearInterval(iv);}
+    if(t>50)clearInterval(iv);
+  },300);
+})();
+</script>
 </body>
 </html>
