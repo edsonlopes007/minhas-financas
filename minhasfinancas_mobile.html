@@ -3264,10 +3264,35 @@ function detectCSVCols(header, bancoId) {
 
 function parseValor(str) {
   if (!str) return 0;
-  // Remove R$, espaços, converte vírgula para ponto
-  let s = str.replace(/R\$|\s/g,'').replace('.','').replace(',','.');
-  // Trata valores negativos com parênteses: (100,00) → -100
+  let s = str.replace(/R\$|\s/g,'').trim();
+  // Trata negativos com parênteses: (100,00) → -100
   if (s.startsWith('(') && s.endsWith(')')) s = '-' + s.slice(1,-1);
+  // Detecta formato:
+  // BR: 1.500,00 — ponto = milhar, vírgula = decimal
+  // EN: 1500.00  — ponto = decimal
+  const hasDot = s.includes('.');
+  const hasComma = s.includes(',');
+  if (hasComma && hasDot) {
+    // Ambos: verifica qual vem por último (é o decimal)
+    if (s.lastIndexOf(',') > s.lastIndexOf('.')) {
+      // BR: 1.500,00
+      s = s.replace(/\./g,'').replace(',','.');
+    } else {
+      // EN: 1,500.00
+      s = s.replace(/,/g,'');
+    }
+  } else if (hasComma) {
+    // Só vírgula: é decimal BR → 1500,00
+    s = s.replace(',','.');
+  } else if (hasDot) {
+    // Só ponto — pode ser decimal EN (1500.00) ou milhar BR (1.500)
+    const parts = s.split('.');
+    if (parts[parts.length-1].length === 3 && parts.length > 1) {
+      // Milhar BR: 1.500 → remover ponto
+      s = s.replace(/\./g,'');
+    }
+    // Senão é decimal EN: 1500.00 → deixa como está
+  }
   return parseFloat(s) || 0;
 }
 
@@ -3334,6 +3359,14 @@ function showImportStep2(filename) {
   
   document.getElementById('import-preview-title').textContent = filename;
   document.getElementById('import-preview-sub').textContent = importTxs.length + ' transações encontradas';
+  
+  // Garante que importTxsSel tem os IDs de todas as transações selecionadas
+  if (!window.importTxsSel || window.importTxsSel.size === 0) {
+    window.importTxsSel = new Set(importTxs.filter(t => t.selecionado !== false).map(t => t.id));
+  }
+  
+  // Reseta filtro
+  window.importFiltro = 'todos';
   
   renderImportList();
   atualizarResumoImport();
