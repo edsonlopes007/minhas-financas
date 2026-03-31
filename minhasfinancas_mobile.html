@@ -4345,32 +4345,51 @@ window.renderGastos=function(){
 
 <script id="normalize-amounts">
 (function(){
-function normalizarValores(){
-  const d=(typeof appData!=='undefined'?appData:null)||window.appData;
-  if(!d||!d.transacoes||!d.transacoes.length)return;
-  if(d._amtsNormalizados)return;
+// Normaliza centavos → reais (detecta automaticamente)
+function normalizarValores(d){
+  if(!d||!d.transacoes||!d.transacoes.length||d._amtsNormalizados)return false;
   const amts=d.transacoes.map(t=>Math.abs(parseFloat(t.amt||0)));
   const media=amts.reduce((s,v)=>s+v,0)/amts.length;
   if(media>500){
-    d.transacoes.forEach(t=>{t.amt=parseFloat(t.amt||0)/100;});
+    d.transacoes.forEach(t=>{t.amt=Math.round(parseFloat(t.amt||0))/100;});
     d._amtsNormalizados=true;
-    console.log('✅ Valores normalizados /100: media era',Math.round(media));
+    return true;
+  }
+  return false;
+}
+window._normalizarValores=normalizarValores;
+
+// Intercepta o carregamento do Firebase — roda normalização assim que dados chegam
+const _origOnValue=window.onFirebaseDataLoaded;
+window.onFirebaseDataLoaded=function(data){
+  if(typeof _origOnValue==='function')_origOnValue(data);
+  const d=(typeof appData!=='undefined'?appData:null)||window.appData;
+  if(normalizarValores(d)){
     setTimeout(function(){
       if(typeof updateHeroSaldo==='function')updateHeroSaldo();
       if(typeof renderTxHome==='function')renderTxHome();
       if(typeof renderCartoesList==='function')renderCartoesList();
-      if(typeof atualizarCATScomDadosReais==='function')atualizarCATScomDadosReais();
-    },200);
+    },100);
   }
-}
-window._normalizarValores=normalizarValores;
-let tries=0;
+};
+
+// Polling como fallback — verifica a cada 300ms por 15s
+let t=0;
 const iv=setInterval(function(){
-  tries++;
+  t++;
   const d=(typeof appData!=='undefined'?appData:null)||window.appData;
-  if(d&&d.transacoes&&d.transacoes.length&&!d._amtsNormalizados){normalizarValores();}
-  if(tries>30||((d||{})._amtsNormalizados))clearInterval(iv);
-},500);
+  if(d&&d.transacoes&&d.transacoes.length&&!d._amtsNormalizados){
+    if(normalizarValores(d)){
+      console.log('✅ Normalizado via polling');
+      setTimeout(function(){
+        if(typeof updateHeroSaldo==='function')updateHeroSaldo();
+        if(typeof renderTxHome==='function')renderTxHome();
+        if(typeof renderCartoesList==='function')renderCartoesList();
+      },100);
+    }
+  }
+  if(t>50||(d&&d._amtsNormalizados))clearInterval(iv);
+},300);
 })();
 </script>
 </body>
