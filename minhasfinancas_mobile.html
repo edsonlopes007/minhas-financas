@@ -2449,6 +2449,11 @@ function syncFromFirebase() {
       if (data && data.ultimaAtualizacao > (appData.ultimaAtualizacao || 0)) {
         appData = data;
         saveLocalData();
+        // Normaliza centavos → reais antes de renderizar
+        if (appData.transacoes && appData.transacoes.length && !appData._amtsNormalizados) {
+          const _m = appData.transacoes.map(t=>Math.abs(parseFloat(t.amt||0))).reduce((s,v)=>s+v,0)/appData.transacoes.length;
+          if (_m > 500) { appData.transacoes.forEach(t=>{t.amt=Math.round(parseFloat(t.amt||0))/100;}); appData._amtsNormalizados=true; console.log('✅ Normalizado /100'); }
+        }
         renderAllData();
         updateSyncIndicator(true);
         console.log('Dados sincronizados do Firebase');
@@ -2466,24 +2471,11 @@ function updateSyncIndicator(ok) {
 
 // ── RENDERIZA TODOS OS DADOS
 function renderAllData() {
-  // Normaliza valores centavos → reais antes de renderizar
-  const _d = (typeof appData !== 'undefined' ? appData : null) || window.appData;
-  if (_d && _d.transacoes && _d.transacoes.length && !_d._amtsNormalizados) {
-    const _amts = _d.transacoes.map(t => Math.abs(parseFloat(t.amt||0)));
-    const _media = _amts.reduce((s,v)=>s+v,0)/_amts.length;
-    if (_media > 500) {
-      _d.transacoes.forEach(t => { t.amt = Math.round(parseFloat(t.amt||0))/100; });
-      _d._amtsNormalizados = true;
-      if (typeof appData !== 'undefined') appData._amtsNormalizados = true;
-      console.log('✅ Normalizado /100: media era', Math.round(_media));
-    }
-  }
   renderContasList();
   renderCartoesList();
   renderTxHome();
   renderSubs();
   renderSI();
-  if (typeof updateHeroSaldo === 'function') setTimeout(updateHeroSaldo, 100);
 }
 
 // ── CONTAS: renderiza na tela início
