@@ -4193,55 +4193,48 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
+
+
 <script id="overlay-position-fix">
-// Centraliza todos os overlays no .app dinamicamente
 function fixOverlayPosition(el) {
   if (!el) return;
   const app = document.getElementById('main-app') || document.querySelector('.app');
   if (!app) return;
   const ar = app.getBoundingClientRect();
-  const center = ar.left + ar.width / 2;
-  el.style.left = center + 'px';
-  el.style.transform = 'translateX(-50%)';
-  el.style.width = ar.width + 'px';
-  el.style.maxWidth = '480px';
-  el.style.height = '100%';
-  el.style.top = '0';
-  el.style.position = 'fixed';
+  el.style.setProperty('left', ar.left + 'px', 'important');
+  el.style.setProperty('transform', 'none', 'important');
+  el.style.setProperty('width', ar.width + 'px', 'important');
+  el.style.setProperty('max-width', ar.width + 'px', 'important');
+  el.style.setProperty('top', '0', 'important');
+  el.style.setProperty('height', '100%', 'important');
+  el.style.setProperty('position', 'fixed', 'important');
 }
-
-// Intercepta todas as funções de abrir overlay
-const _overlayIds = ['orc-overlay','rel-overlay','cal-overlay','sim-overlay',
-                     'form-overlay','cadastro-overlay','importacao-overlay','fab-overlay'];
-
-// Observa mudanças de display nos overlays
-const _observer = new MutationObserver(mutations => {
-  mutations.forEach(m => {
+function fixAllOverlays() {
+  ['orc-overlay','rel-overlay','cal-overlay','sim-overlay',
+   'form-overlay','cadastro-overlay','importacao-overlay','fab-overlay'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.style.display !== 'none') fixOverlayPosition(el);
+  });
+}
+// MutationObserver — reposiciona ao abrir
+var _obs = new MutationObserver(function(mutations) {
+  mutations.forEach(function(m) {
     if (m.type === 'attributes' && m.attributeName === 'style') {
-      const el = m.target;
-      if (el.id && el.id.includes('overlay') && el.style.display !== 'none') {
+      var el = m.target;
+      if (el.id && el.id.indexOf('overlay') >= 0 && el.style.display !== 'none') {
         fixOverlayPosition(el);
       }
     }
   });
 });
-
-// Começa a observar após carregar
 document.addEventListener('DOMContentLoaded', function() {
-  _overlayIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) _observer.observe(el, { attributes: true });
+  ['orc-overlay','rel-overlay','cal-overlay','sim-overlay',
+   'form-overlay','cadastro-overlay','importacao-overlay'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) _obs.observe(el, { attributes: true });
   });
 });
-
-// Também corrige quando a janela é redimensionada
-window.addEventListener('resize', function() {
-  _overlayIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.style.display !== 'none') fixOverlayPosition(el);
-  });
-});
-
+window.addEventListener('resize', fixAllOverlays);
 window.fixOverlayPosition = fixOverlayPosition;
 </script>
 </body>
