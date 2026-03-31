@@ -269,8 +269,7 @@ body{background:#0f1117 !important}
 .alert-box{background:var(--rd3);border:1px solid #ffcdd2;border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--rd2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 
 /* Login screen — sempre fundo escuro independente do tema */
-#login-screen{background:#0f1117 !important}
-#login-screen .login-card, #login-screen .card{background:#1a1a2e !important}
+#login-screen{background:#121212 !important;z-index:9999 !important}
 </style>
   <!-- FIREBASE REALTIME DATABASE — SYNC DESKTOP ↔ MOBILE
        Siga o guia_integracao_sync_v2.md para configurar -->
@@ -575,17 +574,6 @@ body {
   inset: 0 !important;
   z-index: 600;
 }
-/* Login screen centralizada */
-#login-screen {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg) !important;
-  width: 100% !important;
-}
 </style>
 </head>
 <body>
@@ -726,6 +714,9 @@ function doLogin() {
       scr.style.opacity = '0';
       setTimeout(() => {
         scr.style.display = 'none';
+        try { localStorage.setItem('mf-user', JSON.stringify({email: email, nome: user.nome})); } catch(e) {}
+        const mainApp = document.getElementById('main-app');
+        if (mainApp) { mainApp.style.display = 'flex'; }
         // Mostra nome no avatar
         const av = document.getElementById('topbar-avatar-lbl');
         if (av) av.textContent = user.nome.substring(0,2).toUpperCase();
@@ -839,13 +830,12 @@ function showSobre() {
   showToastDrawer('ℹ️ Minhas Finanças v2.0 · Firebase Sync');
 }
 function doLogout() {
-  closeDrawer();
+  const mainApp = document.getElementById('main-app');
+  if (mainApp) mainApp.style.display = 'none';
   const scr = document.getElementById('login-screen');
-  if (scr) {
-    scr.style.opacity = '0';
-    scr.style.display = 'flex';
-    setTimeout(() => { scr.style.transition = 'opacity .3s'; scr.style.opacity = '1'; }, 10);
-  }
+  if (scr) { scr.style.opacity = '1'; scr.style.display = 'flex'; }
+  closeDrawer();
+  try { localStorage.removeItem('mf-user'); } catch(e) {}
 }
 let darkMode = true;
 function toggleTheme() {
@@ -879,7 +869,7 @@ function showToastDrawer(msg) {
 }
 </script>
 
-<div class="app">
+<div class="app" id="main-app" style="display:none">
   <div class="status-area"></div>
 
   <!-- TOPBAR -->
@@ -4185,5 +4175,22 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 
+
+<script id="auto-login">
+(function(){
+  try {
+    var u = localStorage.getItem('mf-user');
+    if (u) {
+      var data = JSON.parse(u);
+      if (data && data.email) {
+        var scr = document.getElementById('login-screen');
+        var mainApp = document.getElementById('main-app');
+        if (scr) scr.style.display = 'none';
+        if (mainApp) mainApp.style.display = 'flex';
+      }
+    }
+  } catch(e) {}
+})();
+</script>
 </body>
 </html>
