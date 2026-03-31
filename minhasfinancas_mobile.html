@@ -4342,5 +4342,36 @@ window.renderGastos=function(){
   if(typeof _oRG==='function')_oRG();
 };
 </script>
+
+<script id="normalize-amounts">
+(function(){
+function normalizarValores(){
+  const d=(typeof appData!=='undefined'?appData:null)||window.appData;
+  if(!d||!d.transacoes||!d.transacoes.length)return;
+  if(d._amtsNormalizados)return;
+  const amts=d.transacoes.map(t=>Math.abs(parseFloat(t.amt||0)));
+  const media=amts.reduce((s,v)=>s+v,0)/amts.length;
+  if(media>500){
+    d.transacoes.forEach(t=>{t.amt=parseFloat(t.amt||0)/100;});
+    d._amtsNormalizados=true;
+    console.log('✅ Valores normalizados /100: media era',Math.round(media));
+    setTimeout(function(){
+      if(typeof updateHeroSaldo==='function')updateHeroSaldo();
+      if(typeof renderTxHome==='function')renderTxHome();
+      if(typeof renderCartoesList==='function')renderCartoesList();
+      if(typeof atualizarCATScomDadosReais==='function')atualizarCATScomDadosReais();
+    },200);
+  }
+}
+window._normalizarValores=normalizarValores;
+let tries=0;
+const iv=setInterval(function(){
+  tries++;
+  const d=(typeof appData!=='undefined'?appData:null)||window.appData;
+  if(d&&d.transacoes&&d.transacoes.length&&!d._amtsNormalizados){normalizarValores();}
+  if(tries>30||((d||{})._amtsNormalizados))clearInterval(iv);
+},500);
+})();
+</script>
 </body>
 </html>
