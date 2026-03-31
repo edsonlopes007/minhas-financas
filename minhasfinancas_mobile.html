@@ -1273,7 +1273,7 @@ function renderTxHome(){
 
 /* ===== GASTOS ===== */
 let donutInst=null;
-function renderGastos(){
+function renderGastos(){ if(typeof atualizarCATScomDadosReais==="function") atualizarCATScomDadosReais();
   if(donutInst){donutInst.destroy();donutInst=null;}
   const ctx=document.getElementById('donutChart');if(!ctx)return;
   donutInst=new Chart(ctx,{type:'doughnut',data:{labels:CATS.map(c=>c.n),datasets:[{data:CATS.map(c=>c.spend),backgroundColor:CATS.map(c=>c.color),borderWidth:2,borderColor:'#fff',hoverOffset:8}]},
@@ -1504,7 +1504,21 @@ function openDrill(key){
   ico.textContent=cfg.ico;ico.style.cssText=`background:${cfg.color}22;color:${cfg.color}`;
   title.textContent=cfg.t;sub.textContent=cfg.s;
 
-  const txsByKey=key.startsWith('conta-')?TXS.filter(t=>t.conta===(key==='conta-nubank'?'Nubank':key==='conta-santander'?'Santander':'Inter')):key.startsWith('fatura-')?TXS.filter(t=>t.amt<0).slice(0,6):key==='despesas'?TXS.filter(t=>t.amt<0):key==='receitas'?TXS.filter(t=>t.amt>0):key==='contas'?TXS.slice(0,6):TXS.filter(t=>t.cat===key).slice(0,6);
+  // Usa transações reais do appData em vez de TXS hardcoded
+  if (typeof loadTxFromAppData === 'function') loadTxFromAppData();
+  const _mesAtual = (typeof window.curM !== 'undefined') ? window.curM : new Date().getMonth();
+  const _anoAtual = (typeof window.curY !== 'undefined') ? window.curY : new Date().getFullYear();
+  const _mm = String(_mesAtual+1).padStart(2,'0'), _yy = String(_anoAtual);
+  const _allTxs = (typeof appData !== 'undefined' ? appData.transacoes || [] : window.TXS || []).map(t => ({
+    ...t, amt: parseFloat(t.amt || 0)
+  }));
+  const _mesTxs = _allTxs.filter(t => { const p=(t.date||'').split('/'); return p[1]===_mm&&p[2]===_yy; });
+  const txsByKey = key.startsWith('conta-') ? _mesTxs.filter(t=>t.conta===(key==='conta-nubank'?'Nubank':key==='conta-santander'?'Santander':key==='conta-inter'?'Banco Inter':'')) :
+    key.startsWith('fatura-') ? _mesTxs.filter(t=>t.amt<0) :
+    key==='despesas' ? _mesTxs.filter(t=>t.amt<0) :
+    key==='receitas' ? _mesTxs.filter(t=>t.amt>0) :
+    key==='contas' ? _mesTxs :
+    _mesTxs.filter(t=>t.cat===key);
 
   const kpiSection=`<div class="drill-kpi-row">
     <div class="drill-kpi"><div class="drill-kpi-lbl">Transações</div><div class="drill-kpi-val">${txsByKey.length}</div></div>
@@ -1514,6 +1528,8 @@ function openDrill(key){
 
   body.innerHTML=kpiSection+'<div class="drill-sec">Movimentações</div>'+
     (txsByKey.length?txsByKey.map(t=>`<div class="drill-tx-row"><div class="drill-ico-sm" style="background:${t.bg}">${t.ico}</div><div style="flex:1"><div class="drill-name">${t.n}</div><div class="drill-date">${t.date} · ${t.conta}</div></div><div class="drill-amt" style="color:${t.amt<0?'var(--rd2)':'var(--gn4)'}">${t.amt<0?'-R$'+Math.abs(t.amt).toFixed(2):'+R$'+t.amt.toFixed(2)}</div></div>`).join(''):'<div style="text-align:center;padding:16px;color:var(--tx3);font-size:13px">Sem movimentações</div>');
+  // Posiciona overlay corretamente no app
+  if (typeof fixOverlayPosition === 'function') fixOverlayPosition(overlay);
   overlay.classList.add('open');
 }
 
@@ -2532,7 +2548,7 @@ function renderCartoesList() {
     const pct = limite > 0 ? Math.min(Math.round((faturaMes / limite) * 100), 100) : 0;
     const cor = pct > 90 ? 'var(--rd2)' : pct > 70 ? 'var(--am2)' : 'var(--gn4)';
     
-    return `<div class="row" onclick="openEditCartao('${cartao.id}')">
+    return `<div class="row" onclick="openFaturaCartao('${cartao.id}')">
       <div class="logo" style="background:${cartao.cor}">${cartao.icone || cartao.nome?.substring(0,2) || 'CC'}</div>
       <div class="rinfo">
         <div class="rname">${cartao.nome} <span style="font-size:10px;color:rgba(255,255,255,.4);font-weight:400">${pct}%</span></div>
@@ -4268,5 +4284,101 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('resize', fixAllOverlays);
 window.fixOverlayPosition = fixOverlayPosition;
 </script>
+
+// ── Detalhe da fatura do cartão no mês atual
+window.openFaturaCartao = function(cartaoId) {
+  if (typeof loadTxFromAppData === 'function') loadTxFromAppData();
+  const d = (typeof appData !== 'undefined' ? appData : null) || window.appData || {};
+  const cartao = (d.cartoes || []).find(c => c.id === cartaoId || c.nome === cartaoId);
+  if (!cartao) return;
+
+  const mesAtual = (typeof window.curM !== 'undefined') ? window.curM : new Date().getMonth();
+  const anoAtual = (typeof window.curY !== 'undefined') ? window.curY : new Date().getFullYear();
+  const MN = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const mm = String(mesAtual+1).padStart(2,'0'), yy = String(anoAtual);
+
+  // Transações do cartão no mês
+  const txs = (d.transacoes || []).filter(t => {
+    const p = (t.date || '').split('/');
+    return p[1] === mm && p[2] === yy && (
+      t.cartaoId === cartaoId || t.cartaoId === cartao.nome ||
+      t.tipo === 'cartao' || t.tipo === 'despesa-cartao'
+    );
+  });
+
+  const fmtV = v => 'R$ ' + Math.abs(v).toLocaleString('pt-BR', {minimumFractionDigits:2});
+  const total = txs.reduce((s,t) => s + Math.abs(parseFloat(t.amt||0)), 0);
+  const limite = parseFloat(cartao.limite) || 0;
+  const pct = limite > 0 ? Math.min(Math.round((total/limite)*100),100) : 0;
+
+  // Abre o drill-overlay com os dados da fatura
+  const overlay = document.getElementById('drill-overlay');
+  const ico = document.getElementById('drill-ico');
+  const title = document.getElementById('drill-title');
+  const sub = document.getElementById('drill-sub');
+  const body = document.getElementById('drill-body');
+  if (!overlay) return;
+
+  if (ico) { ico.textContent = '💳'; ico.style.cssText = `background:${cartao.cor||'#9c27b0'}22;color:${cartao.cor||'#9c27b0'}`; }
+  if (title) title.textContent = cartao.nome + ' — Fatura ' + MN[mesAtual] + '/' + String(anoAtual).slice(2);
+  if (sub) sub.textContent = fmtV(total) + (cartao.vencimento ? ' · Vence dia ' + cartao.vencimento : '');
+
+  const kpi = `<div class="drill-kpi-row">
+    <div class="drill-kpi"><div class="drill-kpi-lbl">Fatura</div><div class="drill-kpi-val" style="color:#ef5350">${fmtV(total)}</div></div>
+    <div class="drill-kpi"><div class="drill-kpi-lbl">Limite</div><div class="drill-kpi-val">${fmtV(limite)}</div></div>
+    <div class="drill-kpi"><div class="drill-kpi-lbl">Usado</div><div class="drill-kpi-val" style="color:${pct>70?'#ef5350':'#43a047'}">${pct}%</div></div>
+  </div>`;
+
+  const lista = txs.length ? txs.map(t =>
+    `<div class="drill-tx-row"><div class="drill-ico-sm" style="background:${t.bg||'#f5f5f5'}">${t.ico||'📦'}</div><div style="flex:1"><div class="drill-name">${t.n||t.name||'—'}</div><div class="drill-date">${t.date} · ${t.cat||'Outros'}</div></div><div class="drill-amt" style="color:var(--rd2)">-R$ ${Math.abs(parseFloat(t.amt||0)).toFixed(2)}</div></div>`
+  ).join('') : '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px">Nenhum lançamento de cartão em ' + MN[mesAtual] + '/' + anoAtual + '</div>';
+
+  if (body) body.innerHTML = kpi + '<div class="drill-sec">Lançamentos do mês</div>' + lista;
+
+  // Posiciona o overlay corretamente
+  if (typeof fixOverlayPosition === 'function') fixOverlayPosition(overlay);
+  overlay.classList.add('open');
+};
+
+// Atualiza CATS com dados reais das transações do mês
+function atualizarCATScomDadosReais() {
+  if (typeof loadTxFromAppData === 'function') loadTxFromAppData();
+  const d = (typeof appData !== 'undefined' ? appData : null) || window.appData || {};
+  const mesAtual = (typeof window.curM !== 'undefined') ? window.curM : new Date().getMonth();
+  const anoAtual = (typeof window.curY !== 'undefined') ? window.curY : new Date().getFullYear();
+  const mm = String(mesAtual+1).padStart(2,'0'), yy = String(anoAtual);
+
+  const txsMes = (d.transacoes || []).filter(t => {
+    const p = (t.date||'').split('/');
+    return p[1]===mm && p[2]===yy && parseFloat(t.amt||0) < 0;
+  });
+
+  // Agrupa por categoria
+  const catMap = {};
+  txsMes.forEach(t => {
+    const cat = t.cat || 'Outros';
+    const ico = t.ico || '📦';
+    const cor = t.bg ? t.bg.replace('22','') : '#9e9e9e';
+    if (!catMap[cat]) catMap[cat] = { n: cat, spend: 0, budget: 0, color: cor, ico, txs: [] };
+    catMap[cat].spend += Math.abs(parseFloat(t.amt||0));
+    catMap[cat].txs.push(t);
+  });
+
+  if (Object.keys(catMap).length > 0) {
+    // Atualiza CATS com dados reais
+    Object.entries(catMap).forEach(([cat, data]) => {
+      const existing = CATS.find(c => c.n === cat);
+      if (existing) {
+        existing.spend = data.spend;
+        existing.txs = data.txs;
+      } else {
+        CATS.push(data);
+      }
+    });
+    // Zera categorias sem lançamentos no mês
+    CATS.forEach(c => { if (!catMap[c.n]) { c.spend = 0; c.txs = []; } });
+  }
+}
+window.atualizarCATScomDadosReais = atualizarCATScomDadosReais;
 </body>
 </html>
