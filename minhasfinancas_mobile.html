@@ -2466,11 +2466,24 @@ function updateSyncIndicator(ok) {
 
 // ── RENDERIZA TODOS OS DADOS
 function renderAllData() {
+  // Normaliza valores centavos → reais antes de renderizar
+  const _d = (typeof appData !== 'undefined' ? appData : null) || window.appData;
+  if (_d && _d.transacoes && _d.transacoes.length && !_d._amtsNormalizados) {
+    const _amts = _d.transacoes.map(t => Math.abs(parseFloat(t.amt||0)));
+    const _media = _amts.reduce((s,v)=>s+v,0)/_amts.length;
+    if (_media > 500) {
+      _d.transacoes.forEach(t => { t.amt = Math.round(parseFloat(t.amt||0))/100; });
+      _d._amtsNormalizados = true;
+      if (typeof appData !== 'undefined') appData._amtsNormalizados = true;
+      console.log('✅ Normalizado /100: media era', Math.round(_media));
+    }
+  }
   renderContasList();
   renderCartoesList();
   renderTxHome();
   renderSubs();
   renderSI();
+  if (typeof updateHeroSaldo === 'function') setTimeout(updateHeroSaldo, 100);
 }
 
 // ── CONTAS: renderiza na tela início
@@ -4343,54 +4356,6 @@ window.renderGastos=function(){
 };
 </script>
 
-<script id="normalize-amounts">
-(function(){
-// Normaliza centavos → reais (detecta automaticamente)
-function normalizarValores(d){
-  if(!d||!d.transacoes||!d.transacoes.length||d._amtsNormalizados)return false;
-  const amts=d.transacoes.map(t=>Math.abs(parseFloat(t.amt||0)));
-  const media=amts.reduce((s,v)=>s+v,0)/amts.length;
-  if(media>500){
-    d.transacoes.forEach(t=>{t.amt=Math.round(parseFloat(t.amt||0))/100;});
-    d._amtsNormalizados=true;
-    return true;
-  }
-  return false;
-}
-window._normalizarValores=normalizarValores;
 
-// Intercepta o carregamento do Firebase — roda normalização assim que dados chegam
-const _origOnValue=window.onFirebaseDataLoaded;
-window.onFirebaseDataLoaded=function(data){
-  if(typeof _origOnValue==='function')_origOnValue(data);
-  const d=(typeof appData!=='undefined'?appData:null)||window.appData;
-  if(normalizarValores(d)){
-    setTimeout(function(){
-      if(typeof updateHeroSaldo==='function')updateHeroSaldo();
-      if(typeof renderTxHome==='function')renderTxHome();
-      if(typeof renderCartoesList==='function')renderCartoesList();
-    },100);
-  }
-};
-
-// Polling como fallback — verifica a cada 300ms por 15s
-let t=0;
-const iv=setInterval(function(){
-  t++;
-  const d=(typeof appData!=='undefined'?appData:null)||window.appData;
-  if(d&&d.transacoes&&d.transacoes.length&&!d._amtsNormalizados){
-    if(normalizarValores(d)){
-      console.log('✅ Normalizado via polling');
-      setTimeout(function(){
-        if(typeof updateHeroSaldo==='function')updateHeroSaldo();
-        if(typeof renderTxHome==='function')renderTxHome();
-        if(typeof renderCartoesList==='function')renderCartoesList();
-      },100);
-    }
-  }
-  if(t>50||(d&&d._amtsNormalizados))clearInterval(iv);
-},300);
-})();
-</script>
 </body>
 </html>
