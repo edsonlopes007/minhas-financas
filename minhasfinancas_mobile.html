@@ -3117,8 +3117,6 @@ function processImportFile(file) {
     showImportStep2(file.name);
   };
   
-  reader.readAsText(content => {}, 'UTF-8');
-  // Fix: usar readAsText corretamente
   reader.readAsText(file, 'UTF-8');
 }
 
