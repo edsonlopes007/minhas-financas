@@ -3671,7 +3671,7 @@ function selIco(el, ico) {
   el.style.borderColor = '#1e88e5';
   _mIco = ico;
 }
-function openOrcamentos() { document.getElementById('orc-overlay').style.display = 'flex'; renderMetas(); }
+function openOrcamentos() { const _ov=document.getElementById('orc-overlay'); _ov.style.display = 'flex'; if(typeof fixOverlayPosition==='function') fixOverlayPosition(_ov); renderMetas(); }
 function closeOrcamentos() { document.getElementById('orc-overlay').style.display = 'none'; }
 function openAddMeta() { document.getElementById('orc-form').style.display = ''; document.getElementById('m-nome')?.focus(); }
 
@@ -3768,7 +3768,7 @@ window.renderMetas = renderMetas;
 // ════════════════════════════════════════════════════════════
 // RELATÓRIOS
 // ════════════════════════════════════════════════════════════
-function openRelatorios() { document.getElementById('rel-overlay').style.display = 'flex'; renderRelatorios(); }
+function openRelatorios() { const _ov=document.getElementById('rel-overlay'); _ov.style.display = 'flex'; if(typeof fixOverlayPosition==='function') fixOverlayPosition(_ov); renderRelatorios(); }
 function closeRelatorios() { document.getElementById('rel-overlay').style.display = 'none'; }
 function renderRelatorios() {
   const el = document.getElementById('rel-body'); if (!el) return;
@@ -3811,7 +3811,7 @@ window.openRelatorios = openRelatorios; window.closeRelatorios = closeRelatorios
 // ════════════════════════════════════════════════════════════
 // CALENDÁRIO FINANCEIRO
 // ════════════════════════════════════════════════════════════
-function openCalendario() { document.getElementById('cal-overlay').style.display = 'flex'; renderCalendario(); }
+function openCalendario() { const _ov=document.getElementById('cal-overlay'); _ov.style.display = 'flex'; if(typeof fixOverlayPosition==='function') fixOverlayPosition(_ov); renderCalendario(); }
 function closeCalendario() { document.getElementById('cal-overlay').style.display = 'none'; }
 function renderCalendario() {
   const el = document.getElementById('cal-body'); if (!el) return;
@@ -3866,7 +3866,7 @@ window.openCalendario = openCalendario; window.closeCalendario = closeCalendario
 // SIMULADOR FINANCEIRO
 // ════════════════════════════════════════════════════════════
 let _st = 'economia';
-function openSimulador() { document.getElementById('sim-overlay').style.display = 'flex'; simT('economia'); }
+function openSimulador() { const _ov=document.getElementById('sim-overlay'); _ov.style.display = 'flex'; if(typeof fixOverlayPosition==='function') fixOverlayPosition(_ov); simT('economia'); }
 function closeSimulador() { document.getElementById('sim-overlay').style.display = 'none'; }
 function simT(tab) {
   _st = tab;
@@ -4191,6 +4191,58 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   } catch(e) {}
 })();
+</script>
+
+<script id="overlay-position-fix">
+// Centraliza todos os overlays no .app dinamicamente
+function fixOverlayPosition(el) {
+  if (!el) return;
+  const app = document.getElementById('main-app') || document.querySelector('.app');
+  if (!app) return;
+  const ar = app.getBoundingClientRect();
+  const center = ar.left + ar.width / 2;
+  el.style.left = center + 'px';
+  el.style.transform = 'translateX(-50%)';
+  el.style.width = ar.width + 'px';
+  el.style.maxWidth = '480px';
+  el.style.height = '100%';
+  el.style.top = '0';
+  el.style.position = 'fixed';
+}
+
+// Intercepta todas as funções de abrir overlay
+const _overlayIds = ['orc-overlay','rel-overlay','cal-overlay','sim-overlay',
+                     'form-overlay','cadastro-overlay','importacao-overlay','fab-overlay'];
+
+// Observa mudanças de display nos overlays
+const _observer = new MutationObserver(mutations => {
+  mutations.forEach(m => {
+    if (m.type === 'attributes' && m.attributeName === 'style') {
+      const el = m.target;
+      if (el.id && el.id.includes('overlay') && el.style.display !== 'none') {
+        fixOverlayPosition(el);
+      }
+    }
+  });
+});
+
+// Começa a observar após carregar
+document.addEventListener('DOMContentLoaded', function() {
+  _overlayIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) _observer.observe(el, { attributes: true });
+  });
+});
+
+// Também corrige quando a janela é redimensionada
+window.addEventListener('resize', function() {
+  _overlayIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.style.display !== 'none') fixOverlayPosition(el);
+  });
+});
+
+window.fixOverlayPosition = fixOverlayPosition;
 </script>
 </body>
 </html>
